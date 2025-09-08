@@ -1,7 +1,7 @@
-name: Deploy static content to Pages
+name: Deploy Demo to GitHub Pages
 
 on:
-  # Runs on pushes targeting the default branch
+  # Runs on pushes targeting the main branch
   push:
     branches: ["master"]
 
@@ -13,12 +13,6 @@ permissions:
   contents: read
   pages: write
   id-token: write
-
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
   # Single deploy job since we're just deploying
@@ -32,21 +26,21 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v3
         with:
-          version: 9 # You can specify a version if needed
+          version: 8 # You can specify a pnpm version
 
-      - name: Set up Node
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "pnpm" # This is the crucial change for caching pnpm dependencies
+          cache: 'pnpm' # Use pnpm's cache
 
       - name: Install dependencies
         run: pnpm install
 
       - name: Build
-        # This command runs 'vite build' via the script in your package.json
+        # The 'base' in vite.config.ts ensures assets load correctly
         run: pnpm build
 
       - name: Setup Pages
@@ -55,8 +49,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # This should match the 'outDir' in your vite.config.ts
-          path: "./docs"
+          # Upload the 'dist' directory created by the build step
+          path: './dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
