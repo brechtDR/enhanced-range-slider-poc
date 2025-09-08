@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Advanced Range Input Component</title>
+        <link rel="stylesheet" href="style.css" />
+        <style>
+            /* A demonstration of styling the web component using CSS Parts */
+            range-group {
+                /* These are custom properties the component uses internally */
+                --track-height: 8px;
+                --thumb-size: 28px;
+                --thumb-bg: oklch(70% 0.28 260); /* Bright Indigo */
+                --tick-color: oklch(60% 0.02 230);
+                --tick-label-color: oklch(70% 0.02 230);
+
+                /* General component styling */
+                width: 100%;
+                display: block;
+            }
+
+            /* Styling the component parts from the outside */
+            range-group::part(track) {
+                background-color: oklch(25% 0.02 230);
+                border-radius: 9999px;
+            }
+
+            range-group::part(thumb) {
+                border: 2px solid oklch(95% 0.01 230);
+                border-radius: 50%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container-wrapper">
+            <div class="main-container">
+                <header class="header">
+                    <h1>The Future of Range Inputs</h1>
+                    <p class="subtitle">
+                        A Lit web component implementation of the proposed <code>&lt;rangegroup&gt;</code> element.
+                    </p>
+                </header>
+
+                <div class="sections-container">
+                    <section>
+                        <p class="description">
+                            A common use case for selecting a minimum and maximum price. The segment between the handles
+                            is styled differently.
+                        </p>
+                        <div class="card">
+                            <range-group id="price-range" min="0" max="1000">
+                                <legend slot="legend" class="color-purple">Dual-Handle Price Range</legend>
+                                <style>
+                                    #price-range::part(segment-1) {
+                                        background-color: oklch(35% 0.02 230);
+                                    }
+                                    #price-range::part(segment-2) {
+                                        background-color: var(--color-purple);
+                                    }
+                                    #price-range::part(segment-3) {
+                                        background-color: oklch(35% 0.02 230);
+                                    }
+                                </style>
+                                <label for="price-min-input" class="visually-hidden">Minimum Price</label>
+                                <input type="range" id="price-min-input" name="price-min" value="250" />
+                                <label for="price-max-input" class="visually-hidden">Maximum Price</label>
+                                <input type="range" id="price-max-input" name="price-max" value="750" />
+                            </range-group>
+                        </div>
+                    </section>
+
+                    <section>
+                        <p class="description">
+                            Demonstrates multiple handles and custom-colored segments for different temperature zones.
+                        </p>
+                        <div class="card">
+                            <range-group id="temp-range" min="-100" max="100">
+                                <legend slot="legend" class="color-pink">Multi-Handle Temperature Control</legend>
+                                <style>
+                                    #temp-range::part(segment-1) {
+                                        background-color: oklch(65% 0.25 260);
+                                    } /* Blue */
+                                    #temp-range::part(segment-2) {
+                                        background-color: oklch(80% 0.25 180);
+                                    } /* Cyan */
+                                    #temp-range::part(segment-3) {
+                                        background-color: oklch(85% 0.25 90);
+                                    } /* Yellow */
+                                    #temp-range::part(segment-4) {
+                                        background-color: oklch(70% 0.28 25);
+                                    } /* Red */
+
+                                    #temp-range::part(thumb-1) {
+                                        --thumb-bg: oklch(65% 0.25 260); /* Blue */
+                                        border: 2px solid oklch(98% 0.01 230);
+                                        box-shadow: 0 0 12px 4px oklch(65% 0.25 260 / 0.75);
+                                    }
+                                    #temp-range::part(thumb-2) {
+                                        --thumb-bg: oklch(85% 0.25 90); /* Yellow */
+                                        border: 2px solid oklch(98% 0.01 230);
+                                        box-shadow: 0 0 12px 4px oklch(85% 0.25 90 / 0.75);
+                                    }
+                                    #temp-range::part(thumb-3) {
+                                        --thumb-bg: oklch(70% 0.28 25); /* Red */
+                                        border: 2px solid oklch(98% 0.01 230);
+                                        box-shadow: 0 0 12px 4px oklch(70% 0.28 25 / 0.75);
+                                    }
+                                </style>
+                                <label for="temp-cold-input" class="visually-hidden">Cold temperature bound</label>
+                                <input type="range" id="temp-cold-input" name="temp-cold" value="-50" />
+                                <label for="temp-mild-input" class="visually-hidden">Mild temperature bound</label>
+                                <input type="range" id="temp-mild-input" name="temp-mild" value="0" />
+                                <label for="temp-hot-input" class="visually-hidden">Hot temperature bound</label>
+                                <input type="range" id="temp-hot-input" name="temp-hot" value="50" />
+                            </range-group>
+                        </div>
+                    </section>
+
+                    <section>
+                        <p class="description">
+                            Shows integration with a <code>&lt;datalist&gt;</code> for tick marks and labels, and
+                            enforces a minimum distance of 25 between handles via <code>stepbetween="25"</code>.
+                        </p>
+                        <div class="card">
+                            <range-group min="0" max="100" list="rating-ticks" stepbetween="25">
+                                <legend slot="legend" class="color-teal">Datalist Integration & Step Between</legend>
+                                <label for="rating-min-input" class="visually-hidden">Minimum rating</label>
+                                <input type="range" id="rating-min-input" name="rating-min" value="20" />
+                                <label for="rating-max-input" class="visually-hidden">Maximum rating</label>
+                                <input type="range" id="rating-max-input" name="rating-max" value="80" />
+                            </range-group>
+                            <datalist id="rating-ticks">
+                                <option value="0" label="0%"></option>
+                                <option value="25"></option>
+                                <option value="50" label="50%"></option>
+                                <option value="75"></option>
+                                <option value="100" label="100%"></option>
+                            </datalist>
+                        </div>
+                    </section>
+
+                    <section>
+                        <p class="description">
+                            An example using CSS Anchoring API to position tooltips directly above the component's
+                            thumbs.
+                        </p>
+                        <div class="card" style="position: relative">
+                            <range-group id="anchor-range" min="0" max="100">
+                                <legend slot="legend" class="color-pink">CSS Anchoring Tooltips</legend>
+                                <style>
+                                    /* Define the anchor names for the thumbs */
+                                    #anchor-range::part(thumb-1) {
+                                        anchor-name: --thumb-1-anchor;
+                                    }
+                                    #anchor-range::part(thumb-2) {
+                                        anchor-name: --thumb-2-anchor;
+                                    }
+
+                                    .tooltip {
+                                        position: absolute;
+                                        background: var(--color-bg);
+                                        color: var(--color-text-muted);
+                                        padding: 0.25rem 0.5rem;
+                                        border-radius: 0.375rem;
+                                        border: 1px solid oklch(40% 0.02 230);
+                                        pointer-events: none;
+                                        font-size: 0.875rem;
+                                        font-weight: 600;
+                                        opacity: 0;
+                                        transition:
+                                            opacity 0.15s ease-in-out,
+                                            transform 0.15s ease-in-out;
+                                        transform: translate(-50%, -125%);
+                                    }
+
+                                    #tooltip-1 {
+                                        top: anchor(--thumb-1-anchor top);
+                                        left: anchor(--thumb-1-anchor center);
+                                    }
+
+                                    #tooltip-2 {
+                                        top: anchor(--thumb-2-anchor top);
+                                        left: anchor(--thumb-2-anchor center);
+                                    }
+
+                                    #anchor-range:is(:hover, :focus-within) ~ .tooltip {
+                                        opacity: 1;
+                                        transform: translate(-50%, -200%);
+                                    }
+                                </style>
+                                <label for="anchor-1-input" class="visually-hidden">Anchor Handle 1</label>
+                                <input type="range" id="anchor-1-input" name="anchor-1" value="25" />
+                                <label for="anchor-2-input" class="visually-hidden">Anchor Handle 2</label>
+                                <input type="range" id="anchor-2-input" name="anchor-2" value="75" />
+                            </range-group>
+
+                            <div id="tooltip-1" class="tooltip" aria-hidden="true">25</div>
+                            <div id="tooltip-2" class="tooltip" aria-hidden="true">75</div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <p class="description">
+                            Use the component's public methods and properties to get and set values programmatically.
+                        </p>
+                        <div class="card">
+                            <range-group id="api-range" min="0" max="500">
+                                <legend slot="legend" class="color-indigo">JavaScript API Interaction</legend>
+                                <style>
+                                    #api-range::part(segment-2) {
+                                        background: linear-gradient(to right, var(--color-purple), var(--color-pink));
+                                    }
+                                </style>
+                                <label for="api-1-input" class="visually-hidden">API Handle 1</label>
+                                <input type="range" id="api-1-input" name="api-1" value="100" />
+                                <label for="api-2-input" class="visually-hidden">API Handle 2</label>
+                                <input type="range" id="api-2-input" name="api-2" value="400" />
+                            </range-group>
+                            <div class="button-group">
+                                <button id="getValuesBtn" class="btn btn-indigo">Get Values</button>
+                                <button id="setValuesBtn" class="btn btn-pink">Set Random Values</button>
+                            </div>
+                            <pre id="apiOutput" class="api-output"></pre>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+        <script type="module">
+            import "./src/range-group.ts";
+
+            document.addEventListener("DOMContentLoaded", () => {
+                // --- API Example ---
+                const apiRange = document.getElementById("api-range");
+                const getValuesBtn = document.getElementById("getValuesBtn");
+                const setValuesBtn = document.getElementById("setValuesBtn");
+                const apiOutput = document.getElementById("apiOutput");
+
+                if (apiRange && getValuesBtn && setValuesBtn && apiOutput) {
+                    getValuesBtn.addEventListener("click", () => {
+                        apiOutput.textContent = `Values: [${apiRange.values.join(", ")}]`;
+                    });
+
+                    setValuesBtn.addEventListener("click", () => {
+                        const val1 = Math.round(Math.random() * 500);
+                        const val2 = Math.round(Math.random() * 500);
+                        apiRange.setRangeValue(0, Math.min(val1, val2));
+                        apiRange.setRangeValue(1, Math.max(val1, val2));
+                        apiOutput.textContent = `Set to: [${apiRange.values.join(", ")}]`;
+                    });
+                }
+
+                // --- Tooltip Example ---
+                const anchorRange = document.getElementById("anchor-range");
+                const tooltip1 = document.getElementById("tooltip-1");
+                const tooltip2 = document.getElementById("tooltip-2");
+
+                if (anchorRange && tooltip1 && tooltip2) {
+                    const updateTooltips = () => {
+                        const values = anchorRange.values;
+                        tooltip1.textContent = Math.round(values[0]);
+                        tooltip2.textContent = Math.round(values[1]);
+                    };
+
+                    // Set initial values
+                    updateTooltips();
+
+                    // Update on change
+                    anchorRange.addEventListener("change", updateTooltips);
+                }
+            });
+        </script>
+    </body>
+</html>
