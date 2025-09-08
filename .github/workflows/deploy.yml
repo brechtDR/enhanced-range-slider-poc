@@ -1,9 +1,11 @@
+# .github/workflows/deploy.yml
+
 name: Deploy Demo to GitHub Pages
 
 on:
   # Runs on pushes targeting the main branch
   push:
-    branches: [main]
+    branches: [master]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -32,7 +34,8 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        # Use 'npm install' because a package-lock.json is not committed
+        run: npm install
 
       - name: Build
         # The 'base' in vite.config.ts ensures assets load correctly
