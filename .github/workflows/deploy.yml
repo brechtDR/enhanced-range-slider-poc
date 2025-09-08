@@ -1,11 +1,9 @@
-# .github/workflows/deploy.yml
-
-name: Deploy Demo to GitHub Pages
+name: Deploy static content to Pages
 
 on:
-  # Runs on pushes targeting the main branch
+  # Runs on pushes targeting the default branch
   push:
-    branches: [master]
+    branches: ["master"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -15,6 +13,12 @@ permissions:
   contents: read
   pages: write
   id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   # Single deploy job since we're just deploying
@@ -27,19 +31,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9 # You can specify a version if needed
+
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: "pnpm" # This is the crucial change for caching pnpm dependencies
 
       - name: Install dependencies
-        # Use 'npm install' because a package-lock.json is not committed
-        run: npm install
+        run: pnpm install
 
       - name: Build
-        # The 'base' in vite.config.ts ensures assets load correctly
-        run: npm run build
+        # This command runs 'vite build' via the script in your package.json
+        run: pnpm build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -47,8 +55,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload the 'dist' directory created by the build step
-          path: './dist'
+          # This should match the 'outDir' in your vite.config.ts
+          path: "./docs"
 
       - name: Deploy to GitHub Pages
         id: deployment
