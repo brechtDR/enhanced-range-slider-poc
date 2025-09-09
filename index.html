@@ -32,6 +32,15 @@
                 border-radius: 50%;
             }
         </style>
+        <script type="importmap">
+            {
+                "imports": {
+                    "lit/": "https://aistudiocdn.com/lit@^3.3.1/",
+                    "lit": "https://aistudiocdn.com/lit@^3.3.1",
+                    "vite": "https://aistudiocdn.com/vite@^7.1.5"
+                }
+            }
+        </script>
     </head>
     <body>
         <div class="container-wrapper">
@@ -46,12 +55,12 @@
                 <div class="sections-container">
                     <section>
                         <p class="description">
-                            A common use case for selecting a minimum and maximum price. The segment between the handles
+                            A common use case for selecting a minimum and maximum value. The segment between the handles
                             is styled differently.
                         </p>
                         <div class="card">
                             <range-group id="price-range" min="0" max="1000">
-                                <legend slot="legend" class="color-purple">Dual-Handle Price Range</legend>
+                                <legend slot="legend" class="color-purple">Dual-Handle Base Example</legend>
                                 <style>
                                     #price-range::part(segment-1) {
                                         background-color: oklch(35% 0.02 230);
@@ -72,11 +81,42 @@
                     </section>
                     <section>
                         <p class="description">
-                           You could use stepbetween to prevent thumbs form colliding.
+                            Demonstrates two-way data binding. Drag the handles to update the input fields, or type in
+                            the fields to move the handles.
                         </p>
                         <div class="card">
+                            <range-group id="interactive-price-range" min="0" max="1000">
+                                <legend slot="legend" class="color-teal">Interactive Price Range</legend>
+                                <style>
+                                    #interactive-price-range::part(segment-2) {
+                                        background: var(--color-teal);
+                                    }
+                                    #interactive-price-range::part(thumb) {
+                                        --thumb-bg: var(--color-teal);
+                                    }
+                                </style>
+                                <label for="interactive-price-min-input" class="visually-hidden">Minimum Price</label>
+                                <input type="range" id="interactive-price-min-input" name="price-min" value="250" />
+                                <label for="interactive-price-max-input" class="visually-hidden">Maximum Price</label>
+                                <input type="range" id="interactive-price-max-input" name="price-max" value="750" />
+                            </range-group>
+                            <div class="price-input-container">
+                                <div class="price-input-group">
+                                    <label for="price-min-num-input">Min Price</label>
+                                    <input type="number" id="price-min-num-input" min="0" max="1000" />
+                                </div>
+                                <div class="price-input-group">
+                                    <label for="price-max-num-input">Max Price</label>
+                                    <input type="number" id="price-max-num-input" min="0" max="1000" />
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <p class="description">You could use stepbetween to prevent thumbs form colliding.</p>
+                        <div class="card">
                             <range-group id="stepbetween-example" min="0" max="100" stepbetween="10">
-                                <legend slot="legend" class="color-teal">Dual-Handle with 10 stepbetween</legend>
+                                <legend slot="legend" class="color-pink">Dual-Handle with 10 stepbetween</legend>
                                 <style>
                                     #stepbetween-example::part(segment-1) {
                                         background-color: oklch(0.554 0.104 233.66);
@@ -101,7 +141,7 @@
                         </p>
                         <div class="card">
                             <range-group id="temp-range" min="-100" max="100">
-                                <legend slot="legend" class="color-pink">Multi-Handle Temperature Control</legend>
+                                <legend slot="legend" class="color-indigo">Multi-Handle Temperature Control</legend>
                                 <style>
                                     #temp-range::part(segment-1) {
                                         background-color: oklch(65% 0.25 260);
@@ -141,7 +181,93 @@
                             </range-group>
                         </div>
                     </section>
+                    <section>
+                        <p class="description">
+                            A pure CSS transformation where the thumbs are styled as tooltips. The value is displayed
+                            via a pseudo-element, and the focus state applies directly to the visible handle.
+                        </p>
+                        <div class="card">
+                            <range-group id="floating-tooltip-range" min="0" max="100">
+                                <legend slot="legend" class="color-purple">Floating Tooltip Handles</legend>
+                                <style>
+                                    #floating-tooltip-range {
+                                        --track-height: 12px;
+                                        /* Add margin to prevent tooltips from being clipped */
+                                        margin-top: 2rem;
+                                        margin-bottom: 2rem;
+                                    }
+                                    #floating-tooltip-range::part(track) {
+                                        background-color: oklch(40% 0.02 230);
+                                    }
+                                    #floating-tooltip-range::part(segment-2) {
+                                        background: var(--color-pink);
+                                    }
 
+                                    /* Common thumb styling */
+                                    #floating-tooltip-range::part(thumb) {
+                                        /* Reset base thumb styles to create the tooltip look */
+                                        border: none;
+                                        border-radius: 9999px;
+                                        background: white;
+                                        box-shadow:
+                                            0 4px 6px -1px rgba(0, 0, 0, 0.3),
+                                            0 2px 4px -1px rgba(0, 0, 0, 0.1);
+                                        width: 40px;
+                                        height: 28px;
+                                        cursor: grab;
+
+                                        /* Text styling for the value */
+                                        color: oklch(10% 0.01 230);
+                                        font-weight: 700;
+                                        font-size: 0.875rem;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                    }
+                                    /* The default hover/focus scale effect is not needed here */
+                                    #floating-tooltip-range::part(thumb):hover {
+                                        transform: var(--thumb-transform);
+                                    }
+                                    #floating-tooltip-range::part(thumb):focus-visible {
+                                        transform: var(--thumb-transform);
+                                        outline: 2px solid oklch(85% 0.15 240);
+                                        outline-offset: 3px;
+                                    }
+
+                                    /* Use ::after to display the value from the ARIA attribute */
+                                    #floating-tooltip-range::part(thumb)::after {
+                                        content: attr(aria-valuenow);
+                                    }
+
+                                    /* Position the first thumb above the track */
+                                    #floating-tooltip-range::part(thumb-1) {
+                                        --thumb-transform: translate(-50%, calc(-100% - var(--track-height) / 2 - 5px));
+                                        transform: var(--thumb-transform);
+                                    }
+
+                                    /* Position the second thumb below the track */
+                                    #floating-tooltip-range::part(thumb-2) {
+                                        --thumb-transform: translate(-50%, calc(0% + var(--track-height) / 2 + 5px));
+                                        transform: var(--thumb-transform);
+                                    }
+                                </style>
+                                <label for="floating-tooltip-input-1" class="visually-hidden">Value Handle 1</label>
+                                <input
+                                    type="range"
+                                    id="floating-tooltip-input-1"
+                                    name="floating-tooltip-1"
+                                    value="40"
+                                />
+                                <label for="floating-tooltip-input-2" class="visually-hidden">Value Handle 2</label>
+                                <input
+                                    type="range"
+                                    id="floating-tooltip-input-2"
+                                    name="floating-tooltip-2"
+                                    value="65"
+                                />
+                            </range-group>
+                        </div>
+                    </section>
                     <section>
                         <p class="description">
                             Shows integration with a <code>&lt;datalist&gt;</code> for tick marks and labels, and
@@ -164,74 +290,176 @@
                             </datalist>
                         </div>
                     </section>
-
                     <section>
                         <p class="description">
-                            An example using CSS Anchoring API to position tooltips directly above the component's
-                            thumbs.
+                            A complete visual transformation to create a budget allocation tool. The component's
+                            segments are styled as colored bars, and the thumbs as draggable separators. All labels and
+                            percentages are updated via JavaScript.
                         </p>
                         <div class="card" style="position: relative">
-                            <range-group id="anchor-range" min="0" max="100">
-                                <legend slot="legend" class="color-pink">CSS Anchoring Tooltips</legend>
-                                <style>
-                                    /* Define the anchor names for the thumbs */
-                                    #anchor-range::part(thumb-1) {
-                                        anchor-name: --thumb-1-anchor;
-                                    }
-                                    #anchor-range::part(thumb-2) {
-                                        anchor-name: --thumb-2-anchor;
-                                    }
+                            <style>
+                                #budget-range {
+                                    --track-height: 50px;
+                                    --thumb-size: 36px;
+                                }
+                                #budget-range::part(track) {
+                                    border-radius: 25px;
+                                    overflow: hidden; /* Important for containing segments */
+                                }
+                                #budget-range::part(thumb) {
+                                    border: 4px solid var(--color-card-bg);
+                                    background-color: white;
+                                    background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools --%3E%3Csvg width='800px' height='800px' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:none;stroke:%23000000;stroke-linecap:round;stroke-linejoin:bevel;stroke-width:1.5px;%7D%3C/style%3E%3C/defs%3E%3Cg id='ic-chevron-left-right'%3E%3Cpath class='cls-1' d='M15.3,16.78l4.11-4.11a1,1,0,0,0,0-1.41l-4-4'/%3E%3Cpath class='cls-1' d='M8.7,7.22,4.59,11.33a1,1,0,0,0,0,1.41l4,4'/%3E%3C/g%3E%3C/svg%3E");
+                                    background-position: center;
+                                    background-repeat: no-repeat;
+                                    background-size: 60%;
+                                    box-shadow:
+                                        0 4px 6px -1px rgba(0, 0, 0, 0.3),
+                                        0 2px 4px -1px rgba(0, 0, 0, 0.1);
+                                }
+                                #budget-range::part(segment-1) {
+                                    background-color: #e53935;
+                                    anchor-name: --budget-segment-1;
+                                } /* Red */
+                                #budget-range::part(segment-2) {
+                                    background-color: #8e24aa;
+                                    anchor-name: --budget-segment-2;
+                                } /* Purple */
+                                #budget-range::part(segment-3) {
+                                    background-color: #fdd835;
+                                    anchor-name: --budget-segment-3;
+                                } /* Yellow */
+                                #budget-range::part(segment-4) {
+                                    background-color: #3949ab;
+                                    anchor-name: --budget-segment-4;
+                                } /* Indigo */
 
-                                    .tooltip {
-                                        position: absolute;
-                                        background: var(--color-bg);
-                                        color: var(--color-text-muted);
-                                        padding: 0.25rem 0.5rem;
-                                        border-radius: 0.375rem;
-                                        border: 1px solid oklch(40% 0.02 230);
-                                        pointer-events: none;
-                                        font-size: 0.875rem;
-                                        font-weight: 600;
-                                        opacity: 0;
-                                        transition:
-                                            opacity 0.15s ease-in-out,
-                                            transform 0.15s ease-in-out;
-                                        transform: translate(-50%, -125%);
+                                .budget-label {
+                                    position: absolute;
+                                    color: white;
+                                    top: anchor(var(--anchor) top);
+                                    left: anchor(var(--anchor) center);
+                                    translate: -50% -50%;
+                                    text-align: center;
+                                    font-size: 0.875rem;
+                                    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+                                    line-height: 1.2;
+                                    &:nth-child(1) {
+                                        --anchor: --budget-segment-1;
                                     }
-
-                                    #tooltip-1 {
-                                        top: anchor(--thumb-1-anchor top);
-                                        left: anchor(--thumb-1-anchor center);
+                                    &:nth-child(2) {
+                                        --anchor: --budget-segment-2;
                                     }
-
-                                    #tooltip-2 {
-                                        top: anchor(--thumb-2-anchor top);
-                                        left: anchor(--thumb-2-anchor center);
+                                    &:nth-child(3) {
+                                        --anchor: --budget-segment-3;
                                     }
-
-                                    #anchor-range:is(:hover, :focus-within) ~ .tooltip {
-                                        opacity: 1;
-                                        transform: translate(-50%, -200%);
+                                    &:nth-child(4) {
+                                        --anchor: --budget-segment-4;
                                     }
-                                </style>
-                                <label for="anchor-1-input" class="visually-hidden">Anchor Handle 1</label>
-                                <input type="range" id="anchor-1-input" name="anchor-1" value="25" />
-                                <label for="anchor-2-input" class="visually-hidden">Anchor Handle 2</label>
-                                <input type="range" id="anchor-2-input" name="anchor-2" value="75" />
-                            </range-group>
+                                }
 
-                            <div id="tooltip-1" class="tooltip" aria-hidden="true">25</div>
-                            <div id="tooltip-2" class="tooltip" aria-hidden="true">75</div>
+                                .budget-label strong {
+                                    font-size: 1rem;
+                                    font-weight: 700;
+                                }
+                            </style>
+                            <div class="budget-range-wrapper">
+                                <range-group id="budget-range" min="0" max="100">
+                                    <legend slot="legend" class="color-pink">Budget Allocator</legend>
+
+                                    <label for="budget-1" class="visually-hidden">Groceries/Rent separator</label>
+                                    <input type="range" id="budget-1" value="25" />
+                                    <label for="budget-2" class="visually-hidden">Rent/Transport separator</label>
+                                    <input type="range" id="budget-2" value="50" />
+                                    <label for="budget-3" class="visually-hidden">Transport/Internet separator</label>
+                                    <input type="range" id="budget-3" value="75" />
+                                </range-group>
+                                <div id="budget-labels" class="budget-labels">
+                                    <div id="budget-label-0" class="budget-label"></div>
+                                    <div id="budget-label-1" class="budget-label"></div>
+                                    <div id="budget-label-2" class="budget-label"></div>
+                                    <div id="budget-label-3" class="budget-label"></div>
+                                </div>
+                            </div>
                         </div>
                     </section>
 
+                    <section>
+                        <p class="description">
+                            Recreating a classic slider look. This demonstrates using the CSS Anchoring API for tooltips
+                            with heavy custom styling on all component parts.
+                        </p>
+                        <div class="card" style="position: relative">
+                            <range-group id="classic-range" min="0" max="100">
+                                <legend slot="legend" class="color-indigo">Classic Look with anchored Tooltips</legend>
+                                <style>
+                                    #classic-range {
+                                        --track-height: 4px;
+                                        --thumb-size: 24px;
+                                    }
+                                    #classic-range::part(track) {
+                                        background: #444;
+                                        border: 1px solid #111;
+                                        border-radius: 0;
+                                        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+                                    }
+                                    #classic-range::part(segment-2) {
+                                        background: #3b82f6; /* Blue */
+                                    }
+                                    #classic-range::part(thumb) {
+                                        anchor-name: var(--anchor-name); /* Set anchor name via var */
+                                        background: linear-gradient(to bottom, #f9fafb, #d1d5db);
+                                        border: 1px solid #6b7280;
+                                        border-radius: 3px;
+                                        width: 14px;
+                                        height: var(--thumb-size);
+                                        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+                                    }
+                                    #classic-range::part(thumb-1) {
+                                        --anchor-name: --classic-thumb-1;
+                                    }
+                                    #classic-range::part(thumb-2) {
+                                        --anchor-name: --classic-thumb-2;
+                                    }
+
+                                    .classic-tooltip {
+                                        position: absolute;
+                                        position-anchor: var(--anchor-name);
+                                        position-area: top;
+                                        translate: -20% -60%;
+
+                                        background: #222;
+                                        color: white;
+                                        padding: 2px 8px;
+                                        border-radius: 3px;
+                                        border: 1px solid #555;
+                                        font-size: 0.875rem;
+                                        font-weight: 600;
+                                        pointer-events: none;
+                                    }
+                                    #classic-tooltip-1 {
+                                        --anchor-name: --classic-thumb-1;
+                                    }
+                                    #classic-tooltip-2 {
+                                        --anchor-name: --classic-thumb-2;
+                                    }
+                                </style>
+                                <label for="classic-1" class="visually-hidden">Classic Handle 1</label>
+                                <input type="range" id="classic-1" name="classic-1" value="20" />
+                                <label for="classic-2" class="visually-hidden">Classic Handle 2</label>
+                                <input type="range" id="classic-2" name="classic-2" value="80" />
+                            </range-group>
+                            <div id="classic-tooltip-1" class="classic-tooltip" aria-hidden="true">20</div>
+                            <div id="classic-tooltip-2" class="classic-tooltip" aria-hidden="true">80</div>
+                        </div>
+                    </section>
                     <section>
                         <p class="description">
                             Use the component's public methods and properties to get and set values programmatically.
                         </p>
                         <div class="card">
                             <range-group id="api-range" min="0" max="500">
-                                <legend slot="legend" class="color-indigo">JavaScript API Interaction</legend>
+                                <legend slot="legend" class="color-purple">JavaScript API Interaction</legend>
                                 <style>
                                     #api-range::part(segment-2) {
                                         background: linear-gradient(to right, var(--color-purple), var(--color-pink));
@@ -256,6 +484,80 @@
             import "./src/range-group.ts";
 
             document.addEventListener("DOMContentLoaded", () => {
+                // --- Interactive Price Range Example ---
+                const priceRange = document.getElementById("interactive-price-range");
+                const minPriceInput = document.getElementById("price-min-num-input");
+                const maxPriceInput = document.getElementById("price-max-num-input");
+
+                if (priceRange && minPriceInput && maxPriceInput) {
+                    const syncInputsToSlider = () => {
+                        const [minVal, maxVal] = priceRange.values.map((v) => Math.round(v));
+                        minPriceInput.value = minVal;
+                        maxPriceInput.value = maxVal;
+                        minPriceInput.max = maxVal;
+                        maxPriceInput.min = minVal;
+                    };
+
+                    minPriceInput.addEventListener("input", () => {
+                        let value = parseInt(minPriceInput.value, 10);
+                        if (isNaN(value)) return;
+                        priceRange.setRangeValue(0, value);
+                        syncInputsToSlider(); // Re-sync to handle clamping
+                    });
+
+                    maxPriceInput.addEventListener("input", () => {
+                        let value = parseInt(maxPriceInput.value, 10);
+                        if (isNaN(value)) return;
+                        priceRange.setRangeValue(1, value);
+                        syncInputsToSlider(); // Re-sync to handle clamping
+                    });
+
+                    priceRange.addEventListener("change", syncInputsToSlider);
+                    syncInputsToSlider(); // Initial sync
+                }
+
+                // --- Budget Allocator Example ---
+                const budgetRange = document.getElementById("budget-range");
+                const budgetLabels = [
+                    document.getElementById("budget-label-0"),
+                    document.getElementById("budget-label-1"),
+                    document.getElementById("budget-label-2"),
+                    document.getElementById("budget-label-3"),
+                ];
+                const budgetCategories = ["Groceries", "Rent", "Transport", "Internet"];
+
+                if (budgetRange && budgetLabels.every((l) => l)) {
+                    const updateBudgetLabels = () => {
+                        const values = [0, ...budgetRange.values, 100];
+                        for (let i = 0; i < budgetLabels.length; i++) {
+                            const start = values[i];
+                            const end = values[i + 1];
+                            const percentage = Math.round(end - start);
+                            const center = start + percentage / 2;
+
+                            const label = budgetLabels[i];
+                            label.innerHTML = `<strong>${budgetCategories[i]}</strong><br>${percentage}%`;
+                        }
+                    };
+                    updateBudgetLabels();
+                    budgetRange.addEventListener("change", updateBudgetLabels);
+                }
+
+                // --- Classic Tooltip Example ---
+                const classicRange = document.getElementById("classic-range");
+                const classicTooltip1 = document.getElementById("classic-tooltip-1");
+                const classicTooltip2 = document.getElementById("classic-tooltip-2");
+
+                if (classicRange && classicTooltip1 && classicTooltip2) {
+                    const updateClassicTooltips = () => {
+                        const values = classicRange.values;
+                        classicTooltip1.textContent = Math.round(values[0]);
+                        classicTooltip2.textContent = Math.round(values[1]);
+                    };
+                    updateClassicTooltips();
+                    classicRange.addEventListener("change", updateClassicTooltips);
+                }
+
                 // --- API Example ---
                 const apiRange = document.getElementById("api-range");
                 const getValuesBtn = document.getElementById("getValuesBtn");
@@ -274,25 +576,6 @@
                         apiRange.setRangeValue(1, Math.max(val1, val2));
                         apiOutput.textContent = `Set to: [${apiRange.values.join(", ")}]`;
                     });
-                }
-
-                // --- Tooltip Example ---
-                const anchorRange = document.getElementById("anchor-range");
-                const tooltip1 = document.getElementById("tooltip-1");
-                const tooltip2 = document.getElementById("tooltip-2");
-
-                if (anchorRange && tooltip1 && tooltip2) {
-                    const updateTooltips = () => {
-                        const values = anchorRange.values;
-                        tooltip1.textContent = Math.round(values[0]);
-                        tooltip2.textContent = Math.round(values[1]);
-                    };
-
-                    // Set initial values
-                    updateTooltips();
-
-                    // Update on change
-                    anchorRange.addEventListener("change", updateTooltips);
                 }
             });
         </script>
