@@ -59,19 +59,19 @@
                             is styled differently.
                         </p>
                         <div class="card">
+                            <style>
+                                #price-range::part(segment-1) {
+                                    background-color: oklch(35% 0.02 230);
+                                }
+                                #price-range::part(segment-2) {
+                                    background-color: var(--color-purple);
+                                }
+                                #price-range::part(segment-3) {
+                                    background-color: oklch(35% 0.02 230);
+                                }
+                            </style>
                             <range-group id="price-range" min="0" max="1000">
                                 <legend slot="legend" class="color-purple">Dual-Handle Base Example</legend>
-                                <style>
-                                    #price-range::part(segment-1) {
-                                        background-color: oklch(35% 0.02 230);
-                                    }
-                                    #price-range::part(segment-2) {
-                                        background-color: var(--color-purple);
-                                    }
-                                    #price-range::part(segment-3) {
-                                        background-color: oklch(35% 0.02 230);
-                                    }
-                                </style>
                                 <label for="price-min-input" class="visually-hidden">Minimum Price</label>
                                 <input type="range" id="price-min-input" name="price-min" value="250" />
                                 <label for="price-max-input" class="visually-hidden">Maximum Price</label>
@@ -85,16 +85,16 @@
                             the fields to move the handles.
                         </p>
                         <div class="card">
+                            <style>
+                                #interactive-price-range::part(segment-2) {
+                                    background: var(--color-teal);
+                                }
+                                #interactive-price-range::part(thumb) {
+                                    --thumb-bg: var(--color-teal);
+                                }
+                            </style>
                             <range-group id="interactive-price-range" min="0" max="1000">
                                 <legend slot="legend" class="color-teal">Interactive Price Range</legend>
-                                <style>
-                                    #interactive-price-range::part(segment-2) {
-                                        background: var(--color-teal);
-                                    }
-                                    #interactive-price-range::part(thumb) {
-                                        --thumb-bg: var(--color-teal);
-                                    }
-                                </style>
                                 <label for="interactive-price-min-input" class="visually-hidden">Minimum Price</label>
                                 <input type="range" id="interactive-price-min-input" name="price-min" value="250" />
                                 <label for="interactive-price-max-input" class="visually-hidden">Maximum Price</label>
@@ -115,19 +115,20 @@
                     <section>
                         <p class="description">You could use stepbetween to prevent thumbs form colliding.</p>
                         <div class="card">
+                            <style>
+                                #stepbetween-example::part(segment-1) {
+                                    background-color: oklch(0.554 0.104 233.66);
+                                }
+                                #stepbetween-example::part(segment-2) {
+                                    background-color: oklch(0.849 0.288 142.427);
+                                }
+                                #stepbetween-example::part(segment-3) {
+                                    background-color: oklch(0.554 0.104 233.66);
+                                }
+                            </style>
                             <range-group id="stepbetween-example" min="0" max="100" stepbetween="10">
                                 <legend slot="legend" class="color-pink">Dual-Handle with 10 stepbetween</legend>
-                                <style>
-                                    #stepbetween-example::part(segment-1) {
-                                        background-color: oklch(0.554 0.104 233.66);
-                                    }
-                                    #stepbetween-example::part(segment-2) {
-                                        background-color: oklch(0.849 0.288 142.427);
-                                    }
-                                    #stepbetween-example::part(segment-3) {
-                                        background-color: oklch(0.554 0.104 233.66);
-                                    }
-                                </style>
+
                                 <label for="price-min-input-stepbetween" class="visually-hidden">Minimum Price</label>
                                 <input type="range" id="price-min-input-stepbetween" name="price-min" value="50" />
                                 <label for="price-max-input-stepbetween" class="visually-hidden">Maximum Price</label>
@@ -140,38 +141,39 @@
                             Demonstrates multiple handles and custom-colored segments for different temperature zones.
                         </p>
                         <div class="card">
+                            <style>
+                                #temp-range::part(segment-1) {
+                                    background-color: oklch(65% 0.25 260);
+                                } /* Blue */
+                                #temp-range::part(segment-2) {
+                                    background-color: oklch(80% 0.25 180);
+                                } /* Cyan */
+                                #temp-range::part(segment-3) {
+                                    background-color: oklch(85% 0.25 90);
+                                } /* Yellow */
+                                #temp-range::part(segment-4) {
+                                    background-color: oklch(70% 0.28 25);
+                                } /* Red */
+
+                                #temp-range::part(thumb-1) {
+                                    --thumb-bg: oklch(65% 0.25 260); /* Blue */
+                                    border: 2px solid oklch(98% 0.01 230);
+                                    box-shadow: 0 0 12px 4px oklch(65% 0.25 260 / 0.75);
+                                }
+                                #temp-range::part(thumb-2) {
+                                    --thumb-bg: oklch(85% 0.25 90); /* Yellow */
+                                    border: 2px solid oklch(98% 0.01 230);
+                                    box-shadow: 0 0 12px 4px oklch(85% 0.25 90 / 0.75);
+                                }
+                                #temp-range::part(thumb-3) {
+                                    --thumb-bg: oklch(70% 0.28 25); /* Red */
+                                    border: 2px solid oklch(98% 0.01 230);
+                                    box-shadow: 0 0 12px 4px oklch(70% 0.28 25 / 0.75);
+                                }
+                            </style>
                             <range-group id="temp-range" min="-100" max="100">
                                 <legend slot="legend" class="color-indigo">Multi-Handle Temperature Control</legend>
-                                <style>
-                                    #temp-range::part(segment-1) {
-                                        background-color: oklch(65% 0.25 260);
-                                    } /* Blue */
-                                    #temp-range::part(segment-2) {
-                                        background-color: oklch(80% 0.25 180);
-                                    } /* Cyan */
-                                    #temp-range::part(segment-3) {
-                                        background-color: oklch(85% 0.25 90);
-                                    } /* Yellow */
-                                    #temp-range::part(segment-4) {
-                                        background-color: oklch(70% 0.28 25);
-                                    } /* Red */
 
-                                    #temp-range::part(thumb-1) {
-                                        --thumb-bg: oklch(65% 0.25 260); /* Blue */
-                                        border: 2px solid oklch(98% 0.01 230);
-                                        box-shadow: 0 0 12px 4px oklch(65% 0.25 260 / 0.75);
-                                    }
-                                    #temp-range::part(thumb-2) {
-                                        --thumb-bg: oklch(85% 0.25 90); /* Yellow */
-                                        border: 2px solid oklch(98% 0.01 230);
-                                        box-shadow: 0 0 12px 4px oklch(85% 0.25 90 / 0.75);
-                                    }
-                                    #temp-range::part(thumb-3) {
-                                        --thumb-bg: oklch(70% 0.28 25); /* Red */
-                                        border: 2px solid oklch(98% 0.01 230);
-                                        box-shadow: 0 0 12px 4px oklch(70% 0.28 25 / 0.75);
-                                    }
-                                </style>
                                 <label for="temp-cold-input" class="visually-hidden">Cold temperature bound</label>
                                 <input type="range" id="temp-cold-input" name="temp-cold" value="-50" />
                                 <label for="temp-mild-input" class="visually-hidden">Mild temperature bound</label>
@@ -187,70 +189,70 @@
                             via a pseudo-element, and the focus state applies directly to the visible handle.
                         </p>
                         <div class="card">
+                            <style>
+                                #floating-tooltip-range {
+                                    --track-height: 12px;
+                                    /* Add margin to prevent tooltips from being clipped */
+                                    margin-top: 2rem;
+                                    margin-bottom: 2rem;
+                                }
+                                #floating-tooltip-range::part(track) {
+                                    background-color: oklch(40% 0.02 230);
+                                }
+                                #floating-tooltip-range::part(segment-2) {
+                                    background: var(--color-pink);
+                                }
+
+                                /* Common thumb styling */
+                                #floating-tooltip-range::part(thumb) {
+                                    /* Reset base thumb styles to create the tooltip look */
+                                    border: none;
+                                    border-radius: 9999px;
+                                    background: white;
+                                    box-shadow:
+                                        0 4px 6px -1px rgba(0, 0, 0, 0.3),
+                                        0 2px 4px -1px rgba(0, 0, 0, 0.1);
+                                    width: 40px;
+                                    height: 28px;
+                                    cursor: grab;
+
+                                    /* Text styling for the value */
+                                    color: oklch(10% 0.01 230);
+                                    font-weight: 700;
+                                    font-size: 0.875rem;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                }
+                                /* The default hover/focus scale effect is not needed here */
+                                #floating-tooltip-range::part(thumb):hover {
+                                    transform: var(--thumb-transform);
+                                }
+                                #floating-tooltip-range::part(thumb):focus-visible {
+                                    transform: var(--thumb-transform);
+                                    outline: 2px solid oklch(85% 0.15 240);
+                                    outline-offset: 3px;
+                                }
+
+                                /* Use ::after to display the value from the ARIA attribute */
+                                #floating-tooltip-range::part(thumb)::after {
+                                    content: attr(aria-valuenow);
+                                }
+
+                                /* Position the first thumb above the track */
+                                #floating-tooltip-range::part(thumb-1) {
+                                    --thumb-transform: translate(-50%, calc(-100% - var(--track-height) / 2 - 5px));
+                                    transform: var(--thumb-transform);
+                                }
+
+                                /* Position the second thumb below the track */
+                                #floating-tooltip-range::part(thumb-2) {
+                                    --thumb-transform: translate(-50%, calc(0% + var(--track-height) / 2 + 5px));
+                                    transform: var(--thumb-transform);
+                                }
+                            </style>
                             <range-group id="floating-tooltip-range" min="0" max="100">
                                 <legend slot="legend" class="color-purple">Floating Tooltip Handles</legend>
-                                <style>
-                                    #floating-tooltip-range {
-                                        --track-height: 12px;
-                                        /* Add margin to prevent tooltips from being clipped */
-                                        margin-top: 2rem;
-                                        margin-bottom: 2rem;
-                                    }
-                                    #floating-tooltip-range::part(track) {
-                                        background-color: oklch(40% 0.02 230);
-                                    }
-                                    #floating-tooltip-range::part(segment-2) {
-                                        background: var(--color-pink);
-                                    }
-
-                                    /* Common thumb styling */
-                                    #floating-tooltip-range::part(thumb) {
-                                        /* Reset base thumb styles to create the tooltip look */
-                                        border: none;
-                                        border-radius: 9999px;
-                                        background: white;
-                                        box-shadow:
-                                            0 4px 6px -1px rgba(0, 0, 0, 0.3),
-                                            0 2px 4px -1px rgba(0, 0, 0, 0.1);
-                                        width: 40px;
-                                        height: 28px;
-                                        cursor: grab;
-
-                                        /* Text styling for the value */
-                                        color: oklch(10% 0.01 230);
-                                        font-weight: 700;
-                                        font-size: 0.875rem;
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: center;
-                                    }
-                                    /* The default hover/focus scale effect is not needed here */
-                                    #floating-tooltip-range::part(thumb):hover {
-                                        transform: var(--thumb-transform);
-                                    }
-                                    #floating-tooltip-range::part(thumb):focus-visible {
-                                        transform: var(--thumb-transform);
-                                        outline: 2px solid oklch(85% 0.15 240);
-                                        outline-offset: 3px;
-                                    }
-
-                                    /* Use ::after to display the value from the ARIA attribute */
-                                    #floating-tooltip-range::part(thumb)::after {
-                                        content: attr(aria-valuenow);
-                                    }
-
-                                    /* Position the first thumb above the track */
-                                    #floating-tooltip-range::part(thumb-1) {
-                                        --thumb-transform: translate(-50%, calc(-100% - var(--track-height) / 2 - 5px));
-                                        transform: var(--thumb-transform);
-                                    }
-
-                                    /* Position the second thumb below the track */
-                                    #floating-tooltip-range::part(thumb-2) {
-                                        --thumb-transform: translate(-50%, calc(0% + var(--track-height) / 2 + 5px));
-                                        transform: var(--thumb-transform);
-                                    }
-                                </style>
                                 <label for="floating-tooltip-input-1" class="visually-hidden">Value Handle 1</label>
                                 <input
                                     type="range"
@@ -390,60 +392,60 @@
                             with heavy custom styling on all component parts.
                         </p>
                         <div class="card" style="position: relative">
+                            <style>
+                                #classic-range {
+                                    --track-height: 4px;
+                                    --thumb-size: 24px;
+                                }
+                                #classic-range::part(track) {
+                                    background: #444;
+                                    border: 1px solid #111;
+                                    border-radius: 0;
+                                    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+                                }
+                                #classic-range::part(segment-2) {
+                                    background: #3b82f6; /* Blue */
+                                }
+                                #classic-range::part(thumb) {
+                                    anchor-name: var(--anchor-name); /* Set anchor name via var */
+                                    background: linear-gradient(to bottom, #f9fafb, #d1d5db);
+                                    border: 1px solid #6b7280;
+                                    border-radius: 3px;
+                                    width: 14px;
+                                    height: var(--thumb-size);
+                                    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+                                }
+                                #classic-range::part(thumb-1) {
+                                    --anchor-name: --classic-thumb-1;
+                                }
+                                #classic-range::part(thumb-2) {
+                                    --anchor-name: --classic-thumb-2;
+                                }
+
+                                .classic-tooltip {
+                                    position: absolute;
+                                    position-anchor: var(--anchor-name);
+                                    position-area: top;
+                                    translate: -20% -60%;
+
+                                    background: #222;
+                                    color: white;
+                                    padding: 2px 8px;
+                                    border-radius: 3px;
+                                    border: 1px solid #555;
+                                    font-size: 0.875rem;
+                                    font-weight: 600;
+                                    pointer-events: none;
+                                }
+                                #classic-tooltip-1 {
+                                    --anchor-name: --classic-thumb-1;
+                                }
+                                #classic-tooltip-2 {
+                                    --anchor-name: --classic-thumb-2;
+                                }
+                            </style>
                             <range-group id="classic-range" min="0" max="100">
                                 <legend slot="legend" class="color-indigo">Classic Look with anchored Tooltips</legend>
-                                <style>
-                                    #classic-range {
-                                        --track-height: 4px;
-                                        --thumb-size: 24px;
-                                    }
-                                    #classic-range::part(track) {
-                                        background: #444;
-                                        border: 1px solid #111;
-                                        border-radius: 0;
-                                        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
-                                    }
-                                    #classic-range::part(segment-2) {
-                                        background: #3b82f6; /* Blue */
-                                    }
-                                    #classic-range::part(thumb) {
-                                        anchor-name: var(--anchor-name); /* Set anchor name via var */
-                                        background: linear-gradient(to bottom, #f9fafb, #d1d5db);
-                                        border: 1px solid #6b7280;
-                                        border-radius: 3px;
-                                        width: 14px;
-                                        height: var(--thumb-size);
-                                        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-                                    }
-                                    #classic-range::part(thumb-1) {
-                                        --anchor-name: --classic-thumb-1;
-                                    }
-                                    #classic-range::part(thumb-2) {
-                                        --anchor-name: --classic-thumb-2;
-                                    }
-
-                                    .classic-tooltip {
-                                        position: absolute;
-                                        position-anchor: var(--anchor-name);
-                                        position-area: top;
-                                        translate: -20% -60%;
-
-                                        background: #222;
-                                        color: white;
-                                        padding: 2px 8px;
-                                        border-radius: 3px;
-                                        border: 1px solid #555;
-                                        font-size: 0.875rem;
-                                        font-weight: 600;
-                                        pointer-events: none;
-                                    }
-                                    #classic-tooltip-1 {
-                                        --anchor-name: --classic-thumb-1;
-                                    }
-                                    #classic-tooltip-2 {
-                                        --anchor-name: --classic-thumb-2;
-                                    }
-                                </style>
                                 <label for="classic-1" class="visually-hidden">Classic Handle 1</label>
                                 <input type="range" id="classic-1" name="classic-1" value="20" />
                                 <label for="classic-2" class="visually-hidden">Classic Handle 2</label>
