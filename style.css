@@ -4,12 +4,12 @@
     --color-text-muted: oklch(70% 0.02 230);
     --color-text-description: oklch(85% 0.01 230);
     --color-card-bg: oklch(20% 0.02 230);
-
+    
     --color-purple: oklch(70% 0.3 300);
     --color-pink: oklch(75% 0.3 340);
     --color-teal: oklch(80% 0.25 180);
     --color-indigo: oklch(70% 0.28 260);
-
+    
     --color-indigo-strong: oklch(65% 0.28 260);
     --color-indigo-hover: oklch(60% 0.28 260);
     --color-pink-strong: oklch(70% 0.3 340);
@@ -41,13 +41,6 @@ body {
 .header {
     text-align: center;
     margin-bottom: 3rem;
-    a {
-        color: #FFF;
-        text-underline-offset: 3px;
-        &:where(:hover, :focus) {
-            color: #DDD;
-        }
-    }
 }
 
 h1 {
@@ -163,6 +156,74 @@ h1 {
     justify-content: center;
 }
 
+/* Styles for Budget Allocator Example */
+.budget-labels {
+    position: absolute;
+    top: 0;
+    left: 2rem; /* Matches card padding */
+    right: 2rem; /* Matches card padding */
+    bottom: 0;
+    pointer-events: none; /* Allows clicks to go through to the slider */
+    display: flex;
+    align-items: center;
+}
+
+.budget-label {
+    position: absolute;
+    transform: translateX(-50%);
+    color: white;
+    text-align: center;
+    font-size: 0.875rem;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    line-height: 1.2;
+}
+
+.budget-label strong {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+/* Styles for Interactive Price Range Example */
+.price-input-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.price-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-grow: 1;
+}
+
+.price-input-group label {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.price-input-group input[type="number"] {
+    background-color: var(--color-bg);
+    border: 1px solid oklch(30% 0.02 230);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    color: var(--color-text);
+    font-size: 1rem;
+    width: 100%;
+}
+/* Hide the arrows on number inputs for a cleaner look */
+.price-input-group input[type=number]::-webkit-inner-spin-button, 
+.price-input-group input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+.price-input-group input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
 /* Utility class to hide elements visually but keep them accessible to screen readers */
 .visually-hidden {
     position: absolute;
@@ -174,53 +235,4 @@ h1 {
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border-width: 0;
-}
-
-/* Styles for Code Snippet Details Element */
-.code-details {
-    margin-top: 1.5rem;
-    border: 1px solid oklch(30% 0.02 230);
-    border-radius: 0.5rem;
-    overflow: hidden; /* Ensures the pre border-radius is respected */
-}
-
-.code-details summary {
-    padding: 0.75rem 1rem;
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--color-text-muted);
-    outline: none;
-    transition: background-color 0.2s ease;
-    background-color: var(--color-card-bg);
-    user-select: none;
-}
-
-.code-details summary:hover {
-    background-color: oklch(25% 0.02 230);
-}
-
-.code-details[open] > summary {
-    border-bottom: 1px solid oklch(30% 0.02 230);
-}
-
-.code-details pre {
-    margin: 0;
-}
-
-.code-details pre[class*="language-"] {
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
-    background: oklch(22% 0.02 230) !important; /* Override prism theme */
-}
-
-/* Custom loading/error messages */
-.loading-message, .error-message {
-    color: var(--color-text-muted);
-    text-align: center;
-    font-size: 1.125rem;
-    padding: 2rem;
-}
-.error-message {
-    color: var(--color-pink);
 }
