@@ -146,16 +146,3 @@ range-group::part(segment-2) {
 ```
 
 ---
-
-## Deployment to GitHub Pages
-
-This repository includes a GitHub Actions workflow to automatically build and deploy the demo page to GitHub Pages.
-
--   **Trigger**: The workflow runs automatically on every push to the `main` branch.
--   **Process**:
-    1.  The action checks out the code.
-    2.  It installs Node.js and the project dependencies (`npm install`).
-    3.  It builds the static site using Vite (`npm run build`). The output is placed in the `/dist` directory.
-    4.  The contents of the `/dist` directory are then deployed, making the demo live.
-
-To enable this for your fork, you need to configure GitHub Pages in your repository settings to deploy from the `GitHub Actions` source.
