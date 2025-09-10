@@ -54,6 +54,14 @@ body {
 .header {
 	margin-bottom: 3rem;
 	text-align: center;
+	a {
+		color: #FFF;
+		text-underline-offset: 4px;
+		transition: color 0.2s ease-in-out;
+		&:where(:hover, :focus) {
+			color: #DDD;
+		}
+	}
 }
 
 h1 {
