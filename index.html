@@ -1,577 +1,239 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Advanced Range Input Component</title>
-        <link rel="stylesheet" href="style.css" />
-        <style>
-            /* A demonstration of styling the web component using CSS Parts */
-            range-group {
-                /* These are custom properties the component uses internally */
-                --track-height: 8px;
-                --thumb-size: 28px;
-                --thumb-bg: oklch(70% 0.28 260); /* Bright Indigo */
-                --tick-color: oklch(60% 0.02 230);
-                --tick-label-color: oklch(70% 0.02 230);
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Advanced Range Input Component</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" />
+    <style>
+        /* A demonstration of styling the web component using CSS Parts */
+        range-group {
+            /* These are custom properties the component uses internally */
+            /*--track-height: 8px;*/
+            /*--thumb-size: 28px;*/
+            /*--thumb-bg: oklch(70% 0.28 260); !* Bright Indigo *!*/
+            /*--tick-color: oklch(60% 0.02 230);*/
+            /*--tick-label-color: oklch(70% 0.02 230);*/
 
-                /* General component styling */
-                width: 100%;
-                display: block;
-            }
+            /* General component styling */
+            width: 100%;
+            display: block;
+        }
 
-            /* Styling the component parts from the outside */
-            range-group::part(track) {
-                background-color: oklch(25% 0.02 230);
-                border-radius: 9999px;
-            }
+        /* Styling the component parts from the outside */
+        range-group::part(track) {
+            background-color: oklch(25% 0.02 230);
+            border-radius: 9999px;
+        }
 
-            range-group::part(thumb) {
-                border: 2px solid oklch(95% 0.01 230);
-                border-radius: 50%;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container-wrapper">
-            <div class="main-container">
-                <header class="header">
-                    <h1>The Future of Range Inputs</h1>
-                    <p class="subtitle">
-                        A Lit web component implementation of the proposed <code>&lt;rangegroup&gt;</code> element.
-                        <a href="https://open-ui.org/components/enhanced-range-input.explainer/" target="_blank">Read the rangegroup explainer</a>
-                    </p>
-                </header>
+        range-group::part(thumb) {
+            border: 2px solid oklch(95% 0.01 230);
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+<div class="container-wrapper">
+    <div class="main-container">
+        <header class="header">
+            <h1>The Future of Range Inputs</h1>
+            <p class="subtitle">
+                A Lit web component implementation of the proposed <code>&lt;rangegroup&gt;</code> element.
+                <a href="https://open-ui.org/components/enhanced-range-input.explainer/" target="_blank">Read the rangegroup explainer</a>
+            </p>
+        </header>
 
-                <div class="sections-container">
-                    <section>
-                        <p class="description">
-                            A common use case for selecting a minimum and maximum value. The segment between the handles
-                            is styled differently.
-                        </p>
-                        <div class="card">
-                            <style>
-                                #price-range::part(segment-1) {
-                                    background-color: oklch(35% 0.02 230);
-                                }
-                                #price-range::part(segment-2) {
-                                    background-color: var(--color-purple);
-                                }
-                                #price-range::part(segment-3) {
-                                    background-color: oklch(35% 0.02 230);
-                                }
-                            </style>
-                            <range-group id="price-range" min="0" max="1000">
-                                <legend slot="legend" class="color-purple">Dual-Handle Base Example</legend>
-                                <label for="price-min-input" class="visually-hidden">Minimum Price</label>
-                                <input type="range" id="price-min-input" name="price-min" value="250" />
-                                <label for="price-max-input" class="visually-hidden">Maximum Price</label>
-                                <input type="range" id="price-max-input" name="price-max" value="750" />
-                            </range-group>
-                        </div>
-                    </section>
-                    <section>
-                        <p class="description">
-                            Demonstrates two-way data binding. Drag the handles to update the input fields, or type in
-                            the fields to move the handles.
-                        </p>
-                        <div class="card">
-                            <style>
-                                #interactive-price-range::part(segment-2) {
-                                    background: var(--color-teal);
-                                }
-                                #interactive-price-range::part(thumb) {
-                                    --thumb-bg: var(--color-teal);
-                                }
-                            </style>
-                            <range-group id="interactive-price-range" min="0" max="1000">
-                                <legend slot="legend" class="color-teal">Interactive Price Range</legend>
-                                <label for="interactive-price-min-input" class="visually-hidden">Minimum Price</label>
-                                <input type="range" id="interactive-price-min-input" name="price-min" value="250" />
-                                <label for="interactive-price-max-input" class="visually-hidden">Maximum Price</label>
-                                <input type="range" id="interactive-price-max-input" name="price-max" value="750" />
-                            </range-group>
-                            <div class="price-input-container">
-                                <div class="price-input-group">
-                                    <label for="price-min-num-input">Min Price</label>
-                                    <input type="number" id="price-min-num-input" min="0" max="1000" />
-                                </div>
-                                <div class="price-input-group">
-                                    <label for="price-max-num-input">Max Price</label>
-                                    <input type="number" id="price-max-num-input" min="0" max="1000" />
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <section>
-                        <p class="description">You could use stepbetween to prevent thumbs form colliding.</p>
-                        <div class="card">
-                            <style>
-                                #stepbetween-example::part(segment-1) {
-                                    background-color: oklch(0.554 0.104 233.66);
-                                }
-                                #stepbetween-example::part(segment-2) {
-                                    background-color: oklch(0.849 0.288 142.427);
-                                }
-                                #stepbetween-example::part(segment-3) {
-                                    background-color: oklch(0.554 0.104 233.66);
-                                }
-                            </style>
-                            <range-group id="stepbetween-example" min="0" max="100" stepbetween="10">
-                                <legend slot="legend" class="color-pink">Dual-Handle with 10 stepbetween</legend>
-
-                                <label for="price-min-input-stepbetween" class="visually-hidden">Minimum Price</label>
-                                <input type="range" id="price-min-input-stepbetween" name="price-min" value="50" />
-                                <label for="price-max-input-stepbetween" class="visually-hidden">Maximum Price</label>
-                                <input type="range" id="price-max-input-stepbetween" name="price-max" value="80" />
-                            </range-group>
-                        </div>
-                    </section>
-                    <section>
-                        <p class="description">
-                            Demonstrates multiple handles and custom-colored segments for different temperature zones.
-                        </p>
-                        <div class="card">
-                            <style>
-                                #temp-range::part(segment-1) {
-                                    background-color: oklch(65% 0.25 260);
-                                } /* Blue */
-                                #temp-range::part(segment-2) {
-                                    background-color: oklch(80% 0.25 180);
-                                } /* Cyan */
-                                #temp-range::part(segment-3) {
-                                    background-color: oklch(85% 0.25 90);
-                                } /* Yellow */
-                                #temp-range::part(segment-4) {
-                                    background-color: oklch(70% 0.28 25);
-                                } /* Red */
-
-                                #temp-range::part(thumb-1) {
-                                    --thumb-bg: oklch(65% 0.25 260); /* Blue */
-                                    border: 2px solid oklch(98% 0.01 230);
-                                    box-shadow: 0 0 12px 4px oklch(65% 0.25 260 / 0.75);
-                                }
-                                #temp-range::part(thumb-2) {
-                                    --thumb-bg: oklch(85% 0.25 90); /* Yellow */
-                                    border: 2px solid oklch(98% 0.01 230);
-                                    box-shadow: 0 0 12px 4px oklch(85% 0.25 90 / 0.75);
-                                }
-                                #temp-range::part(thumb-3) {
-                                    --thumb-bg: oklch(70% 0.28 25); /* Red */
-                                    border: 2px solid oklch(98% 0.01 230);
-                                    box-shadow: 0 0 12px 4px oklch(70% 0.28 25 / 0.75);
-                                }
-                            </style>
-                            <range-group id="temp-range" min="-100" max="100">
-                                <legend slot="legend" class="color-indigo">Multi-Handle Temperature Control</legend>
-
-                                <label for="temp-cold-input" class="visually-hidden">Cold temperature bound</label>
-                                <input type="range" id="temp-cold-input" name="temp-cold" value="-50" />
-                                <label for="temp-mild-input" class="visually-hidden">Mild temperature bound</label>
-                                <input type="range" id="temp-mild-input" name="temp-mild" value="0" />
-                                <label for="temp-hot-input" class="visually-hidden">Hot temperature bound</label>
-                                <input type="range" id="temp-hot-input" name="temp-hot" value="50" />
-                            </range-group>
-                        </div>
-                    </section>
-                    <section>
-                        <p class="description">
-                            A pure CSS transformation where the thumbs are styled as tooltips. The value is displayed
-                            via a pseudo-element, and the focus state applies directly to the visible handle.
-                        </p>
-                        <div class="card">
-                            <style>
-                                #floating-tooltip-range {
-                                    --track-height: 12px;
-                                    /* Add margin to prevent tooltips from being clipped */
-                                    margin-top: 2rem;
-                                    margin-bottom: 2rem;
-                                }
-                                #floating-tooltip-range::part(track) {
-                                    background-color: oklch(40% 0.02 230);
-                                }
-                                #floating-tooltip-range::part(segment-2) {
-                                    background: var(--color-pink);
-                                }
-
-                                /* Common thumb styling */
-                                #floating-tooltip-range::part(thumb) {
-                                    /* Reset base thumb styles to create the tooltip look */
-                                    border: none;
-                                    border-radius: 9999px;
-                                    background: white;
-                                    box-shadow:
-                                        0 4px 6px -1px rgba(0, 0, 0, 0.3),
-                                        0 2px 4px -1px rgba(0, 0, 0, 0.1);
-                                    width: 40px;
-                                    height: 28px;
-                                    cursor: grab;
-
-                                    /* Text styling for the value */
-                                    color: oklch(10% 0.01 230);
-                                    font-weight: 700;
-                                    font-size: 0.875rem;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                }
-                                /* The default hover/focus scale effect is not needed here */
-                                #floating-tooltip-range::part(thumb):hover {
-                                    transform: var(--thumb-transform);
-                                }
-                                #floating-tooltip-range::part(thumb):focus-visible {
-                                    transform: var(--thumb-transform);
-                                    outline: 2px solid oklch(85% 0.15 240);
-                                    outline-offset: 3px;
-                                }
-
-                                /* Use ::after to display the value from the ARIA attribute */
-                                #floating-tooltip-range::part(thumb)::after {
-                                    content: attr(aria-valuenow);
-                                }
-
-                                /* Position the first thumb above the track */
-                                #floating-tooltip-range::part(thumb-1) {
-                                    --thumb-transform: translate(-50%, calc(-100% - var(--track-height) / 2 - 5px));
-                                    transform: var(--thumb-transform);
-                                }
-
-                                /* Position the second thumb below the track */
-                                #floating-tooltip-range::part(thumb-2) {
-                                    --thumb-transform: translate(-50%, calc(0% + var(--track-height) / 2 + 5px));
-                                    transform: var(--thumb-transform);
-                                }
-                            </style>
-                            <range-group id="floating-tooltip-range" min="0" max="100">
-                                <legend slot="legend" class="color-purple">Floating Tooltip Handles</legend>
-                                <label for="floating-tooltip-input-1" class="visually-hidden">Value Handle 1</label>
-                                <input
-                                    type="range"
-                                    id="floating-tooltip-input-1"
-                                    name="floating-tooltip-1"
-                                    value="40"
-                                />
-                                <label for="floating-tooltip-input-2" class="visually-hidden">Value Handle 2</label>
-                                <input
-                                    type="range"
-                                    id="floating-tooltip-input-2"
-                                    name="floating-tooltip-2"
-                                    value="65"
-                                />
-                            </range-group>
-                        </div>
-                    </section>
-                    <section>
-                        <p class="description">
-                            Shows integration with a <code>&lt;datalist&gt;</code> for tick marks and labels, and
-                            enforces a minimum distance of 25 between handles via <code>stepbetween="25"</code>.
-                        </p>
-                        <div class="card">
-                            <range-group min="0" max="100" list="rating-ticks" stepbetween="25">
-                                <legend slot="legend" class="color-teal">Datalist Integration & Step Between</legend>
-                                <label for="rating-min-input" class="visually-hidden">Minimum rating</label>
-                                <input type="range" id="rating-min-input" name="rating-min" value="20" />
-                                <label for="rating-max-input" class="visually-hidden">Maximum rating</label>
-                                <input type="range" id="rating-max-input" name="rating-max" value="80" />
-                            </range-group>
-                            <datalist id="rating-ticks">
-                                <option value="0" label="0%"></option>
-                                <option value="25"></option>
-                                <option value="50" label="50%"></option>
-                                <option value="75"></option>
-                                <option value="100" label="100%"></option>
-                            </datalist>
-                        </div>
-                    </section>
-                    <section>
-                        <p class="description">
-                            A complete visual transformation to create a budget allocation tool. The component's
-                            segments are styled as colored bars, and the thumbs as draggable separators. All labels and
-                            percentages are updated via JavaScript.
-                        </p>
-                        <div class="card" style="position: relative">
-                            <style>
-                                #budget-range {
-                                    --track-height: 50px;
-                                    --thumb-size: 36px;
-                                }
-                                #budget-range::part(track) {
-                                    border-radius: 25px;
-                                    overflow: hidden; /* Important for containing segments */
-                                }
-                                #budget-range::part(thumb) {
-                                    border: 4px solid var(--color-card-bg);
-                                    background-color: white;
-                                    background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools --%3E%3Csvg width='800px' height='800px' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:none;stroke:%23000000;stroke-linecap:round;stroke-linejoin:bevel;stroke-width:1.5px;%7D%3C/style%3E%3C/defs%3E%3Cg id='ic-chevron-left-right'%3E%3Cpath class='cls-1' d='M15.3,16.78l4.11-4.11a1,1,0,0,0,0-1.41l-4-4'/%3E%3Cpath class='cls-1' d='M8.7,7.22,4.59,11.33a1,1,0,0,0,0,1.41l4,4'/%3E%3C/g%3E%3C/svg%3E");
-                                    background-position: center;
-                                    background-repeat: no-repeat;
-                                    background-size: 60%;
-                                    box-shadow:
-                                        0 4px 6px -1px rgba(0, 0, 0, 0.3),
-                                        0 2px 4px -1px rgba(0, 0, 0, 0.1);
-                                }
-                                #budget-range::part(segment-1) {
-                                    background-color: #e53935;
-                                    anchor-name: --budget-segment-1;
-                                } /* Red */
-                                #budget-range::part(segment-2) {
-                                    background-color: #8e24aa;
-                                    anchor-name: --budget-segment-2;
-                                } /* Purple */
-                                #budget-range::part(segment-3) {
-                                    background-color: #fdd835;
-                                    anchor-name: --budget-segment-3;
-                                } /* Yellow */
-                                #budget-range::part(segment-4) {
-                                    background-color: #3949ab;
-                                    anchor-name: --budget-segment-4;
-                                } /* Indigo */
-
-                                .budget-label {
-                                    position: absolute;
-                                    color: white;
-                                    top: anchor(var(--anchor) top);
-                                    left: anchor(var(--anchor) center);
-                                    translate: -50% -50%;
-                                    text-align: center;
-                                    font-size: 0.875rem;
-                                    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-                                    line-height: 1.2;
-                                    &:nth-child(1) {
-                                        --anchor: --budget-segment-1;
-                                    }
-                                    &:nth-child(2) {
-                                        --anchor: --budget-segment-2;
-                                    }
-                                    &:nth-child(3) {
-                                        --anchor: --budget-segment-3;
-                                    }
-                                    &:nth-child(4) {
-                                        --anchor: --budget-segment-4;
-                                    }
-                                }
-
-                                .budget-label strong {
-                                    font-size: 1rem;
-                                    font-weight: 700;
-                                }
-                            </style>
-                            <div class="budget-range-wrapper">
-                                <range-group id="budget-range" min="0" max="100">
-                                    <legend slot="legend" class="color-pink">Budget Allocator</legend>
-
-                                    <label for="budget-1" class="visually-hidden">Groceries/Rent separator</label>
-                                    <input type="range" id="budget-1" value="25" />
-                                    <label for="budget-2" class="visually-hidden">Rent/Transport separator</label>
-                                    <input type="range" id="budget-2" value="50" />
-                                    <label for="budget-3" class="visually-hidden">Transport/Internet separator</label>
-                                    <input type="range" id="budget-3" value="75" />
-                                </range-group>
-                                <div id="budget-labels" class="budget-labels">
-                                    <div id="budget-label-0" class="budget-label"></div>
-                                    <div id="budget-label-1" class="budget-label"></div>
-                                    <div id="budget-label-2" class="budget-label"></div>
-                                    <div id="budget-label-3" class="budget-label"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section>
-                        <p class="description">
-                            Recreating a classic slider look. This demonstrates using the CSS Anchoring API for tooltips
-                            with heavy custom styling on all component parts.
-                        </p>
-                        <div class="card" style="position: relative">
-                            <style>
-                                #classic-range {
-                                    --track-height: 4px;
-                                    --thumb-size: 24px;
-                                }
-                                #classic-range::part(track) {
-                                    background: #444;
-                                    border: 1px solid #111;
-                                    border-radius: 0;
-                                    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
-                                }
-                                #classic-range::part(segment-2) {
-                                    background: #3b82f6; /* Blue */
-                                }
-                                #classic-range::part(thumb) {
-                                    anchor-name: var(--anchor-name); /* Set anchor name via var */
-                                    background: linear-gradient(to bottom, #f9fafb, #d1d5db);
-                                    border: 1px solid #6b7280;
-                                    border-radius: 3px;
-                                    width: 14px;
-                                    height: var(--thumb-size);
-                                    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-                                }
-                                #classic-range::part(thumb-1) {
-                                    --anchor-name: --classic-thumb-1;
-                                }
-                                #classic-range::part(thumb-2) {
-                                    --anchor-name: --classic-thumb-2;
-                                }
-
-                                .classic-tooltip {
-                                    position: absolute;
-                                    position-anchor: var(--anchor-name);
-                                    position-area: top;
-                                    translate: -20% -60%;
-
-                                    background: #222;
-                                    color: white;
-                                    padding: 2px 8px;
-                                    border-radius: 3px;
-                                    border: 1px solid #555;
-                                    font-size: 0.875rem;
-                                    font-weight: 600;
-                                    pointer-events: none;
-                                }
-                                #classic-tooltip-1 {
-                                    --anchor-name: --classic-thumb-1;
-                                }
-                                #classic-tooltip-2 {
-                                    --anchor-name: --classic-thumb-2;
-                                }
-                            </style>
-                            <range-group id="classic-range" min="0" max="100">
-                                <legend slot="legend" class="color-indigo">Classic Look with anchored Tooltips</legend>
-                                <label for="classic-1" class="visually-hidden">Classic Handle 1</label>
-                                <input type="range" id="classic-1" name="classic-1" value="20" />
-                                <label for="classic-2" class="visually-hidden">Classic Handle 2</label>
-                                <input type="range" id="classic-2" name="classic-2" value="80" />
-                            </range-group>
-                            <div id="classic-tooltip-1" class="classic-tooltip" aria-hidden="true">20</div>
-                            <div id="classic-tooltip-2" class="classic-tooltip" aria-hidden="true">80</div>
-                        </div>
-                    </section>
-                    <section>
-                        <p class="description">
-                            Use the component's public methods and properties to get and set values programmatically.
-                        </p>
-                        <div class="card">
-                            <range-group id="api-range" min="0" max="500">
-                                <legend slot="legend" class="color-purple">JavaScript API Interaction</legend>
-                                <style>
-                                    #api-range::part(segment-2) {
-                                        background: linear-gradient(to right, var(--color-purple), var(--color-pink));
-                                    }
-                                </style>
-                                <label for="api-1-input" class="visually-hidden">API Handle 1</label>
-                                <input type="range" id="api-1-input" name="api-1" value="100" />
-                                <label for="api-2-input" class="visually-hidden">API Handle 2</label>
-                                <input type="range" id="api-2-input" name="api-2" value="400" />
-                            </range-group>
-                            <div class="button-group">
-                                <button id="getValuesBtn" class="btn btn-indigo">Get Values</button>
-                                <button id="setValuesBtn" class="btn btn-pink">Set Random Values</button>
-                            </div>
-                            <pre id="apiOutput" class="api-output"></pre>
-                        </div>
-                    </section>
-                </div>
-            </div>
+        <div class="sections-container">
+            <!-- Examples will be dynamically loaded here -->
         </div>
-        <script type="module">
-            import "./src/range-group.ts";
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+<script type="module">
+    import "./src/range-group.ts";
 
-            document.addEventListener("DOMContentLoaded", () => {
-                // --- Interactive Price Range Example ---
-                const priceRange = document.getElementById("interactive-price-range");
-                const minPriceInput = document.getElementById("price-min-num-input");
-                const maxPriceInput = document.getElementById("price-max-num-input");
+    /**
+     * This function contains all the logic from the old script block
+     * that sets up event listeners for the interactive examples. It's called
+     * after the example HTML has been loaded into the DOM.
+     */
+    function initializeInteractiveExamples() {
+        // --- Interactive Price Range Example ---
+        const priceRange = document.getElementById("interactive-price-range");
+        const minPriceInput = document.getElementById("price-min-num-input");
+        const maxPriceInput = document.getElementById("price-max-num-input");
 
-                if (priceRange && minPriceInput && maxPriceInput) {
-                    const syncInputsToSlider = () => {
-                        const [minVal, maxVal] = priceRange.values.map((v) => Math.round(v));
-                        minPriceInput.value = minVal;
-                        maxPriceInput.value = maxVal;
-                        minPriceInput.max = maxVal;
-                        maxPriceInput.min = minVal;
-                    };
+        if (priceRange && minPriceInput && maxPriceInput) {
+            const syncInputsToSlider = () => {
+                const [minVal, maxVal] = priceRange.values.map((v) => Math.round(v));
+                minPriceInput.value = minVal;
+                maxPriceInput.value = maxVal;
+                minPriceInput.max = maxVal;
+                maxPriceInput.min = minVal;
+            };
 
-                    minPriceInput.addEventListener("input", () => {
-                        let value = parseInt(minPriceInput.value, 10);
-                        if (isNaN(value)) return;
-                        priceRange.setRangeValue(0, value);
-                        syncInputsToSlider(); // Re-sync to handle clamping
-                    });
-
-                    maxPriceInput.addEventListener("input", () => {
-                        let value = parseInt(maxPriceInput.value, 10);
-                        if (isNaN(value)) return;
-                        priceRange.setRangeValue(1, value);
-                        syncInputsToSlider(); // Re-sync to handle clamping
-                    });
-
-                    priceRange.addEventListener("change", syncInputsToSlider);
-                    syncInputsToSlider(); // Initial sync
-                }
-
-                // --- Budget Allocator Example ---
-                const budgetRange = document.getElementById("budget-range");
-                const budgetLabels = [
-                    document.getElementById("budget-label-0"),
-                    document.getElementById("budget-label-1"),
-                    document.getElementById("budget-label-2"),
-                    document.getElementById("budget-label-3"),
-                ];
-                const budgetCategories = ["Groceries", "Rent", "Transport", "Internet"];
-
-                if (budgetRange && budgetLabels.every((l) => l)) {
-                    const updateBudgetLabels = () => {
-                        const values = [0, ...budgetRange.values, 100];
-                        for (let i = 0; i < budgetLabels.length; i++) {
-                            const start = values[i];
-                            const end = values[i + 1];
-                            const percentage = Math.round(end - start);
-                            const center = start + percentage / 2;
-
-                            const label = budgetLabels[i];
-                            label.innerHTML = `<strong>${budgetCategories[i]}</strong><br>${percentage}%`;
-                        }
-                    };
-                    updateBudgetLabels();
-                    budgetRange.addEventListener("change", updateBudgetLabels);
-                }
-
-                // --- Classic Tooltip Example ---
-                const classicRange = document.getElementById("classic-range");
-                const classicTooltip1 = document.getElementById("classic-tooltip-1");
-                const classicTooltip2 = document.getElementById("classic-tooltip-2");
-
-                if (classicRange && classicTooltip1 && classicTooltip2) {
-                    const updateClassicTooltips = () => {
-                        const values = classicRange.values;
-                        classicTooltip1.textContent = Math.round(values[0]);
-                        classicTooltip2.textContent = Math.round(values[1]);
-                    };
-                    updateClassicTooltips();
-                    classicRange.addEventListener("change", updateClassicTooltips);
-                }
-
-                // --- API Example ---
-                const apiRange = document.getElementById("api-range");
-                const getValuesBtn = document.getElementById("getValuesBtn");
-                const setValuesBtn = document.getElementById("setValuesBtn");
-                const apiOutput = document.getElementById("apiOutput");
-
-                if (apiRange && getValuesBtn && setValuesBtn && apiOutput) {
-                    getValuesBtn.addEventListener("click", () => {
-                        apiOutput.textContent = `Values: [${apiRange.values.join(", ")}]`;
-                    });
-
-                    setValuesBtn.addEventListener("click", () => {
-                        const val1 = Math.round(Math.random() * 500);
-                        const val2 = Math.round(Math.random() * 500);
-                        apiRange.setRangeValue(0, Math.min(val1, val2));
-                        apiRange.setRangeValue(1, Math.max(val1, val2));
-                        apiOutput.textContent = `Set to: [${apiRange.values.join(", ")}]`;
-                    });
-                }
+            minPriceInput.addEventListener("input", () => {
+                let value = parseInt(minPriceInput.value, 10);
+                if (isNaN(value)) return;
+                priceRange.setRangeValue(0, value);
+                syncInputsToSlider(); // Re-sync to handle clamping
             });
-        </script>
-    </body>
+
+            maxPriceInput.addEventListener("input", () => {
+                let value = parseInt(maxPriceInput.value, 10);
+                if (isNaN(value)) return;
+                priceRange.setRangeValue(1, value);
+                syncInputsToSlider(); // Re-sync to handle clamping
+            });
+
+            priceRange.addEventListener("change", syncInputsToSlider);
+            syncInputsToSlider(); // Initial sync
+        }
+
+        // --- Budget Allocator Example ---
+        const budgetRange = document.getElementById("budget-range");
+        const budgetLabels = [
+            document.getElementById("budget-label-0"),
+            document.getElementById("budget-label-1"),
+            document.getElementById("budget-label-2"),
+            document.getElementById("budget-label-3"),
+        ].filter(l => l); // Filter out nulls just in case
+        const budgetCategories = ["Groceries", "Rent", "Transport", "Internet"];
+
+        if (budgetRange && budgetLabels.length === 4) {
+            const updateBudgetLabels = () => {
+                // Replicate the component's internal value-to-percent logic
+                const valueToPercent = (value) => {
+                    const min = Number(budgetRange.min);
+                    const max = Number(budgetRange.max);
+                    // Prevent division by zero if min and max are the same
+                    if (max === min) return 0;
+                    return ((value - min) / (max - min)) * 100;
+                };
+
+                const values = [0, ...budgetRange.values, 100];
+                for (let i = 0; i < budgetLabels.length; i++) {
+                    const start = values[i];
+                    const end = values[i + 1];
+                    const percentage = Math.round(end - start);
+                    const midPoint = start + (end - start) / 2;
+                    const midPercent = valueToPercent(midPoint);
+
+                    // Position the label at the midpoint of its segment
+                    budgetLabels[i].style.left = `${midPercent}%`;
+                    budgetLabels[i].innerHTML = `<strong>${budgetCategories[i]}</strong><br>${percentage}%`;
+                }
+            };
+            updateBudgetLabels();
+            budgetRange.addEventListener("change", updateBudgetLabels);
+        }
+
+        // --- Floating Tooltip Example ---
+        const floatingRange = document.getElementById("floating-tooltip-range");
+        const floatingTooltip1 = document.getElementById("floating-tooltip-1");
+        const floatingTooltip2 = document.getElementById("floating-tooltip-2");
+
+        if (floatingRange && floatingTooltip1 && floatingTooltip2) {
+            const tooltips = [floatingTooltip1, floatingTooltip2];
+            const updateFloatingTooltips = () => {
+                const values = floatingRange.values;
+                if (values && values.length >= 2) {
+                    tooltips[0].textContent = Math.round(values[0]);
+                    tooltips[1].textContent = Math.round(values[1]);
+                }
+            };
+            updateFloatingTooltips();
+            floatingRange.addEventListener("change", updateFloatingTooltips);
+        }
+
+        // --- Classic Tooltip Example ---
+        const classicRange = document.getElementById("classic-range");
+        const classicTooltip1 = document.getElementById("classic-tooltip-1");
+        const classicTooltip2 = document.getElementById("classic-tooltip-2");
+
+        if (classicRange && classicTooltip1 && classicTooltip2) {
+            const updateClassicTooltips = () => {
+                const values = classicRange.values;
+                classicTooltip1.textContent = Math.round(values[0]);
+                classicTooltip2.textContent = Math.round(values[1]);
+            };
+            updateClassicTooltips();
+            classicRange.addEventListener("change", updateClassicTooltips);
+        }
+
+        // --- API Example ---
+        const apiRange = document.getElementById("api-range");
+        const getValuesBtn = document.getElementById("getValuesBtn");
+        const setValuesBtn = document.getElementById("setValuesBtn");
+        const apiOutput = document.getElementById("apiOutput");
+
+        if (apiRange && getValuesBtn && setValuesBtn && apiOutput) {
+            getValuesBtn.addEventListener("click", () => {
+                apiOutput.textContent = `Values: [${apiRange.values.join(", ")}]`;
+            });
+
+            setValuesBtn.addEventListener("click", () => {
+                const val1 = Math.round(Math.random() * 500);
+                const val2 = Math.round(Math.random() * 500);
+                apiRange.setRangeValue(0, Math.min(val1, val2));
+                apiRange.setRangeValue(1, Math.max(val1, val2));
+                apiOutput.textContent = `Set to: [${apiRange.values.join(", ")}]`;
+            });
+        }
+    }
+
+    /**
+     * Fetches the HTML for all examples, injects them into the page,
+     * and then initializes the interactive scripts and syntax highlighting.
+     */
+    async function loadExamples() {
+        const container = document.querySelector('.sections-container');
+        if (!container) return;
+
+        container.innerHTML = `<p class="loading-message">Loading examples...</p>`;
+
+        // The order of files in this array determines their order on the page.
+        const exampleFiles = [
+            'examples/01-dual-handle-base.html',
+            'examples/02-interactive-price-range.html',
+            'examples/03-step-between.html',
+            'examples/04-multi-handle-temperature.html',
+            'examples/05-floating-tooltip.html',
+            'examples/06-datalist-integration.html',
+            'examples/07-budget-allocator.html',
+            'examples/08-classic-look.html',
+            'examples/09-javascript-api.html',
+            'examples/10-custom-ticks.html',
+            'examples/11-styled-timeline.html',
+            'examples/12-multiphase-process.html'
+        ];
+
+        try {
+            const fetchPromises = exampleFiles.map(file => fetch(file).then(res => {
+                if (!res.ok) throw new Error(`Failed to load ${file}: ${res.statusText}`);
+                return res.text();
+            }));
+
+            const examplesHtml = await Promise.all(fetchPromises);
+            container.innerHTML = examplesHtml.join('');
+
+            // Now that HTML is in the DOM, initialize scripts and syntax highlighting
+            initializeInteractiveExamples();
+
+            // Prism is loaded from CDN, so it's on the window object
+            if (window.Prism) {
+                window.Prism.highlightAll();
+            }
+        } catch (error) {
+            console.error("Error loading examples:", error);
+            container.innerHTML = `<p class="error-message">Could not load examples. Please check the console for details.</p>`;
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadExamples);
+</script>
+</body>
 </html>

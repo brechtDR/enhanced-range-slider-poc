@@ -1,0 +1,144 @@
+<section>
+    <p class="description">
+        Demonstrates using invisible handles with the CSS Anchoring API to position custom tooltips. The tooltips appear to be the draggable handles, and their values are updated via JavaScript.
+    </p>
+    <div class="card" style="position: relative">
+        <style>
+            #floating-tooltip-range {
+                --track-height: 12px;
+                --thumb-size: 40px;
+                margin-top: 2rem;
+                margin-bottom: 2rem;
+            }
+            #floating-tooltip-range::part(track) {
+                background-color: oklch(40% 0.02 230);
+            }
+            #floating-tooltip-range::part(segment-2) {
+                background: var(--color-pink);
+            }
+            #floating-tooltip-range::part(thumb) {
+                anchor-name: var(--anchor-name);
+                background: transparent;
+                border: none;
+                box-shadow: none;
+                width: 40px;
+                height: 20px;
+                padding: 0;
+                border-radius: 9999px;
+            }
+            #floating-tooltip-range::part(thumb-1) {
+                --thumb-transform: translate(-50%, calc(-100% - var(--track-height) / 2 - 5px));
+                --anchor-name: --floating-thumb-1;
+                transform: var(--thumb-transform);
+            }
+            #floating-tooltip-range::part(thumb-2) {
+                --thumb-transform: translate(-50%, calc(0% + var(--track-height) / 2 + 5px));
+                --anchor-name: --floating-thumb-2;
+                transform: var(--thumb-transform);
+            }
+            .floating-tooltip {
+                position: absolute;
+                position-anchor: var(--anchor-name);
+                pointer-events: none;
+                border: none;
+                border-radius: 9999px;
+                background: white;
+                box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -1px rgb(0 0 0 / 0.1);
+                width: 40px;
+                height: 28px;
+                color: oklch(10% 0.01 230);
+                font-weight: 700;
+                font-size: 0.875rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                translate: -50% -20%;
+                z-index: 10;
+            }
+            #floating-tooltip-1 {
+                --anchor-name: --floating-thumb-1;
+                bottom: anchor(top);
+                left: anchor(left);
+            }
+            #floating-tooltip-2 {
+                --anchor-name: --floating-thumb-2;
+                top: anchor(center);
+                left: anchor(left);
+            }
+        </style>
+        <range-group id="floating-tooltip-range" min="0" max="100">
+            <legend slot="legend" class="color-purple">Floating Tooltip Handles</legend>
+            <label for="floating-tooltip-input-1" class="visually-hidden">Value Handle 1</label>
+            <input type="range" id="floating-tooltip-input-1" value="40" />
+            <label for="floating-tooltip-input-2" class="visually-hidden">Value Handle 2</label>
+            <input type="range" id="floating-tooltip-input-2" value="65" />
+        </range-group>
+        <div id="floating-tooltip-1" class="floating-tooltip" aria-hidden="true">40</div>
+        <div id="floating-tooltip-2" class="floating-tooltip" aria-hidden="true">65</div>
+    </div>
+    <details class="code-details">
+        <summary>View CSS</summary>
+        <pre><code class="language-css">#floating-tooltip-range {
+    --track-height: 12px;
+    --thumb-size: 40px;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+#floating-tooltip-range::part(track) {
+    background-color: oklch(40% 0.02 230);
+}
+#floating-tooltip-range::part(segment-2) {
+    background: var(--color-pink);
+}
+#floating-tooltip-range::part(thumb) {
+    anchor-name: var(--anchor-name);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    width: 40px;
+    height: 20px;
+    padding: 0;
+    border-radius: 9999px;
+}
+#floating-tooltip-range::part(thumb-1) {
+    --thumb-transform: translate(-50%, calc(-100% - var(--track-height) / 2 - 5px));
+    --anchor-name: --floating-thumb-1;
+    transform: var(--thumb-transform);
+}
+#floating-tooltip-range::part(thumb-2) {
+    --thumb-transform: translate(-50%, calc(0% + var(--track-height) / 2 + 5px));
+    --anchor-name: --floating-thumb-2;
+    transform: var(--thumb-transform);
+}
+/* Tooltip styling */
+.floating-tooltip {
+    position: absolute;
+    position-anchor: var(--anchor-name);
+    pointer-events: none;
+    border: none;
+    border-radius: 9999px;
+    background: white;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -1px rgb(0 0 0 / 0.1);
+    width: 40px;
+    height: 28px;
+    color: oklch(10% 0.01 230);
+    font-weight: 700;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    translate: -50% -20%;
+    z-index: 10;
+}
+#floating-tooltip-1 {
+    --anchor-name: --floating-thumb-1;
+    bottom: anchor(top);
+    left: anchor(left);
+}
+#floating-tooltip-2 {
+    --anchor-name: --floating-thumb-2;
+    top: anchor(center);
+    left: anchor(left);
+}</code></pre>
+    </details>
+</section>

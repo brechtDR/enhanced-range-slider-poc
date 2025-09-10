@@ -1,0 +1,30 @@
+<section>
+    <p class="description">
+        Use the component's public methods and properties to get and set values programmatically.
+    </p>
+    <div class="card">
+        <range-group id="api-range" min="0" max="500">
+            <legend slot="legend" class="color-purple">JavaScript API Interaction</legend>
+            <style>
+                #api-range::part(segment-2) {
+                    background: linear-gradient(to right, var(--color-purple), var(--color-pink));
+                }
+            </style>
+            <label for="api-1-input" class="visually-hidden">API Handle 1</label>
+            <input type="range" id="api-1-input" value="100" />
+            <label for="api-2-input" class="visually-hidden">API Handle 2</label>
+            <input type="range" id="api-2-input" value="400" />
+        </range-group>
+        <div class="button-group">
+            <button id="getValuesBtn" class="btn btn-indigo">Get Values</button>
+            <button id="setValuesBtn" class="btn btn-pink">Set Random Values</button>
+        </div>
+        <pre id="apiOutput" class="api-output"></pre>
+    </div>
+    <details class="code-details">
+        <summary>View CSS</summary>
+        <pre><code class="language-css">#api-range::part(segment-2) {
+    background: linear-gradient(to right, var(--color-purple), var(--color-pink));
+}</code></pre>
+    </details>
+</section>

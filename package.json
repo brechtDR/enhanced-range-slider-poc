@@ -1,33 +1,30 @@
 {
-    "name": "range-group-component",
-    "private": false,
-    "version": "1.0.0",
-    "description": "A Lit-based multi-handle range slider web component.",
-    "type": "module",
-    "main": "./dist/range-group.umd.cjs",
-    "module": "./dist/range-group.js",
-    "exports": {
-        ".": {
-            "import": "./dist/range-group.js",
-            "require": "./dist/range-group.umd.cjs"
-        }
-    },
-    "files": [
-        "dist"
-    ],
-    "scripts": {
-        "dev": "vite",
-        "build": "tsc && vite build",
-        "preview": "vite preview",
-        "format": "prettier --write ."
-    },
-    "dependencies": {
-        "lit": "^3.1.2"
-    },
-    "devDependencies": {
-        "prettier": "^3.2.5",
-        "prettier-plugin-css-order": "^2.1.2",
-        "typescript": "^5.2.2",
-        "vite": "^5.2.0"
+  "name": "range-group-component",
+  "private": false,
+  "version": "1.0.0",
+  "description": "A Lit-based multi-handle range slider web component.",
+  "type": "module",
+  "main": "./dist/range-group.umd.cjs",
+  "module": "./dist/range-group.js",
+  "exports": {
+    ".": {
+      "import": "./dist/range-group.js",
+      "require": "./dist/range-group.umd.cjs"
     }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lit": "^3.1.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0"
+  }
 }

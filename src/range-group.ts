@@ -3,6 +3,11 @@ import { customElement, property, state, queryAssignedElements } from "lit/decor
 
 @customElement("range-group")
 export class RangeGroup extends LitElement {
+    declare shadowRoot: ShadowRoot;
+    declare dispatchEvent: (event: Event) => boolean;
+    declare hasAttribute: (name: string) => boolean;
+    declare requestUpdate: (name?: PropertyKey, oldValue?: unknown) => void;
+
     @property({ type: Number }) min: number;
     @property({ type: Number }) max: number;
     @property({ type: Number }) stepbetween: number;
@@ -358,24 +363,37 @@ export class RangeGroup extends LitElement {
 
                 ${this._datalistOptions.length > 0
                     ? html`
-                          <div class="ticks">
-                              ${this._datalistOptions.map(
-                                  (opt) => html`
-                                      <div
-                                          class="tick-container"
-                                          style="left: ${this._valueToPercent(Number(opt.value))}%"
-                                      >
-                                          <div part="tick" class="tick"></div>
-                                          <div part="tick-label" class="tick-label">${opt.label}</div>
-                                      </div>
-                                  `,
-                              )}
+                          <div class="ticks-wrapper">
+                              <div class="tick-marks" part="ticks">
+                                  ${this._datalistOptions.map(
+                                      (opt, index) => html`
+                                          <div
+                                              part="tick tick-${index + 1}"
+                                              class="tick"
+                                              style="left: ${this._valueToPercent(Number(opt.value))}%"
+                                          ></div>
+                                      `,
+                                  )}
+                              </div>
+                              <div class="tick-labels" part="tick-labels">
+                                  ${this._datalistOptions.map(
+                                      (opt, index) => html`
+                                          <div
+                                              part="tick-label tick-label-${index + 1}"
+                                              class="tick-label"
+                                              style="left: ${this._valueToPercent(Number(opt.value))}%"
+                                          >
+                                              ${opt.label}
+                                          </div>
+                                      `,
+                                  )}
+                              </div>
                           </div>
                       `
                     : ""}
                 ${this._values.map(
                     (value, index) => html`
-                        <div
+                        <button
                             part="thumb thumb-${index + 1}"
                             class="thumb"
                             style="left: ${this._valueToPercent(value)}%; z-index: ${index === this._activeThumbIndex
@@ -389,7 +407,7 @@ export class RangeGroup extends LitElement {
                             aria-valuenow=${Math.round(value)}
                             @pointerdown=${(e: PointerEvent) => this._handlePointerDown(e, index)}
                             @keydown=${(e: KeyboardEvent) => this._handleKeyDown(e, index)}
-                        ></div>
+                        ></button>
                     `,
                 )}
             </div>
@@ -442,6 +460,8 @@ export class RangeGroup extends LitElement {
             touch-action: none;
             box-shadow: 0 0 8px 0 var(--thumb-bg, #007bff);
             transition: transform 0.1s ease-in-out;
+            border: none;
+            padding: 0;
         }
 
         .thumb::before {
@@ -455,18 +475,16 @@ export class RangeGroup extends LitElement {
             background: transparent;
             border-radius: 50%;
         }
-
+        
         .thumb:hover {
             transform: translate(-50%, -50%) scale(1.1);
         }
 
         .thumb:focus-visible {
-            outline: 2px solid oklch(85% 0.15 240);
-            outline-offset: 3px;
-            transform: translate(-50%, -50%) scale(1.1);
+            outline-offset: 4px;
         }
 
-        .ticks {
+        .ticks-wrapper {
             position: absolute;
             top: calc(50% + var(--track-height) / 2 + 4px);
             left: 0;
@@ -475,23 +493,27 @@ export class RangeGroup extends LitElement {
             pointer-events: none;
         }
 
-        .tick-container {
+        .tick-marks,
+        .tick-labels {
             position: absolute;
             top: 0;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
 
         .tick {
+            position: absolute;
+            transform: translateX(-50%);
             width: 1px;
             height: 6px;
             background: var(--tick-color, #999);
         }
 
         .tick-label {
-            margin-top: 4px;
+            position: absolute;
+            top: 10px; /* 6px tick height + 4px gap */
+            transform: translateX(-50%);
             font-size: 0.75rem;
             color: var(--tick-label-color, #666);
         }

@@ -1,5 +1,5 @@
 {
-    "name": "Advanced Range Input Component",
-    "description": "A proof-of-concept web component built with Lit, demonstrating a highly customizable, multi-handle range slider inspired by the proposed <rangegroup> HTML element.",
-    "requestFramePermissions": []
+  "name": "Advanced Range Input Component",
+  "description": "A proof-of-concept web component built with Lit, demonstrating a highly customizable, multi-handle range slider inspired by the proposed <rangegroup> HTML element.",
+  "requestFramePermissions": []
 }

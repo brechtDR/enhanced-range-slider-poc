@@ -1,0 +1,22 @@
+<section>
+    <p class="description">
+        Shows integration with a <code>&lt;datalist&gt;</code> for tick marks and labels, and
+        enforces a minimum distance of 25 between handles via <code>stepbetween="25"</code>.
+    </p>
+    <div class="card">
+        <range-group min="0" max="100" list="rating-ticks" stepbetween="25">
+            <legend slot="legend" class="color-teal">Datalist Integration & Step Between</legend>
+            <label for="rating-min-input" class="visually-hidden">Minimum rating</label>
+            <input type="range" id="rating-min-input" name="rating-min" value="20" />
+            <label for="rating-max-input" class="visually-hidden">Maximum rating</label>
+            <input type="range" id="rating-max-input" name="rating-max" value="80" />
+        </range-group>
+        <datalist id="rating-ticks">
+            <option value="0" label="0%"></option>
+            <option value="25"></option>
+            <option value="50" label="50%"></option>
+            <option value="75"></option>
+            <option value="100" label="100%"></option>
+        </datalist>
+    </div>
+</section>
