@@ -354,61 +354,61 @@ export class RangeGroup extends LitElement {
                         const left = p;
                         const width = segmentPoints[i + 1] - p;
                         return html`<div
-                                part="segment segment-${i + 1}"
-                                class="segment"
-                                style="left: ${left}%; width: ${width}%;"
+                            part="segment segment-${i + 1}"
+                            class="segment"
+                            style="left: ${left}%; width: ${width}%;"
                         ></div>`;
                     })}
                 </div>
 
                 ${this._datalistOptions.length > 0
-                        ? html`
-                            <div class="ticks-wrapper">
-                                <div class="tick-marks" part="ticks">
-                                    ${this._datalistOptions.map(
-                                            (opt, index) => html`
-                                                <div
-                                                        part="tick tick-${index + 1}"
-                                                        class="tick"
-                                                        style="left: ${this._valueToPercent(Number(opt.value))}%"
-                                                ></div>
-                                            `,
-                                    )}
-                                </div>
-                                <div class="tick-labels" part="tick-labels">
-                                    ${this._datalistOptions.map(
-                                            (opt, index) => html`
-                                                <div
-                                                        part="tick-label tick-label-${index + 1}"
-                                                        class="tick-label"
-                                                        style="left: ${this._valueToPercent(Number(opt.value))}%"
-                                                >
-                                                    ${opt.label}
-                                                </div>
-                                            `,
-                                    )}
-                                </div>
-                            </div>
-                        `
-                        : ""}
+                    ? html`
+                          <div class="ticks-wrapper">
+                              <div class="tick-marks" part="ticks">
+                                  ${this._datalistOptions.map(
+                                      (opt, index) => html`
+                                          <div
+                                              part="tick tick-${index + 1}"
+                                              class="tick"
+                                              style="left: ${this._valueToPercent(Number(opt.value))}%"
+                                          ></div>
+                                      `,
+                                  )}
+                              </div>
+                              <div class="tick-labels" part="tick-labels">
+                                  ${this._datalistOptions.map(
+                                      (opt, index) => html`
+                                          <div
+                                              part="tick-label tick-label-${index + 1}"
+                                              class="tick-label"
+                                              style="left: ${this._valueToPercent(Number(opt.value))}%"
+                                          >
+                                              ${opt.label}
+                                          </div>
+                                      `,
+                                  )}
+                              </div>
+                          </div>
+                      `
+                    : ""}
                 ${this._values.map(
-                        (value, index) => html`
-                            <button
-                                    part="thumb thumb-${index + 1}"
-                                    class="thumb"
-                                    style="left: ${this._valueToPercent(value)}%; z-index: ${index === this._activeThumbIndex
-                                            ? 12
-                                            : 10};"
-                                    role="slider"
-                                    tabindex="0"
-                                    aria-label=${this._getAccessibleName(this._inputs[index], index)}
-                                    aria-valuemin=${this.min}
-                                    aria-valuemax=${this.max}
-                                    aria-valuenow=${Math.round(value)}
-                                    @pointerdown=${(e: PointerEvent) => this._handlePointerDown(e, index)}
-                                    @keydown=${(e: KeyboardEvent) => this._handleKeyDown(e, index)}
-                            ></button>
-                        `,
+                    (value, index) => html`
+                        <button
+                            part="thumb thumb-${index + 1}"
+                            class="thumb"
+                            style="left: ${this._valueToPercent(value)}%; z-index: ${index === this._activeThumbIndex
+                                ? 12
+                                : 10};"
+                            role="slider"
+                            tabindex="0"
+                            aria-label=${this._getAccessibleName(this._inputs[index], index)}
+                            aria-valuemin=${this.min}
+                            aria-valuemax=${this.max}
+                            aria-valuenow=${Math.round(value)}
+                            @pointerdown=${(e: PointerEvent) => this._handlePointerDown(e, index)}
+                            @keydown=${(e: KeyboardEvent) => this._handleKeyDown(e, index)}
+                        ></button>
+                    `,
                 )}
             </div>
             <slot @slotchange=${this._onSlotChange} style="display: none;"></slot>
@@ -475,7 +475,7 @@ export class RangeGroup extends LitElement {
             background: transparent;
             border-radius: 50%;
         }
-
+        
         .thumb:hover {
             transform: translate(-50%, -50%) scale(1.1);
         }

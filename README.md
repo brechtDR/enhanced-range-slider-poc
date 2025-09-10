@@ -96,15 +96,15 @@ npm install range-group-component
 ### Public Methods
 
 - **`getRangeInput(index: number): HTMLInputElement | undefined`**
-    - Returns the slotted `<input type="range">` element at the specified index.
+  - Returns the slotted `<input type="range">` element at the specified index.
 
 - **`setRangeValue(index: number, value: number)`**
-    - Programmatically sets the value of the handle at the specified index.
+  - Programmatically sets the value of the handle at the specified index.
 
 ### Events
 
 - **`change`**
-    - Fires when any of the handle values change. The new values can be accessed from the `event.detail.values` property.
+  - Fires when any of the handle values change. The new values can be accessed from the `event.detail.values` property.
 
 ### Styling with CSS Parts
 

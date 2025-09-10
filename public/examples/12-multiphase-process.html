@@ -1,0 +1,49 @@
+<section>
+    <p class="description">
+        This example uses three handles and styled ticks to represent different phases in a process, with each major tick mark having a unique color.
+    </p>
+    <div class="card">
+        <style>
+            #multiphase-example::part(tick) { height: 12px; width: 2px; }
+            #multiphase-example::part(tick-1) { background: #aaa; }
+            #multiphase-example::part(tick-label-1) { color: #aaa; }
+            #multiphase-example::part(tick-2) { background: #fdd835; } /* Yellow */
+            #multiphase-example::part(tick-label-2) { color: #fdd835; }
+            #multiphase-example::part(tick-3) { background: #4caf50; } /* Green */
+            #multiphase-example::part(tick-label-3) { color: #4caf50; }
+            #multiphase-example::part(tick-4) { background: #3b82f6; } /* Blue */
+            #multiphase-example::part(tick-label-4) { color: #3b82f6; }
+        </style>
+        <range-group id="multiphase-example" min="0" max="100" list="multiphase-datalist">
+            <legend slot="legend" class="color-indigo">Three-Handle Process Flow</legend>
+            <label for="multiphase-1" class="visually-hidden">Phase 1 End</label>
+            <input type="range" id="multiphase-1" value="20" />
+            <label for="multiphase-2" class="visually-hidden">Phase 2 End</label>
+            <input type="range" id="multiphase-2" value="50" />
+            <label for="multiphase-3" class="visually-hidden">Phase 3 End</label>
+            <input type="range" id="multiphase-3" value="80" />
+        </range-group>
+        <datalist id="multiphase-datalist">
+            <option value="0" label="Start"></option>
+            <option value="33" label="Review"></option>
+            <option value="66" label="Approved"></option>
+            <option value="100" label="Complete"></option>
+        </datalist>
+    </div>
+    <details class="code-details">
+        <summary>View CSS</summary>
+        <pre><code class="language-css">#multiphase-example::part(tick) { height: 12px; width: 2px; }
+
+#multiphase-example::part(tick-1) { background: #aaa; }
+#multiphase-example::part(tick-label-1) { color: #aaa; }
+
+#multiphase-example::part(tick-2) { background: #fdd835; } /* Yellow */
+#multiphase-example::part(tick-label-2) { color: #fdd835; }
+
+#multiphase-example::part(tick-3) { background: #4caf50; } /* Green */
+#multiphase-example::part(tick-label-3) { color: #4caf50; }
+
+#multiphase-example::part(tick-4) { background: #3b82f6; } /* Blue */
+#multiphase-example::part(tick-label-4) { color: #3b82f6; }</code></pre>
+    </details>
+</section>

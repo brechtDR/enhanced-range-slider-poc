@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Advanced Range Input Component</title>
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" />
     <style>
         /* A demonstration of styling the web component using CSS Parts */
         range-group {
@@ -45,580 +46,21 @@
         </header>
 
         <div class="sections-container">
-            <section>
-                <p class="description">
-                    A common use case for selecting a minimum and maximum value. The segment between the handles
-                    is styled differently.
-                </p>
-                <div class="card">
-                    <style>
-                        #price-range::part(segment-1) {
-                            background-color: oklch(35% 0.02 230);
-                        }
-                        #price-range::part(segment-2) {
-                            background-color: var(--color-purple);
-                        }
-                        #price-range::part(segment-3) {
-                            background-color: oklch(35% 0.02 230);
-                        }
-                    </style>
-                    <range-group id="price-range" min="0" max="1000">
-                        <legend slot="legend" class="color-purple">Dual-Handle Base Example</legend>
-                        <label for="price-min-input" class="visually-hidden">Minimum Price</label>
-                        <input type="range" id="price-min-input" name="price-min" value="250" />
-                        <label for="price-max-input" class="visually-hidden">Maximum Price</label>
-                        <input type="range" id="price-max-input" name="price-max" value="750" />
-                    </range-group>
-                </div>
-            </section>
-            <section>
-                <p class="description">
-                    Demonstrates two-way data binding. Drag the handles to update the input fields, or type in
-                    the fields to move the handles.
-                </p>
-                <div class="card">
-                    <style>
-                        #interactive-price-range::part(segment-2) {
-                            background: var(--color-teal);
-                        }
-                        #interactive-price-range::part(thumb) {
-                            --thumb-bg: var(--color-teal);
-                        }
-                    </style>
-                    <range-group id="interactive-price-range" min="0" max="1000">
-                        <legend slot="legend" class="color-teal">Interactive Price Range</legend>
-                        <label for="interactive-price-min-input" class="visually-hidden">Minimum Price</label>
-                        <input type="range" id="interactive-price-min-input" name="price-min" value="250" />
-                        <label for="interactive-price-max-input" class="visually-hidden">Maximum Price</label>
-                        <input type="range" id="interactive-price-max-input" name="price-max" value="750" />
-                    </range-group>
-                    <div class="price-input-container">
-                        <div class="price-input-group">
-                            <label for="price-min-num-input">Min Price</label>
-                            <input type="number" id="price-min-num-input" min="0" max="1000" />
-                        </div>
-                        <div class="price-input-group">
-                            <label for="price-max-num-input">Max Price</label>
-                            <input type="number" id="price-max-num-input" min="0" max="1000" />
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section>
-                <p class="description">You could use stepbetween to prevent thumbs form colliding.</p>
-                <div class="card">
-                    <style>
-                        #stepbetween-example::part(segment-1) {
-                            background-color: oklch(0.554 0.104 233.66);
-                        }
-                        #stepbetween-example::part(segment-2) {
-                            background-color: oklch(0.849 0.288 142.427);
-                        }
-                        #stepbetween-example::part(segment-3) {
-                            background-color: oklch(0.554 0.104 233.66);
-                        }
-                    </style>
-                    <range-group id="stepbetween-example" min="0" max="100" stepbetween="10">
-                        <legend slot="legend" class="color-pink">Dual-Handle with 10 stepbetween</legend>
-
-                        <label for="price-min-input-stepbetween" class="visually-hidden">Minimum Price</label>
-                        <input type="range" id="price-min-input-stepbetween" name="price-min" value="50" />
-                        <label for="price-max-input-stepbetween" class="visually-hidden">Maximum Price</label>
-                        <input type="range" id="price-max-input-stepbetween" name="price-max" value="80" />
-                    </range-group>
-                </div>
-            </section>
-            <section>
-                <p class="description">
-                    Demonstrates multiple handles and custom-colored segments for different temperature zones.
-                </p>
-                <div class="card">
-                    <style>
-                        #temp-range::part(segment-1) {
-                            background-color: oklch(65% 0.25 260);
-                        } /* Blue */
-                        #temp-range::part(segment-2) {
-                            background-color: oklch(80% 0.25 180);
-                        } /* Cyan */
-                        #temp-range::part(segment-3) {
-                            background-color: oklch(85% 0.25 90);
-                        } /* Yellow */
-                        #temp-range::part(segment-4) {
-                            background-color: oklch(70% 0.28 25);
-                        } /* Red */
-
-                        #temp-range::part(thumb-1) {
-                            --thumb-bg: oklch(65% 0.25 260);
-                            border: 2px solid oklch(98% 0.01 230);
-                            box-shadow: 0 0 12px 4px oklch(65% 0.25 260 / 0.75);
-                        }
-                        #temp-range::part(thumb-2) {
-                            --thumb-bg: oklch(85% 0.25 90);
-                            border: 2px solid oklch(98% 0.01 230);
-                            box-shadow: 0 0 12px 4px oklch(85% 0.25 90 / 0.75);
-                        }
-                        #temp-range::part(thumb-3) {
-                            --thumb-bg: oklch(70% 0.28 25);
-                            border: 2px solid oklch(98% 0.01 230);
-                            box-shadow: 0 0 12px 4px oklch(70% 0.28 25 / 0.75);
-                        }
-                    </style>
-                    <range-group id="temp-range" min="-100" max="100">
-                        <legend slot="legend" class="color-indigo">Multi-Handle Temperature Control</legend>
-
-                        <label for="temp-cold-input" class="visually-hidden">Cold temperature bound</label>
-                        <input type="range" id="temp-cold-input" name="temp-cold" value="-50" />
-                        <label for="temp-mild-input" class="visually-hidden">Mild temperature bound</label>
-                        <input type="range" id="temp-mild-input" name="temp-mild" value="0" />
-                        <label for="temp-hot-input" class="visually-hidden">Hot temperature bound</label>
-                        <input type="range" id="temp-hot-input" name="temp-hot" value="50" />
-                    </range-group>
-                </div>
-            </section>
-            <section>
-                <p class="description">
-                    Demonstrates using invisible handles with the CSS Anchoring API to position custom tooltips. The tooltips appear to be the draggable handles, and their values are updated via JavaScript.
-                </p>
-                <div class="card" style="position: relative">
-                    <style>
-                        #floating-tooltip-range {
-                            --track-height: 12px;
-                            --thumb-size: 40px;
-                            margin-top: 2rem;
-                            margin-bottom: 2rem;
-                        }
-                        #floating-tooltip-range::part(track) {
-                            background-color: oklch(40% 0.02 230);
-                        }
-                        #floating-tooltip-range::part(segment-2) {
-                            background: var(--color-pink);
-                        }
-
-                        #floating-tooltip-range::part(thumb) {
-                            anchor-name: var(--anchor-name);
-                            background: transparent;
-                            border: none;
-                            box-shadow: none;
-                            width: 40px;
-                            height: 20px;
-                            padding: 0;
-                            border-radius: 9999px;
-                        }
-
-                        #floating-tooltip-range::part(thumb-1) {
-                            --thumb-transform: translate(-50%, calc(-100% - var(--track-height) / 2 - 5px));
-                            --anchor-name: --floating-thumb-1;
-                            transform: var(--thumb-transform);
-                        }
-
-                        #floating-tooltip-range::part(thumb-2) {
-                            --thumb-transform: translate(-50%, calc(0% + var(--track-height) / 2 + 5px));
-                            --anchor-name: --floating-thumb-2;
-                            transform: var(--thumb-transform);
-                        }
-
-                        /* Tooltip styling */
-                        .floating-tooltip {
-                            position: absolute;
-                            position-anchor: var(--anchor-name);
-                            pointer-events: none;
-
-                            /* These styles create the tooltip shape */
-                            border: none;
-                            border-radius: 9999px;
-                            background: white;
-                            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -1px rgb(0 0 0 / 0.1);
-                            width: 40px;
-                            height: 28px;
-
-                            color: oklch(10% 0.01 230);
-                            font-weight: 700;
-                            font-size: 0.875rem;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-
-                            translate: -50% -20%;
-                            z-index: 10;
-                        }
-
-                        #floating-tooltip-1 {
-                            --anchor-name: --floating-thumb-1;
-                            bottom: anchor(top);
-                            left: anchor(left);
-                        }
-                        #floating-tooltip-2 {
-                            --anchor-name: --floating-thumb-2;
-                            top: anchor(center);
-                            left: anchor(left);
-                        }
-
-                    </style>
-                    <range-group id="floating-tooltip-range" min="0" max="100">
-                        <legend slot="legend" class="color-purple">Floating Tooltip Handles</legend>
-                        <label for="floating-tooltip-input-1" class="visually-hidden">Value Handle 1</label>
-                        <input
-                                type="range"
-                                id="floating-tooltip-input-1"
-                                name="floating-tooltip-1"
-                                value="40"
-                        />
-                        <label for="floating-tooltip-input-2" class="visually-hidden">Value Handle 2</label>
-                        <input
-                                type="range"
-                                id="floating-tooltip-input-2"
-                                name="floating-tooltip-2"
-                                value="65"
-                        />
-                    </range-group>
-                    <div id="floating-tooltip-1" class="floating-tooltip" aria-hidden="true">40</div>
-                    <div id="floating-tooltip-2" class="floating-tooltip" aria-hidden="true">65</div>
-                </div>
-            </section>
-            <section>
-                <p class="description">
-                    Shows integration with a <code>&lt;datalist&gt;</code> for tick marks and labels, and
-                    enforces a minimum distance of 25 between handles via <code>stepbetween="25"</code>.
-                </p>
-                <div class="card">
-                    <range-group min="0" max="100" list="rating-ticks" stepbetween="25">
-                        <legend slot="legend" class="color-teal">Datalist Integration & Step Between</legend>
-                        <label for="rating-min-input" class="visually-hidden">Minimum rating</label>
-                        <input type="range" id="rating-min-input" name="rating-min" value="20" />
-                        <label for="rating-max-input" class="visually-hidden">Maximum rating</label>
-                        <input type="range" id="rating-max-input" name="rating-max" value="80" />
-                    </range-group>
-                    <datalist id="rating-ticks">
-                        <option value="0" label="0%"></option>
-                        <option value="25"></option>
-                        <option value="50" label="50%"></option>
-                        <option value="75"></option>
-                        <option value="100" label="100%"></option>
-                    </datalist>
-                </div>
-            </section>
-            <section>
-                <p class="description">
-                    A complete visual transformation to create a budget allocation tool. The component's
-                    segments are styled as colored bars, and the thumbs as draggable separators. All labels and
-                    percentages are updated via JavaScript.
-                </p>
-                <div class="card" style="position: relative">
-                    <style>
-                        #budget-range {
-                            --track-height: 50px;
-                            --thumb-size: 36px;
-                        }
-                        #budget-range::part(track) {
-                            border-radius: 25px;
-                            overflow: hidden;
-                        }
-                        #budget-range::part(thumb) {
-                            border: 4px solid var(--color-card-bg);
-                            background-color: white;
-                            background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools --%3E%3Csvg width='800px' height='800px' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:none;stroke:%23000000;stroke-linecap:round;stroke-linejoin:bevel;stroke-width:1.5px;%7D%3C/style%3E%3C/defs%3E%3Cg id='ic-chevron-left-right'%3E%3Cpath class='cls-1' d='M15.3,16.78l4.11-4.11a1,1,0,0,0,0-1.41l-4-4'/%3E%3Cpath class='cls-1' d='M8.7,7.22,4.59,11.33a1,1,0,0,0,0,1.41l4,4'/%3E%3C/g%3E%3C/svg%3E");
-                            background-position: center;
-                            background-repeat: no-repeat;
-                            background-size: 60%;
-                            box-shadow:
-                                    0 4px 6px -1px rgba(0, 0, 0, 0.3),
-                                    0 2px 4px -1px rgba(0, 0, 0, 0.1);
-                        }
-                        #budget-range::part(segment-1) {
-                            background-color: #e53935;
-                            anchor-name: --budget-segment-1;
-                        }
-                        #budget-range::part(segment-2) {
-                            background-color: #8e24aa;
-                            anchor-name: --budget-segment-2;
-                        }
-                        #budget-range::part(segment-3) {
-                            background-color: #fdd835;
-                            anchor-name: --budget-segment-3;
-                        }
-                        #budget-range::part(segment-4) {
-                            background-color: #3949ab;
-                            anchor-name: --budget-segment-4;
-                        }
-
-                        .budget-label {
-                            position: absolute;
-                            color: white;
-                            top: anchor(var(--anchor) top);
-                            left: anchor(var(--anchor) center);
-                            translate: -50% -50%;
-                            text-align: center;
-                            font-size: 0.875rem;
-                            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-                            line-height: 1.2;
-                            &:nth-child(1) {
-                                --anchor: --budget-segment-1;
-                            }
-                            &:nth-child(2) {
-                                --anchor: --budget-segment-2;
-                            }
-                            &:nth-child(3) {
-                                --anchor: --budget-segment-3;
-                            }
-                            &:nth-child(4) {
-                                --anchor: --budget-segment-4;
-                            }
-                        }
-
-                        .budget-label strong {
-                            font-size: 1rem;
-                            font-weight: 700;
-                        }
-                    </style>
-                    <div class="budget-range-wrapper">
-                        <range-group id="budget-range" min="0" max="100">
-                            <legend slot="legend" class="color-pink">Budget Allocator</legend>
-
-                            <label for="budget-1" class="visually-hidden">Groceries/Rent separator</label>
-                            <input type="range" id="budget-1" value="25" />
-                            <label for="budget-2" class="visually-hidden">Rent/Transport separator</label>
-                            <input type="range" id="budget-2" value="50" />
-                            <label for="budget-3" class="visually-hidden">Transport/Internet separator</label>
-                            <input type="range" id="budget-3" value="75" />
-                        </range-group>
-                        <div id="budget-labels" class="budget-labels">
-                            <div id="budget-label-0" class="budget-label"></div>
-                            <div id="budget-label-1" class="budget-label"></div>
-                            <div id="budget-label-2" class="budget-label"></div>
-                            <div id="budget-label-3" class="budget-label"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section>
-                <p class="description">
-                    Recreating a classic slider look. This demonstrates using the CSS Anchoring API for tooltips
-                    with heavy custom styling on all component parts.
-                </p>
-                <div class="card" style="position: relative">
-                    <style>
-                        #classic-range {
-                            --track-height: 4px;
-                            --thumb-size: 24px;
-                        }
-                        #classic-range::part(track) {
-                            background: #444;
-                            border: 1px solid #111;
-                            border-radius: 0;
-                            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
-                        }
-                        #classic-range::part(segment-2) {
-                            background: #3b82f6;
-                        }
-                        #classic-range::part(thumb) {
-                            anchor-name: var(--anchor-name);
-                            background: linear-gradient(to bottom, #f9fafb, #d1d5db);
-                            border: 1px solid #6b7280;
-                            border-radius: 3px;
-                            width: 14px;
-                            height: var(--thumb-size);
-                            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-                        }
-                        #classic-range::part(thumb-1) {
-                            --anchor-name: --classic-thumb-1;
-                        }
-                        #classic-range::part(thumb-2) {
-                            --anchor-name: --classic-thumb-2;
-                        }
-
-                        .classic-tooltip {
-                            position: absolute;
-                            position-anchor: var(--anchor-name);
-                            position-area: top;
-                            translate: -20% -60%;
-
-                            background: #222;
-                            color: white;
-                            padding: 2px 8px;
-                            border-radius: 3px;
-                            border: 1px solid #555;
-                            font-size: 0.875rem;
-                            font-weight: 600;
-                            pointer-events: none;
-                        }
-                        #classic-tooltip-1 {
-                            --anchor-name: --classic-thumb-1;
-                        }
-                        #classic-tooltip-2 {
-                            --anchor-name: --classic-thumb-2;
-                        }
-                    </style>
-                    <range-group id="classic-range" min="0" max="100">
-                        <legend slot="legend" class="color-indigo">Classic Look with anchored Tooltips</legend>
-                        <label for="classic-1" class="visually-hidden">Classic Handle 1</label>
-                        <input type="range" id="classic-1" name="classic-1" value="20" />
-                        <label for="classic-2" class="visually-hidden">Classic Handle 2</label>
-                        <input type="range" id="classic-2" name="classic-2" value="80" />
-                    </range-group>
-                    <div id="classic-tooltip-1" class="classic-tooltip" aria-hidden="true">20</div>
-                    <div id="classic-tooltip-2" class="classic-tooltip" aria-hidden="true">80</div>
-                </div>
-            </section>
-            <section>
-                <p class="description">
-                    Use the component's public methods and properties to get and set values programmatically.
-                </p>
-                <div class="card">
-                    <range-group id="api-range" min="0" max="500">
-                        <legend slot="legend" class="color-purple">JavaScript API Interaction</legend>
-                        <style>
-                            #api-range::part(segment-2) {
-                                background: linear-gradient(to right, var(--color-purple), var(--color-pink));
-                            }
-                        </style>
-                        <label for="api-1-input" class="visually-hidden">API Handle 1</label>
-                        <input type="range" id="api-1-input" name="api-1" value="100" />
-                        <label for="api-2-input" class="visually-hidden">API Handle 2</label>
-                        <input type="range" id="api-2-input" name="api-2" value="400" />
-                    </range-group>
-                    <div class="button-group">
-                        <button id="getValuesBtn" class="btn btn-indigo">Get Values</button>
-                        <button id="setValuesBtn" class="btn btn-pink">Set Random Values</button>
-                    </div>
-                    <pre id="apiOutput" class="api-output"></pre>
-                </div>
-            </section>
-            <section>
-                <p class="description">
-                    This example shows how to style individual tick marks and their labels using CSS Parts. The '50%' tick is highlighted with a different color and height.
-                </p>
-                <div class="card">
-                    <style>
-                        #custom-ticks-example::part(tick) {
-                            background: var(--color-text-muted);
-                            height: 8px;
-                            transition: all 0.2s ease;
-                        }
-                        /* Style the 3rd tick (value="50") */
-                        #custom-ticks-example::part(tick-3) {
-                            background: var(--color-pink);
-                            height: 16px; /* Taller */
-                            width: 3px;
-                            transform: translateX(-1.5px); /* Re-center */
-                        }
-                        /* Style the 3rd tick's label */
-                        #custom-ticks-example::part(tick-label-3) {
-                            color: var(--color-pink);
-                            font-weight: bold;
-                        }
-                    </style>
-                    <range-group id="custom-ticks-example" min="0" max="100" list="custom-ticks-datalist">
-                        <legend slot="legend" class="color-pink">Custom Tick Styling</legend>
-                        <label for="custom-tick-1" class="visually-hidden">Value 1</label>
-                        <input type="range" id="custom-tick-1" value="25" />
-                        <label for="custom-tick-2" class="visually-hidden">Value 2</label>
-                        <input type="range" id="custom-tick-2" value="75" />
-                    </range-group>
-                    <datalist id="custom-ticks-datalist">
-                        <option value="0" label="0%"></option>
-                        <option value="25"></option>
-                        <option value="50" label="50%"></option>
-                        <option value="75"></option>
-                        <option value="100" label="100%"></option>
-                    </datalist>
-                </div>
-            </section>
-            <section>
-                <p class="description">
-                    A more creative example styling ticks to look like milestones on a project timeline. Key milestones are larger and have distinct colors.
-                </p>
-                <div class="card">
-                    <style>
-                        #timeline-example { --track-height: 2px; }
-                        #timeline-example::part(track) { background: #555; }
-                        #timeline-example::part(thumb) { --thumb-bg: var(--color-teal); }
-                        #timeline-example::part(segment-2) { background: var(--color-teal); }
-
-                        #timeline-example::part(tick) {
-                            background: #888;
-                            width: 2px;
-                            height: 10px;
-                            border-radius: 2px;
-                        }
-                        /* Highlight the start (1st), middle (3rd), and end (5th) ticks */
-                        #timeline-example::part(tick-1),
-                        #timeline-example::part(tick-3),
-                        #timeline-example::part(tick-5) {
-                            background: var(--color-teal);
-                            height: 20px;
-                            width: 4px;
-                            transform: translate(-2px, -7px); /* Adjust position for height */
-                        }
-                        #timeline-example::part(tick-label) {
-                            color: var(--color-text-muted);
-                        }
-                        #timeline-example::part(tick-label-1),
-                        #timeline-example::part(tick-label-3),
-                        #timeline-example::part(tick-label-5) {
-                            color: var(--color-teal);
-                            font-weight: bold;
-                        }
-                    </style>
-                    <range-group id="timeline-example" min="0" max="100" list="timeline-datalist">
-                        <legend slot="legend" class="color-teal">Styled Timeline</legend>
-                        <label for="timeline-1" class="visually-hidden">Start Date</label>
-                        <input type="range" id="timeline-1" value="10" />
-                        <label for="timeline-2" class="visually-hidden">End Date</label>
-                        <input type="range" id="timeline-2" value="90" />
-                    </range-group>
-                    <datalist id="timeline-datalist">
-                        <option value="0" label="Q1"></option>
-                        <option value="25"></option>
-                        <option value="50" label="Q3"></option>
-                        <option value="75"></option>
-                        <option value="100" label="End"></option>
-                    </datalist>
-                </div>
-            </section>
-            <section>
-                <p class="description">
-                    This example uses three handles and styled ticks to represent different phases in a process, with each major tick mark having a unique color.
-                </p>
-                <div class="card">
-                    <style>
-                        #multiphase-example::part(tick) { height: 12px; width: 2px; }
-
-                        #multiphase-example::part(tick-1) { background: #aaa; }
-                        #multiphase-example::part(tick-label-1) { color: #aaa; }
-
-                        #multiphase-example::part(tick-2) { background: #fdd835; } /* Yellow */
-                        #multiphase-example::part(tick-label-2) { color: #fdd835; }
-
-                        #multiphase-example::part(tick-3) { background: #4caf50; } /* Green */
-                        #multiphase-example::part(tick-label-3) { color: #4caf50; }
-
-                        #multiphase-example::part(tick-4) { background: #3b82f6; } /* Blue */
-                        #multiphase-example::part(tick-label-4) { color: #3b82f6; }
-                    </style>
-                    <range-group id="multiphase-example" min="0" max="100" list="multiphase-datalist">
-                        <legend slot="legend" class="color-indigo">Three-Handle Process Flow</legend>
-                        <label for="multiphase-1" class="visually-hidden">Phase 1 End</label>
-                        <input type="range" id="multiphase-1" value="20" />
-                        <label for="multiphase-2" class="visually-hidden">Phase 2 End</label>
-                        <input type="range" id="multiphase-2" value="50" />
-                        <label for="multiphase-3" class="visually-hidden">Phase 3 End</label>
-                        <input type="range" id="multiphase-3" value="80" />
-                    </range-group>
-                    <datalist id="multiphase-datalist">
-                        <option value="0" label="Start"></option>
-                        <option value="33" label="Review"></option>
-                        <option value="66" label="Approved"></option>
-                        <option value="100" label="Complete"></option>
-                    </datalist>
-                </div>
-            </section>
+            <!-- Examples will be dynamically loaded here -->
         </div>
     </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
 <script type="module">
     import "./src/range-group.ts";
 
-    document.addEventListener("DOMContentLoaded", () => {
+    /**
+     * This function contains all the logic from the old script block
+     * that sets up event listeners for the interactive examples. It's called
+     * after the example HTML has been loaded into the DOM.
+     */
+    function initializeInteractiveExamples() {
         // --- Interactive Price Range Example ---
         const priceRange = document.getElementById("interactive-price-range");
         const minPriceInput = document.getElementById("price-min-num-input");
@@ -658,20 +100,31 @@
             document.getElementById("budget-label-1"),
             document.getElementById("budget-label-2"),
             document.getElementById("budget-label-3"),
-        ];
+        ].filter(l => l); // Filter out nulls just in case
         const budgetCategories = ["Groceries", "Rent", "Transport", "Internet"];
 
-        if (budgetRange && budgetLabels.every((l) => l)) {
+        if (budgetRange && budgetLabels.length === 4) {
             const updateBudgetLabels = () => {
+                // Replicate the component's internal value-to-percent logic
+                const valueToPercent = (value) => {
+                    const min = Number(budgetRange.min);
+                    const max = Number(budgetRange.max);
+                    // Prevent division by zero if min and max are the same
+                    if (max === min) return 0;
+                    return ((value - min) / (max - min)) * 100;
+                };
+
                 const values = [0, ...budgetRange.values, 100];
                 for (let i = 0; i < budgetLabels.length; i++) {
                     const start = values[i];
                     const end = values[i + 1];
                     const percentage = Math.round(end - start);
-                    const center = start + percentage / 2;
+                    const midPoint = start + (end - start) / 2;
+                    const midPercent = valueToPercent(midPoint);
 
-                    const label = budgetLabels[i];
-                    label.innerHTML = `<strong>${budgetCategories[i]}</strong><br>${percentage}%`;
+                    // Position the label at the midpoint of its segment
+                    budgetLabels[i].style.left = `${midPercent}%`;
+                    budgetLabels[i].innerHTML = `<strong>${budgetCategories[i]}</strong><br>${percentage}%`;
                 }
             };
             updateBudgetLabels();
@@ -730,7 +183,57 @@
                 apiOutput.textContent = `Set to: [${apiRange.values.join(", ")}]`;
             });
         }
-    });
+    }
+
+    /**
+     * Fetches the HTML for all examples, injects them into the page,
+     * and then initializes the interactive scripts and syntax highlighting.
+     */
+    async function loadExamples() {
+        const container = document.querySelector('.sections-container');
+        if (!container) return;
+
+        container.innerHTML = `<p class="loading-message">Loading examples...</p>`;
+
+        // The order of files in this array determines their order on the page.
+        const exampleFiles = [
+            'examples/01-dual-handle-base.html',
+            'examples/02-interactive-price-range.html',
+            'examples/03-step-between.html',
+            'examples/04-multi-handle-temperature.html',
+            'examples/05-floating-tooltip.html',
+            'examples/06-datalist-integration.html',
+            'examples/07-budget-allocator.html',
+            'examples/08-classic-look.html',
+            'examples/09-javascript-api.html',
+            'examples/10-custom-ticks.html',
+            'examples/11-styled-timeline.html',
+            'examples/12-multiphase-process.html'
+        ];
+
+        try {
+            const fetchPromises = exampleFiles.map(file => fetch(file).then(res => {
+                if (!res.ok) throw new Error(`Failed to load ${file}: ${res.statusText}`);
+                return res.text();
+            }));
+
+            const examplesHtml = await Promise.all(fetchPromises);
+            container.innerHTML = examplesHtml.join('');
+
+            // Now that HTML is in the DOM, initialize scripts and syntax highlighting
+            initializeInteractiveExamples();
+
+            // Prism is loaded from CDN, so it's on the window object
+            if (window.Prism) {
+                window.Prism.highlightAll();
+            }
+        } catch (error) {
+            console.error("Error loading examples:", error);
+            container.innerHTML = `<p class="error-message">Could not load examples. Please check the console for details.</p>`;
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadExamples);
 </script>
 </body>
 </html>

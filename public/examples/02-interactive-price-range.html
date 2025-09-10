@@ -1,0 +1,78 @@
+<section>
+    <p class="description">
+        Demonstrates two-way data binding. Drag the handles to update the input fields, or type in
+        the fields to move the handles.
+    </p>
+    <div class="card">
+        <style>
+            #interactive-price-range::part(segment-2) {
+                background: var(--color-teal);
+            }
+            #interactive-price-range::part(thumb) {
+                --thumb-bg: var(--color-teal);
+            }
+            .price-input-container {
+                display: flex;
+                justify-content: space-between;
+                gap: 1rem;
+                margin-top: 1.5rem;
+            }
+            .price-input-group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                flex-grow: 1;
+            }
+            .price-input-group label {
+                color: var(--color-text-muted);
+                font-size: 0.875rem;
+                font-weight: 600;
+            }
+            .price-input-group input[type="number"] {
+                background-color: var(--color-bg);
+                border: 1px solid oklch(30% 0.02 230);
+                border-radius: 0.5rem;
+                padding: 0.5rem 0.75rem;
+                color: var(--color-text);
+                font-size: 1rem;
+                width: 100%;
+            }
+            /* Hide the arrows on number inputs for a cleaner look */
+            .price-input-group input[type=number]::-webkit-inner-spin-button,
+            .price-input-group input[type=number]::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+            .price-input-group input[type=number] {
+                -moz-appearance: textfield;
+            }
+        </style>
+        <range-group id="interactive-price-range" min="0" max="1000">
+            <legend slot="legend" class="color-teal">Interactive Price Range</legend>
+            <label for="interactive-price-min-input" class="visually-hidden">Minimum Price</label>
+            <input type="range" id="interactive-price-min-input" name="price-min" value="250" />
+            <label for="interactive-price-max-input" class="visually-hidden">Maximum Price</label>
+            <input type="range" id="interactive-price-max-input" name="price-max" value="750" />
+        </range-group>
+        <div class="price-input-container">
+            <div class="price-input-group">
+                <label for="price-min-num-input">Min Price</label>
+                <input type="number" id="price-min-num-input" min="0" max="1000" />
+            </div>
+            <div class="price-input-group">
+                <label for="price-max-num-input">Max Price</label>
+                <input type="number" id="price-max-num-input" min="0" max="1000" />
+            </div>
+        </div>
+    </div>
+    <details class="code-details">
+        <summary>View CSS</summary>
+        <pre><code class="language-css">#interactive-price-range::part(segment-2) {
+    background: var(--color-teal);
+}
+#interactive-price-range::part(thumb) {
+    --thumb-bg: var(--color-teal);
+}
+</code></pre>
+    </details>
+</section>

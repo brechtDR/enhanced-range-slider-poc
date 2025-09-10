@@ -1,0 +1,99 @@
+<section>
+    <p class="description">
+        Recreating a classic slider look. This demonstrates using the CSS Anchoring API for tooltips
+        with heavy custom styling on all component parts.
+    </p>
+    <div class="card" style="position: relative">
+        <style>
+            #classic-range {
+                --track-height: 4px;
+                --thumb-size: 24px;
+            }
+            #classic-range::part(track) {
+                background: #444;
+                border: 1px solid #111;
+                border-radius: 0;
+                box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+            }
+            #classic-range::part(segment-2) { background: #3b82f6; }
+            #classic-range::part(thumb) {
+                anchor-name: var(--anchor-name);
+                background: linear-gradient(to bottom, #f9fafb, #d1d5db);
+                border: 1px solid #6b7280;
+                border-radius: 3px;
+                width: 14px;
+                height: var(--thumb-size);
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            }
+            #classic-range::part(thumb-1) { --anchor-name: --classic-thumb-1; }
+            #classic-range::part(thumb-2) { --anchor-name: --classic-thumb-2; }
+            .classic-tooltip {
+                position: absolute;
+                position-anchor: var(--anchor-name);
+                position-area: top;
+                translate: -20% -60%;
+                background: #222;
+                color: white;
+                padding: 2px 8px;
+                border-radius: 3px;
+                border: 1px solid #555;
+                font-size: 0.875rem;
+                font-weight: 600;
+                pointer-events: none;
+            }
+            #classic-tooltip-1 { --anchor-name: --classic-thumb-1; }
+            #classic-tooltip-2 { --anchor-name: --classic-thumb-2; }
+        </style>
+        <range-group id="classic-range" min="0" max="100">
+            <legend slot="legend" class="color-indigo">Classic Look with anchored Tooltips</legend>
+            <label for="classic-1" class="visually-hidden">Classic Handle 1</label>
+            <input type="range" id="classic-1" value="20" />
+            <label for="classic-2" class="visually-hidden">Classic Handle 2</label>
+            <input type="range" id="classic-2" value="80" />
+        </range-group>
+        <div id="classic-tooltip-1" class="classic-tooltip" aria-hidden="true">20</div>
+        <div id="classic-tooltip-2" class="classic-tooltip" aria-hidden="true">80</div>
+    </div>
+    <details class="code-details">
+        <summary>View CSS</summary>
+        <pre><code class="language-css">#classic-range {
+    --track-height: 4px;
+    --thumb-size: 24px;
+}
+#classic-range::part(track) {
+    background: #444;
+    border: 1px solid #111;
+    border-radius: 0;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+#classic-range::part(segment-2) {
+    background: #3b82f6;
+}
+#classic-range::part(thumb) {
+    anchor-name: var(--anchor-name);
+    background: linear-gradient(to bottom, #f9fafb, #d1d5db);
+    border: 1px solid #6b7280;
+    border-radius: 3px;
+    width: 14px;
+    height: var(--thumb-size);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+#classic-range::part(thumb-1) { --anchor-name: --classic-thumb-1; }
+#classic-range::part(thumb-2) { --anchor-name: --classic-thumb-2; }
+
+.classic-tooltip {
+    position: absolute;
+    position-anchor: var(--anchor-name);
+    position-area: top;
+    translate: -20% -60%;
+    background: #222;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 3px;
+    border: 1px solid #555;
+    pointer-events: none;
+}
+#classic-tooltip-1 { --anchor-name: --classic-thumb-1; }
+#classic-tooltip-2 { --anchor-name: --classic-thumb-2; }</code></pre>
+    </details>
+</section>
