@@ -33,6 +33,7 @@
             border-radius: 50%;
         }
     </style>
+
 </head>
 <body>
 <div class="container-wrapper">
@@ -212,7 +213,7 @@
         ];
 
         try {
-            const fetchPromises = exampleFiles.map(file => fetch(file).then(res => {
+            const fetchPromises = exampleFiles.map(file => fetch(`${import.meta.env.BASE_URL}${file}`).then(res => {
                 if (!res.ok) throw new Error(`Failed to load ${file}: ${res.statusText}`);
                 return res.text();
             }));
