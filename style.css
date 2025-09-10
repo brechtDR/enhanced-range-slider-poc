@@ -180,6 +180,48 @@ h1 {
 	text-align: center;
 }
 
+/* Styles for Budget Allocator Example */
+
+/* Styles for Interactive Price Range Example */
+.price-input-container {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 1.5rem;
+	gap: 1rem;
+}
+
+.price-input-group {
+	display: flex;
+	flex-grow: 1;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.price-input-group label {
+	color: var(--color-text-muted);
+	font-weight: 600;
+	font-size: 0.875rem;
+}
+
+.price-input-group input[type="number"] {
+	width: 100%;
+	padding: 0.5rem 0.75rem;
+	border: 1px solid oklch(30% 0.02 230);
+	border-radius: 0.5rem;
+	background-color: var(--color-bg);
+	color: var(--color-text);
+	font-size: 1rem;
+}
+/* Hide the arrows on number inputs for a cleaner look */
+.price-input-group input[type="number"]::-webkit-inner-spin-button,
+.price-input-group input[type="number"]::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+.price-input-group input[type="number"] {
+	-moz-appearance: textfield;
+}
+
 /* Utility class to hide elements visually but keep them accessible to screen readers */
 .visually-hidden {
 	position: absolute;

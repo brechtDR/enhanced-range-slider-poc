@@ -31,20 +31,24 @@ The `index.html` in this repository serves as a live demo page showcasing variou
 To run the demo page locally and start developing, follow these steps:
 
 1.  **Clone the repository:**
+
     ```bash
     git clone <repository-url>
     cd <repository-directory>
     ```
 
 2.  **Install dependencies:**
+
     ```bash
     npm install
     ```
 
 3.  **Start the development server:**
+
     ```bash
     npm run dev
     ```
+
     This will open a local server, typically at `http://localhost:5173`.
 
 4.  **Build for production:**
@@ -67,8 +71,8 @@ npm install range-group-component
 <script type="module" src="/node_modules/range-group-component/dist/range-group.js"></script>
 
 <range-group min="0" max="1000">
-    <input type="range" value="250">
-    <input type="range" value="750">
+    <input type="range" value="250" />
+    <input type="range" value="750" />
 </range-group>
 ```
 
@@ -78,19 +82,18 @@ npm install range-group-component
 
 ### Attributes / Properties
 
-| Attribute     | Property      | Type     | Default | Description                                             |
-|---------------|---------------|----------|---------|---------------------------------------------------------|
-| `min`         | `min`         | `Number` | `0`     | The minimum allowed value for the range.                |
-| `max`         | `max`         | `Number` | `100`   | The maximum allowed value for the range.                |
+| Attribute     | Property      | Type     | Default | Description                                               |
+| ------------- | ------------- | -------- | ------- | --------------------------------------------------------- |
+| `min`         | `min`         | `Number` | `0`     | The minimum allowed value for the range.                  |
+| `max`         | `max`         | `Number` | `100`   | The maximum allowed value for the range.                  |
 | `stepbetween` | `stepbetween` | `Number` | `0`     | The minimum gap required between any two adjacent thumbs. |
 | `list`        | `list`        | `String` | `''`    | The `id` of a `<datalist>` to associate with the range.   |
 
-
 ### Public Properties (Read-only)
 
-| Property | Type                 | Description                                    |
-|----------|----------------------|------------------------------------------------|
-| `values` | `number[]`           | Returns an array of the current numeric values.  |
+| Property | Type                 | Description                                         |
+| -------- | -------------------- | --------------------------------------------------- |
+| `values` | `number[]`           | Returns an array of the current numeric values.     |
 | `inputs` | `HTMLInputElement[]` | Returns an array of the slotted `<input>` elements. |
 
 ### Public Methods
@@ -110,28 +113,29 @@ npm install range-group-component
 
 You can style the component from outside its shadow DOM using the `::part()` pseudo-element.
 
-| Part Name         | Description                                        |
-|-------------------|----------------------------------------------------|
-| `track`           | The main track element.                            |
-| `segment`         | Styles all segments between and outside thumbs.    |
-| `segment-{n}`     | Styles an individual segment (e.g., `segment-1`).  |
-| `thumb`           | Styles all thumb (handle) elements.                |
-| `thumb-{n}`       | Styles an individual thumb (e.g., `thumb-1`).      |
-| `tick`            | Styles the tick marks generated from a datalist.   |
-| `tick-label`      | Styles the labels for the tick marks.              |
+| Part Name     | Description                                       |
+| ------------- | ------------------------------------------------- |
+| `track`       | The main track element.                           |
+| `segment`     | Styles all segments between and outside thumbs.   |
+| `segment-{n}` | Styles an individual segment (e.g., `segment-1`). |
+| `thumb`       | Styles all thumb (handle) elements.               |
+| `thumb-{n}`   | Styles an individual thumb (e.g., `thumb-1`).     |
+| `tick`        | Styles the tick marks generated from a datalist.  |
+| `tick-label`  | Styles the labels for the tick marks.             |
 
 **Example:**
+
 ```css
 range-group::part(track) {
-  background-color: #e5e7eb;
+    background-color: #e5e7eb;
 }
 
 range-group::part(thumb) {
-  border: 2px solid white;
+    border: 2px solid white;
 }
 
 range-group::part(segment-2) {
-  background-color: steelblue;
+    background-color: steelblue;
 }
 ```
 
@@ -141,8 +145,8 @@ range-group::part(segment-2) {
 
 This repository includes a GitHub Actions workflow to automatically build and deploy the demo page to GitHub Pages.
 
--   **Trigger**: The workflow runs automatically on every push to the `main` branch.
--   **Process**:
+- **Trigger**: The workflow runs automatically on every push to the `main` branch.
+- **Process**:
     1.  The action checks out the code.
     2.  It installs Node.js and the project dependencies (`npm install`).
     3.  It builds the static site using Vite (`npm run build`). The output is placed in the `/dist` directory.

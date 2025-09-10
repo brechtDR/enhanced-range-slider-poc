@@ -19,6 +19,7 @@ export class RangeGroup extends LitElement {
 
     private _activeThumbIndex: number | null = null;
     private _containerRect: DOMRect | null = null;
+    private _pendingActivation: { indices: number[]; initialX: number } | null = null;
     private _uniqueId = Math.random().toString(36).substring(2, 9);
 
     constructor() {
@@ -102,23 +103,30 @@ export class RangeGroup extends LitElement {
     private _initializeInputs() {
         if (this._inputs.length === 0) return;
 
+        // Must sort by attribute value, as the `value` property may have been clamped
+        // by the browser before our `min` and `max` attributes have been propagated.
+        this._inputs.sort((a, b) => Number(a.getAttribute("value")) - Number(b.getAttribute("value")));
+
         this._inputs.forEach((input) => {
+            // Propagate min/max from this component to the underlying inputs.
             if (this.hasAttribute("min")) input.min = String(this.min);
             if (this.hasAttribute("max")) input.max = String(this.max);
-        });
 
-        const initialValues = this._inputs.map((input) => Number(input.getAttribute("value")));
-        initialValues.sort((a, b) => a - b);
+            // Crucially, re-apply the value from the attribute *after* setting min/max.
+            // This corrects any clamping the browser did with the default min=0.
+            const initialValue = input.getAttribute("value");
+            if (initialValue !== null) {
+                input.value = initialValue;
+            }
 
-        this._inputs.forEach((input, index) => {
-            input.value = String(initialValues[index]);
-
+            // Set up event listeners
             input.removeEventListener("input", this._handleInputChange);
             input.removeEventListener("change", this._handleInputChange);
             input.addEventListener("input", this._handleInputChange);
             input.addEventListener("change", this._handleInputChange);
         });
 
+        // Initialize the component's internal state from the now-correct input values.
         this._handleInputChange();
     }
 
@@ -142,13 +150,55 @@ export class RangeGroup extends LitElement {
     private _handlePointerDown(e: PointerEvent, index: number) {
         if (e.button !== 0) return; // Only main button
         e.preventDefault();
-        (e.target as HTMLElement).focus();
-        this._activeThumbIndex = index;
         this._containerRect = this.shadowRoot?.querySelector(".container")?.getBoundingClientRect() ?? null;
+
+        const currentValue = this._values[index];
+        const overlappingIndices = this._values.reduce((acc, v, i) => {
+            if (Math.abs(v - currentValue) < 0.001) {
+                // Use a tolerance for float comparison
+                acc.push(i);
+            }
+            return acc;
+        }, [] as number[]);
+
+        if (overlappingIndices.length > 1) {
+            // Overlap detected: defer activation and focus until pointer move.
+            this._pendingActivation = {
+                indices: overlappingIndices,
+                initialX: e.clientX,
+            };
+            this._activeThumbIndex = null;
+        } else {
+            // No overlap: activate and focus immediately.
+            (e.target as HTMLElement).focus();
+            this._activeThumbIndex = index;
+        }
+
         (e.target as HTMLElement).setPointerCapture(e.pointerId);
     }
 
     private _handlePointerMove = (e: PointerEvent) => {
+        // If a thumb activation is pending, determine which thumb to activate based on drag direction.
+        if (this._pendingActivation) {
+            const dx = e.clientX - this._pendingActivation.initialX;
+            // Wait for a clear move to determine direction to avoid accidental activation.
+            if (Math.abs(dx) > 2) {
+                const direction = dx > 0 ? "right" : "left";
+                const indices = this._pendingActivation.indices;
+                // On left drag, grab the leftmost thumb of the stack.
+                // On right drag, grab the rightmost thumb of the stack.
+                this._activeThumbIndex = direction === "left" ? Math.min(...indices) : Math.max(...indices);
+
+                // Now that the thumb is active, find its element and focus it.
+                const thumbElements = this.shadowRoot?.querySelectorAll<HTMLElement>(".thumb");
+                if (thumbElements && thumbElements[this._activeThumbIndex]) {
+                    thumbElements[this._activeThumbIndex].focus();
+                }
+
+                this._pendingActivation = null; // Activation is decided for this drag session.
+            }
+        }
+
         if (this._activeThumbIndex === null || !this._containerRect) return;
         e.preventDefault();
 
@@ -159,10 +209,17 @@ export class RangeGroup extends LitElement {
     };
 
     private _handlePointerUp = (e: PointerEvent) => {
-        if (this._activeThumbIndex === null) return;
-        e.preventDefault();
-        (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+        if (this._activeThumbIndex !== null || this._pendingActivation !== null) {
+            e.preventDefault();
+            try {
+                (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+            } catch (err) {
+                // This can happen if pointer capture is lost for other reasons; it's safe to ignore.
+            }
+        }
+
         this._activeThumbIndex = null;
+        this._pendingActivation = null;
         this._containerRect = null;
     };
 
@@ -229,8 +286,10 @@ export class RangeGroup extends LitElement {
             targetValue = this._snapToDataList(targetValue);
         }
 
-        const minVal = Number(input.min);
-        const maxVal = Number(input.max);
+        // Use component's min/max as the source of truth for clamping.
+        // This is more reliable than reading from the child input element during initialization.
+        const minVal = this.min;
+        const maxVal = this.max;
 
         let finalValue = Math.max(minVal, Math.min(maxVal, targetValue));
 
@@ -274,7 +333,7 @@ export class RangeGroup extends LitElement {
     }
 
     render() {
-        const segmentPoints = [0, ...[...this._values].map((v) => this._valueToPercent(v)).sort((a, b) => a - b), 100];
+        const segmentPoints = [0, ...this._values.map((v) => this._valueToPercent(v)), 100];
 
         const legend = this._legendElements?.[0];
         if (legend && !legend.id) {
@@ -319,7 +378,9 @@ export class RangeGroup extends LitElement {
                         <div
                             part="thumb thumb-${index + 1}"
                             class="thumb"
-                            style="left: ${this._valueToPercent(value)}%;"
+                            style="left: ${this._valueToPercent(value)}%; z-index: ${index === this._activeThumbIndex
+                                ? 12
+                                : 10};"
                             role="slider"
                             tabindex="0"
                             aria-label=${this._getAccessibleName(this._inputs[index], index)}
@@ -378,7 +439,6 @@ export class RangeGroup extends LitElement {
             border-radius: 50%;
             transform: translate(-50%, -50%);
             cursor: pointer;
-            z-index: 10;
             touch-action: none;
             box-shadow: 0 0 8px 0 var(--thumb-bg, #007bff);
             transition: transform 0.1s ease-in-out;
