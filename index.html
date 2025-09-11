@@ -301,7 +301,8 @@
                 <p class="description">
                     A complete visual transformation to create a budget allocation tool. The component's
                     segments are styled as colored bars, and the thumbs as draggable separators. All labels and
-                    percentages are updated via JavaScript.
+                    percentages are updated via JavaScript as well as an aria-polite to give feedback to the user
+                    about the current value of the slider..
                 </p>
                 <div class="card" style="position: relative">
                     <style>
@@ -374,7 +375,7 @@
                     </style>
                     <div class="budget-range-wrapper">
                         <range-group id="budget-range" min="0" max="100">
-                            <legend slot="legend" class="color-pink">Budget Allocatorff</legend>
+                            <legend slot="legend" class="color-pink">Budget Allocator</legend>
 
                             <label for="budget-1" class="visually-hidden">Groceries/Rent separator</label>
                             <input type="range" id="budget-1" value="25" />
@@ -390,6 +391,7 @@
                             <div id="budget-label-3" class="budget-label"></div>
                         </div>
                     </div>
+                    <div id="budget-announcer" class="visually-hidden" aria-live="polite" role="status"></div>
                 </div>
             </section>
             <section>
@@ -662,22 +664,28 @@
             document.getElementById("budget-label-3"),
         ];
         const budgetCategories = ["Groceries", "Rent", "Transport", "Internet"];
+        const budgetAnnouncer = document.getElementById("budget-announcer");
 
-        if (budgetRange && budgetLabels.every((l) => l)) {
-            const updateBudgetLabels = () => {
+        if (budgetRange && budgetAnnouncer && budgetLabels.every((l) => l)) {
+            const updateBudget = () => {
                 const values = [0, ...budgetRange.values, 100];
+                let announcementText = "Budget updated. ";
+
                 for (let i = 0; i < budgetLabels.length; i++) {
                     const start = values[i];
                     const end = values[i + 1];
                     const percentage = Math.round(end - start);
-                    const center = start + percentage / 2;
-
                     const label = budgetLabels[i];
+
                     label.innerHTML = `<strong>${budgetCategories[i]}</strong><br>${percentage}%`;
+                    announcementText += `${budgetCategories[i]}: ${percentage}%. `;
                 }
+
+                // Update the live region for screen readers
+                budgetAnnouncer.textContent = announcementText.trim();
             };
-            updateBudgetLabels();
-            budgetRange.addEventListener("change", updateBudgetLabels);
+            updateBudget();
+            budgetRange.addEventListener("change", updateBudget);
         }
 
         // --- Floating Tooltip Example ---

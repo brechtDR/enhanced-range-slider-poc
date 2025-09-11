@@ -78,31 +78,44 @@ export class RangeGroup extends LitElement {
     }
 
     private _getAccessibleName(input: HTMLInputElement, index: number): string {
-        if (!input) return `value ${index + 1}`;
+        let controlLabel: string | null = null;
+        if (input) {
+            // 1. aria-labelledby
+            const labelledby = input.getAttribute("aria-labelledby");
+            if (labelledby) {
+                const labelElement = document.getElementById(labelledby);
+                controlLabel = labelElement?.textContent?.trim() || null;
+            }
 
-        // 1. aria-labelledby
-        const labelledby = input.getAttribute("aria-labelledby");
-        if (labelledby) {
-            const labelElement = document.getElementById(labelledby);
-            if (labelElement) return labelElement.textContent?.trim() || "";
+            // 2. aria-label
+            if (!controlLabel) {
+                controlLabel = input.getAttribute("aria-label");
+            }
+
+            // 3. <label for="...">
+            if (!controlLabel && input.id) {
+                const label = document.querySelector<HTMLLabelElement>(`label[for="${input.id}"]`);
+                controlLabel = label?.textContent?.trim() || null;
+            }
+
+            // 4. Fallback to name attribute
+            if (!controlLabel) {
+                controlLabel = input.name;
+            }
         }
-
-        // 2. aria-label
-        const ariaLabel = input.getAttribute("aria-label");
-        if (ariaLabel) return ariaLabel;
-
-        // 3. <label for="...">
-        if (input.id) {
-            // querySelector in the root document, as labels can be anywhere
-            const label = document.querySelector<HTMLLabelElement>(`label[for="${input.id}"]`);
-            if (label) return label.textContent?.trim() || "";
-        }
-
-        // 4. Fallback to name attribute
-        if (input.name) return input.name;
 
         // 5. Final fallback
-        return `value ${index + 1}`;
+        const finalControlLabel = controlLabel || `value ${index + 1}`;
+
+        const legendText = this._legendElements?.[0]?.textContent?.trim();
+
+        if (legendText) {
+            // Combine legend and control label for better context in screen readers.
+            // Using a comma provides a natural pause.
+            return `${legendText}, ${finalControlLabel}`;
+        }
+
+        return finalControlLabel;
     }
 
     private _initializeInputs() {
@@ -347,71 +360,73 @@ export class RangeGroup extends LitElement {
         const legendId = legend?.id;
 
         return html`
-            <slot name="legend" @slotchange=${this._onSlotChange}></slot>
-            <div class="container" role="group" aria-labelledby=${legendId || ""}>
-                <div part="track" class="track">
-                    ${segmentPoints.slice(0, -1).map((p, i) => {
-                        const left = p;
-                        const width = segmentPoints[i + 1] - p;
-                        return html`<div
-                                part="segment segment-${i + 1}"
-                                class="segment"
-                                style="left: ${left}%; width: ${width}%;"
-                        ></div>`;
-                    })}
-                </div>
+            <fieldset class="wrapper">
+                <slot name="legend" @slotchange=${this._onSlotChange}></slot>
+                <div class="container" role="group" aria-labelledby=${legendId || ""}>
+                    <div part="track" class="track">
+                        ${segmentPoints.slice(0, -1).map((p, i) => {
+                            const left = p;
+                            const width = segmentPoints[i + 1] - p;
+                            return html`<div
+                                    part="segment segment-${i + 1}"
+                                    class="segment"
+                                    style="left: ${left}%; width: ${width}%;"
+                            ></div>`;
+                        })}
+                    </div>
 
-                ${this._datalistOptions.length > 0
-                        ? html`
-                            <div class="ticks-wrapper">
-                                <div class="tick-marks" part="ticks">
-                                    ${this._datalistOptions.map(
-                                            (opt, index) => html`
-                                                <div
-                                                        part="tick tick-${index + 1}"
-                                                        class="tick"
-                                                        style="left: ${this._valueToPercent(Number(opt.value))}%"
-                                                ></div>
-                                            `,
-                                    )}
+                    ${this._datalistOptions.length > 0
+                            ? html`
+                                <div class="ticks-wrapper">
+                                    <div class="tick-marks" part="ticks">
+                                        ${this._datalistOptions.map(
+                                                (opt, index) => html`
+                                                    <div
+                                                            part="tick tick-${index + 1}"
+                                                            class="tick"
+                                                            style="left: ${this._valueToPercent(Number(opt.value))}%"
+                                                    ></div>
+                                                `,
+                                        )}
+                                    </div>
+                                    <div class="tick-labels" part="tick-labels">
+                                        ${this._datalistOptions.map(
+                                                (opt, index) => html`
+                                                    <div
+                                                            part="tick-label tick-label-${index + 1}"
+                                                            class="tick-label"
+                                                            style="left: ${this._valueToPercent(Number(opt.value))}%"
+                                                    >
+                                                        ${opt.label}
+                                                    </div>
+                                                `,
+                                        )}
+                                    </div>
                                 </div>
-                                <div class="tick-labels" part="tick-labels">
-                                    ${this._datalistOptions.map(
-                                            (opt, index) => html`
-                                                <div
-                                                        part="tick-label tick-label-${index + 1}"
-                                                        class="tick-label"
-                                                        style="left: ${this._valueToPercent(Number(opt.value))}%"
-                                                >
-                                                    ${opt.label}
-                                                </div>
-                                            `,
-                                    )}
-                                </div>
-                            </div>
-                        `
-                        : ""}
-                ${this._values.map(
-                        (value, index) => html`
-                            <button
-                                    part="thumb thumb-${index + 1}"
-                                    class="thumb"
-                                    style="left: ${this._valueToPercent(value)}%; z-index: ${index === this._activeThumbIndex
-                                            ? 12
-                                            : 10};"
-                                    role="slider"
-                                    tabindex="0"
-                                    aria-label=${this._getAccessibleName(this._inputs[index], index)}
-                                    aria-valuemin=${this.min}
-                                    aria-valuemax=${this.max}
-                                    aria-valuenow=${Math.round(value)}
-                                    @pointerdown=${(e: PointerEvent) => this._handlePointerDown(e, index)}
-                                    @keydown=${(e: KeyboardEvent) => this._handleKeyDown(e, index)}
-                            ></button>
-                        `,
-                )}
-            </div>
-            <slot @slotchange=${this._onSlotChange} style="display: none;"></slot>
+                            `
+                            : ""}
+                    ${this._values.map(
+                            (value, index) => html`
+                                <button
+                                        part="thumb thumb-${index + 1}"
+                                        class="thumb"
+                                        style="left: ${this._valueToPercent(value)}%; z-index: ${index === this._activeThumbIndex
+                                                ? 12
+                                                : 10};"
+                                        role="slider"
+                                        tabindex="0"
+                                        aria-label=${this._getAccessibleName(this._inputs[index], index)}
+                                        aria-valuemin=${this.min}
+                                        aria-valuemax=${this.max}
+                                        aria-valuenow=${Math.round(value)}
+                                        @pointerdown=${(e: PointerEvent) => this._handlePointerDown(e, index)}
+                                        @keydown=${(e: KeyboardEvent) => this._handleKeyDown(e, index)}
+                                ></button>
+                            `,
+                    )}
+                </div>
+                <slot @slotchange=${this._onSlotChange} style="display: none;"></slot>
+            </fieldset>
         `;
     }
 
@@ -422,6 +437,13 @@ export class RangeGroup extends LitElement {
             padding-bottom: calc(var(--thumb-size, 24px) / 2);
             box-sizing: content-box;
             --track-height: 6px;
+        }
+
+        .wrapper {
+            border: 0;
+            padding: 0;
+            margin: 0;
+
         }
 
         .container {
