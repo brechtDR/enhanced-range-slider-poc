@@ -529,7 +529,7 @@ export class RangeGroup extends LitElement {
             transform: translateX(-50%);
             width: 1px;
             height: 6px;
-            background: var(--tick-color, #999);
+            background: var(--tick-color, currentColor);
         }
 
         .tick-label {
@@ -537,7 +537,7 @@ export class RangeGroup extends LitElement {
             top: 10px; /* 6px tick height + 4px gap */
             transform: translateX(-50%);
             font-size: 0.75rem;
-            color: var(--tick-label-color, #666);
+            color: var(--tick-label-color, currentColor);
         }
     `;
 }
