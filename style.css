@@ -41,6 +41,13 @@ body {
 .header {
     text-align: center;
     margin-bottom: 3rem;
+    a {
+        color: inherit;
+        text-underline-offset: 3px;
+        &:where(:hover, :focus) {
+            color: #ddd;
+        }
+    }
 }
 
 h1 {
