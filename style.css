@@ -64,7 +64,7 @@ h1 {
 .subtitle {
     margin-top: 1rem;
     font-size: 1.125rem;
-    color: var(--color-text-muted);
+    color: #FFF;
 }
 
 .subtitle code {
