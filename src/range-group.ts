@@ -126,11 +126,16 @@ export class RangeGroup extends LitElement {
         this._inputs.sort((a, b) => Number(a.getAttribute("value")) - Number(b.getAttribute("value")));
 
         this._inputs.forEach((input) => {
-            // Propagate min/max from this component to the underlying inputs.
-            if (this.hasAttribute("min")) input.min = String(this.min);
-            if (this.hasAttribute("max")) input.max = String(this.max);
+            // Propagate min/max from this component to the underlying inputs ONLY if
+            // the input does not have its own min/max attribute.
+            if (!input.hasAttribute("min") && this.hasAttribute("min")) {
+                input.min = String(this.min);
+            }
+            if (!input.hasAttribute("max") && this.hasAttribute("max")) {
+                input.max = String(this.max);
+            }
 
-            // Crucially, re-apply the value from the attribute *after* setting min/max.
+            // Crucially, re-apply the value from the attribute *after* potentially setting min/max.
             // This corrects any clamping the browser did with the default min=0.
             const initialValue = input.getAttribute("value");
             if (initialValue !== null) {
@@ -297,19 +302,12 @@ export class RangeGroup extends LitElement {
         const input = this._inputs[index];
         if (!input) return value;
 
-        let targetValue = value;
+        let finalValue = value;
 
         // Snap to datalist first if it exists
         if (this.list && this._datalistOptions.length > 0) {
-            targetValue = this._snapToDataList(targetValue);
+            finalValue = this._snapToDataList(finalValue);
         }
-
-        // Use component's min/max as the source of truth for clamping.
-        // This is more reliable than reading from the child input element during initialization.
-        const minVal = this.min;
-        const maxVal = this.max;
-
-        let finalValue = Math.max(minVal, Math.min(maxVal, targetValue));
 
         const step = this.stepbetween || 0;
 
@@ -342,8 +340,19 @@ export class RangeGroup extends LitElement {
             }
         }
 
-        // Re-clamp (to ensure we didn't go out of bounds)
-        return Math.max(minVal, Math.min(maxVal, finalValue));
+        // Determine the specific constraints for this thumb.
+        // Read the *attribute* to get the original value from HTML, not the property.
+        const inputMinAttr = input.getAttribute('min');
+        const inputMaxAttr = input.getAttribute('max');
+        // Fallback to the component's min/max if the attribute isn't set.
+        const inputMin = inputMinAttr !== null ? Number(inputMinAttr) : this.min;
+        const inputMax = inputMaxAttr !== null ? Number(inputMaxAttr) : this.max;
+        // The thumb's effective min/max must also be within the range-group's overall bounds.
+        const thumbMin = Math.max(this.min, inputMin);
+        const thumbMax = Math.min(this.max, inputMax);
+
+        // Finally, apply the individual thumb constraints after all other logic.
+        return Math.max(thumbMin, Math.min(thumbMax, finalValue));
     }
 
     private _valueToPercent(value: number): number {

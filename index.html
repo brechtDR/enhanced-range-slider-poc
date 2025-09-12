@@ -299,6 +299,83 @@
             </section>
             <section>
                 <p class="description">
+                    Each thumb can have its own `min` and `max` attributes, creating individual constraints.
+                    The thumb's movement will be restricted to the tighter of its own bounds and the overall
+                    component's bounds.
+                </p>
+                <div class="card">
+                    <style>
+                        #constraints-example-1::part(segment-1),
+                        #constraints-example-1::part(segment-3) {
+                            background-color: oklch(35% 0.02 230); /* Muted track */
+                        }
+                        #constraints-example-1::part(segment-2) {
+                            background-color: var(--color-orange);
+                        }
+                        #constraints-example-1::part(thumb) {
+                            --thumb-bg: var(--color-orange);
+                        }
+                    </style>
+                    <range-group id="constraints-example-1" min="0" max="300">
+                        <legend slot="legend" class="color-orange">Thumb Constraints</legend>
+                        <label for="c1-min-input" class="visually-hidden">Min value with constraint</label>
+                        <input type="range" id="c1-min-input" name="c1-min" value="100" min="50" />
+                        <label for="c1-max-input" class="visually-hidden">Max value with constraint</label>
+                        <input type="range" id="c1-max-input" name="c1-max" value="200" max="250" />
+                    </range-group>
+                </div>
+            </section>
+            <section>
+                <p class="description">
+                    If a thumb's `min` or `max` exceeds the range of the component, it will be constrained by the component's bounds. Here, the track is 100-200, but the thumbs try to go from 0-300.
+                </p>
+                <div class="card">
+                    <style>
+                        #constraints-example-2::part(segment-2) {
+                            background: var(--color-yellow);
+                        }
+                        #constraints-example-2::part(thumb) {
+                            --thumb-bg: var(--color-yellow);
+                        }
+                    </style>
+                    <range-group id="constraints-example-2" min="100" max="200">
+                        <legend slot="legend" class="color-yellow">Parent Override Constraints</legend>
+                        <label for="c2-min-input" class="visually-hidden">Min value (constrained by parent)</label>
+                        <input type="range" id="c2-min-input" name="c2-min" value="125" min="0" />
+                        <label for="c2-max-input" class="visually-hidden">Max value (constrained by parent)</label>
+                        <input type="range" id="c2-max-input" name="c2-max" value="175" max="300" />
+                    </range-group>
+                </div>
+            </section>
+            <section>
+                <p class="description">
+                    A complex example with three handles. The middle handle is constrained to a small central zone (30-70), while the outer handles have full range and can push the middle one.
+                </p>
+                <div class="card">
+                    <style>
+                        #constraints-example-3::part(segment-1) { background-color: #3949ab; }
+                        #constraints-example-3::part(segment-2) { background-color: var(--color-orange); }
+                        #constraints-example-3::part(segment-3) { background-color: var(--color-yellow); }
+                        #constraints-example-3::part(segment-4) { background-color: #3949ab; }
+
+                        #constraints-example-3::part(thumb-1) { --thumb-bg: #3949ab; }
+                        #constraints-example-3::part(thumb-2) { --thumb-bg: var(--color-orange); }
+                        #constraints-example-3::part(thumb-3) { --thumb-bg: var(--color-yellow); }
+                    </style>
+                    <range-group id="constraints-example-3" min="0" max="100">
+                        <legend slot="legend" class="color-orange">Multi-Handle Constraints</legend>
+
+                        <label for="c3-h1-input" class="visually-hidden">Handle 1</label>
+                        <input type="range" id="c3-h1-input" name="c3-h1" value="15" />
+                        <label for="c3-h2-input" class="visually-hidden">Handle 2 (constrained)</label>
+                        <input type="range" id="c3-h2-input" name="c3-h2" value="40" min="30" max="70" />
+                        <label for="c3-h3-input" class="visually-hidden">Handle 3</label>
+                        <input type="range" id="c3-h3-input" name="c3-h3" value="85" />
+                    </range-group>
+                </div>
+            </section>
+            <section>
+                <p class="description">
                     A complete visual transformation to create a budget allocation tool. The component's
                     segments are styled as colored bars, and the thumbs as draggable separators. All labels and
                     percentages are updated via JavaScript as well as an aria-polite to give feedback to the user
