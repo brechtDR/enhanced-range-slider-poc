@@ -4,12 +4,14 @@
     --color-text-muted: oklch(70% 0.02 230);
     --color-text-description: oklch(85% 0.01 230);
     --color-card-bg: oklch(20% 0.02 230);
-    
+
     --color-purple: oklch(70% 0.3 300);
     --color-pink: oklch(75% 0.3 340);
     --color-teal: oklch(80% 0.25 180);
     --color-indigo: oklch(70% 0.28 260);
-    
+    --color-orange: oklch(75% 0.2 50);
+    --color-yellow: oklch(85% 0.25 90);
+
     --color-indigo-strong: oklch(65% 0.28 260);
     --color-indigo-hover: oklch(60% 0.28 260);
     --color-pink-strong: oklch(70% 0.3 340);
@@ -97,6 +99,8 @@ h1 {
 .color-pink { color: var(--color-pink); }
 .color-teal { color: var(--color-teal); }
 .color-indigo { color: var(--color-indigo); }
+.color-orange { color: var(--color-orange); }
+.color-yellow { color: var(--color-yellow); }
 
 
 .card {
@@ -221,13 +225,13 @@ h1 {
     width: 100%;
 }
 /* Hide the arrows on number inputs for a cleaner look */
-.price-input-group input[type=number]::-webkit-inner-spin-button, 
-.price-input-group input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
+.price-input-group input[type=number]::-webkit-inner-spin-button,
+.price-input-group input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 .price-input-group input[type=number] {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 
 
