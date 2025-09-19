@@ -247,3 +247,99 @@ h1 {
     white-space: nowrap;
     border-width: 0;
 }
+
+/* Progressive Enhancement Toggle */
+.pe-toggle-container {
+    background-color: var(--color-card-bg);
+    border: 1px solid oklch(30% 0.02 230);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 2rem auto;
+    max-width: 32rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+}
+
+.pe-toggle-label {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.pe-toggle-label code {
+    color: var(--color-pink);
+    font-size: 1em;
+}
+
+.pe-toggle-explainer {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+}
+
+.pe-toggle-explainer code {
+    font-size: 0.9em;
+    color: var(--color-text-description);
+}
+
+.pe-toggle-switch {
+    --switch-width: 50px;
+    --switch-height: 28px;
+    --thumb-size: 22px;
+    position: relative;
+    width: var(--switch-width);
+    height: var(--switch-height);
+    appearance: none;
+    background-color: oklch(35% 0.02 230);
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.pe-toggle-switch::before {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: var(--thumb-size);
+    height: var(--thumb-size);
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.2s ease-in-out;
+}
+
+.pe-toggle-switch:checked {
+    background-color: var(--color-teal);
+}
+
+.pe-toggle-switch:checked::before {
+    transform: translateX(calc(var(--switch-width) - var(--switch-height)));
+}
+
+/* Fallback Container Styling */
+fieldset {
+    border: 2px dashed oklch(40% 0.02 230);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+fieldset > legend {
+    padding: 0 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+fieldset {
+    color: #FFF;
+    font-weight: 600;
+    margin-bottom: -1rem; /* Pull input closer */
+}
+
+fieldset input[type="range"] {
+    width: 100%; /* Ensure they take up full width */
+}
