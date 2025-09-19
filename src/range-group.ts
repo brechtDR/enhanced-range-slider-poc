@@ -246,6 +246,38 @@ export class RangeGroup extends LitElement {
         this._containerRect = null;
     };
 
+    private _handleTrackClick = (e: PointerEvent) => {
+        // If the click was on a thumb itself, do nothing.
+        // The thumb's pointerdown handler manages its own drag logic.
+        if ((e.target as HTMLElement).classList.contains("thumb")) {
+            return;
+        }
+
+        const container = this.shadowRoot?.querySelector(".container");
+        if (!container) return;
+
+        // We use the container for the rect, not the track, as the track might be smaller.
+        const rect = container.getBoundingClientRect();
+        const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const value = this.min + percent * (this.max - this.min);
+
+        if (this._values.length === 0) return;
+
+        // Find the thumb closest to the clicked position.
+        const closestThumbIndex = this._values.reduce(
+            (closestIndex, currentValue, currentIndex) => {
+                const closestDistance = Math.abs(this._values[closestIndex] - value);
+                const currentDistance = Math.abs(currentValue - value);
+                return currentDistance < closestDistance ? currentIndex : closestIndex;
+            },
+            0, // Start with the first thumb as the initial closest.
+        );
+
+        if (closestThumbIndex !== -1) {
+            this.setRangeValue(closestThumbIndex, value);
+        }
+    };
+
     private _handleKeyDown(e: KeyboardEvent, index: number) {
         const input = this._inputs[index];
         if (!input) return;
@@ -371,7 +403,7 @@ export class RangeGroup extends LitElement {
         return html`
             <fieldset class="wrapper">
                 <slot name="legend" @slotchange=${this._onSlotChange}></slot>
-                <div class="container" role="group" aria-labelledby=${legendId || ""}>
+                <div class="container" role="group" aria-labelledby=${legendId || ""} @click=${this._handleTrackClick}>
                     <div part="track" class="track">
                         ${segmentPoints.slice(0, -1).map((p, i) => {
                             const left = p;

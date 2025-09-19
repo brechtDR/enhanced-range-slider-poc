@@ -130,6 +130,38 @@
             </section>
             <section>
                 <p class="description">
+                    A common use case for selecting a minimum and maximum value. The segment between the handles
+                    is styled differently.
+                </p>
+                <div class="card">
+                    <style>
+                        #price-range::part(segment-1) {
+                            background-color: #ccc;
+                        }
+                        #price-range::part(segment-2) {
+                            background-color: hotpink;
+                        }
+                        #price-range::part(segment-3) {
+                            background-color: #ccc;
+                        }
+                        #price-range::part(segment-4) {
+                            background-color: hotpink;
+                        }
+                        #price-range::part(segment-5) {
+                            background-color: #ccc;
+                        }
+                    </style>
+                    <range-group id="price-range" min="0" max="1000">
+                        <legend slot="legend" class="color-purple">Opening hours</legend>
+                        <label for="price-min-input" class="visually-hidden">morning start</label>
+                        <input type="range" id="price-min-input" name="price-min" value="250" />
+                        <label for="price-max-input" class="visually-hidden">Maximum Price</label>
+                        <input type="range" id="price-max-input" name="price-max" value="750" />
+                    </range-group>
+                </div>
+            </section>
+            <section>
+                <p class="description">
                     Demonstrates multiple handles and custom-colored segments for different temperature zones.
                 </p>
                 <div class="card">
@@ -295,6 +327,79 @@
                         <option value="75"></option>
                         <option value="100" label="100%"></option>
                     </datalist>
+                </div>
+            </section>
+            <section>
+                <p class="description">
+                    An opening hours selector with four handles to define morning and afternoon shifts. The segments between handles are styled to show open/closed times, with a datalist showing hourly labels and enabling half-hour steps.
+                </p>
+                <div class="card">
+                    <style>
+                        #opening-hours-range::part(segment-1),
+                        #opening-hours-range::part(segment-3),
+                        #opening-hours-range::part(segment-5) {
+                            background-color: oklch(35% 0.02 230); /* Muted track */
+                        }
+                        #opening-hours-range::part(segment-2),
+                        #opening-hours-range::part(segment-4) {
+                            background-color: var(--color-teal);
+                        }
+                        #opening-hours-range::part(thumb) {
+                            --thumb-bg: var(--color-teal);
+                        }
+
+                        /*nth capability would be handy for this*/
+                        #opening-hours-range::part(tick-label-2),
+                        #opening-hours-range::part(tick-label-4),
+                        #opening-hours-range::part(tick-label-6),
+                        #opening-hours-range::part(tick-label-8),
+                        #opening-hours-range::part(tick-label-10),
+                        #opening-hours-range::part(tick-label-12),
+                        #opening-hours-range::part(tick-label-14),
+                        #opening-hours-range::part(tick-label-16),
+                        #opening-hours-range::part(tick-label-18),
+                        #opening-hours-range::part(tick-label-20),
+                        #opening-hours-range::part(tick-label-22),
+                        #opening-hours-range::part(tick-label-24),
+                        #opening-hours-range::part(tick-label-26),
+                        #opening-hours-range::part(tick-label-28) {
+                            display: none;
+                        }
+
+                        #opening-hours-range::part(tick-label-29) {
+                            white-space: nowrap;
+                        }
+                    </style>
+                    <range-group id="opening-hours-range" min="480" max="1320" list="hours-ticks" stepbetween="30">
+                        <legend slot="legend" class="color-purple">Opening Hours Selector</legend>
+
+                        <label for="hours-am-start" class="visually-hidden">AM Open</label>
+                        <input type="range" id="hours-am-start" value="540" />
+                        <label for="hours-am-end" class="visually-hidden">AM Close</label>
+                        <input type="range" id="hours-am-end" value="720" />
+                        <label for="hours-pm-start" class="visually-hidden">PM Open</label>
+                        <input type="range" id="hours-pm-start" value="780" />
+                        <label for="hours-pm-end" class="visually-hidden">PM Close</label>
+                        <input type="range" id="hours-pm-end" value="1020" />
+                    </range-group>
+                    <datalist id="hours-ticks">
+                        <option value="480" label="8 AM"></option><option value="510" label="8:30 AM"></option>
+                        <option value="540" label="9 AM"></option><option value="570" label="9:30 AM"></option>
+                        <option value="600" label="10 AM"></option><option value="630" label="10:30 AM"></option>
+                        <option value="660" label="11 AM"></option><option value="690" label="11:30 AM"></option>
+                        <option value="720" label="12 PM"></option><option value="750" label="12:30 PM"></option>
+                        <option value="780" label="1 PM"></option><option value="810" label="1:30 PM"></option>
+                        <option value="840" label="2 PM"></option><option value="870" label="2:30 PM"></option>
+                        <option value="900" label="3 PM"></option><option value="930" label="3:30 PM"></option>
+                        <option value="960" label="4 PM"></option><option value="990" label="4:30 PM"></option>
+                        <option value="1020" label="5 PM"></option><option value="1050" label="5:30 PM"></option>
+                        <option value="1080" label="6 PM"></option><option value="1110" label="6:30 PM"></option>
+                        <option value="1140" label="7 PM"></option><option value="1170" label="7:30 PM"></option>
+                        <option value="1200" label="8 PM"></option><option value="1230" label="8:30 PM"></option>
+                        <option value="1260" label="9 PM"></option><option value="1290" label="9:30 PM"></option>
+                        <option value="1320" label="10 PM"></option>
+                    </datalist>
+                    <div id="hours-output" class="api-output" style="margin-top: 1.5rem;"></div>
                 </div>
             </section>
             <section>
