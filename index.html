@@ -735,9 +735,9 @@
                         <input type="range" id="timeline-2" value="90" />
                     </range-group>
                     <datalist id="timeline-datalist">
-                        <option value="0" label="Q1"></option>
+                        <option value="0" label="start"></option>
                         <option value="25"></option>
-                        <option value="50" label="Q3"></option>
+                        <option value="50" label="mid"></option>
                         <option value="75"></option>
                         <option value="100" label="End"></option>
                     </datalist>
@@ -868,7 +868,7 @@
                 syncInputsToSlider(); // Re-sync to handle clamping
             });
 
-            priceRange.addEventListener("change", syncInputsToSlider);
+            priceRange.addEventListener("input", syncInputsToSlider);
             syncInputsToSlider(); // Initial sync
         }
 
@@ -902,7 +902,40 @@
                 budgetAnnouncer.textContent = announcementText.trim();
             };
             updateBudget();
-            budgetRange.addEventListener("change", updateBudget);
+            budgetRange.addEventListener("input", updateBudget);
+        }
+
+        // --- Opening Hours Example ---
+        const openingHoursRange = document.getElementById('opening-hours-range');
+        const hoursOutput = document.getElementById('hours-output');
+
+        if (openingHoursRange && hoursOutput) {
+            // This function will be used for both visible text and screen reader output
+            const minutesToTime = (minutes) => {
+                const h = Math.floor(minutes / 60);
+                const m = minutes % 60;
+                const ampm = h >= 12 ? 'PM' : 'AM';
+                const displayH = h % 12 === 0 ? 12 : h % 12;
+                const displayM = m.toString().padStart(2, '0');
+                return `${displayH}:${displayM} ${ampm}`;
+            };
+
+            // Assign the formatting function to the component for aria-valuetext.
+            openingHoursRange.valueTextFormatter = minutesToTime;
+
+            const updateHoursOutput = () => {
+                const values = openingHoursRange.values;
+                if (values.length >= 4) {
+                    const [amStart, amEnd, pmStart, pmEnd] = values;
+                    hoursOutput.textContent = `Morning: ${minutesToTime(amStart)} - ${minutesToTime(amEnd)}, Afternoon: ${minutesToTime(pmStart)} - ${minutesToTime(pmEnd)}`;
+                }
+            };
+
+            // Update the text output whenever the slider moves
+            openingHoursRange.addEventListener('input', updateHoursOutput);
+
+            // Initial update to show the starting values
+            updateHoursOutput();
         }
 
         // --- Floating Tooltip Example ---
@@ -920,7 +953,7 @@
                 }
             };
             updateFloatingTooltips();
-            floatingRange.addEventListener("change", updateFloatingTooltips);
+            floatingRange.addEventListener("input", updateFloatingTooltips);
         }
 
         // --- Classic Tooltip Example ---
@@ -935,7 +968,7 @@
                 classicTooltip2.textContent = Math.round(values[1]);
             };
             updateClassicTooltips();
-            classicRange.addEventListener("change", updateClassicTooltips);
+            classicRange.addEventListener("input", updateClassicTooltips);
         }
 
         // --- API Example ---
