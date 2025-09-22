@@ -184,6 +184,10 @@ export class RangeGroup extends LitElement {
             return acc;
         }, [] as number[]);
 
+        // When multiple thumbs are stacked at the same position, clicking them
+        // can be ambiguous. This logic defers deciding which thumb to drag
+        // until the user moves the pointer, resolving the ambiguity based on
+        // the initial drag direction.
         if (overlappingIndices.length > 1) {
             // Overlap detected: defer activation and focus until pointer move.
             this._pendingActivation = {
@@ -336,14 +340,16 @@ export class RangeGroup extends LitElement {
 
         let finalValue = value;
 
-        // Snap to datalist first if it exists
+        // 1. Snap to datalist first if one is provided. This ensures the value
+        // always aligns with a valid tick mark.
         if (this.list && this._datalistOptions.length > 0) {
             finalValue = this._snapToDataList(finalValue);
         }
 
         const step = this.stepbetween || 0;
 
-        // Check against previous handle
+        // 2. Enforce `stepbetween` constraint with adjacent thumbs.
+        // This prevents thumbs from getting too close to each other.
         const prevInput = this._inputs[index - 1];
         if (prevInput) {
             const minAllowed = Number(prevInput.value) + step;
@@ -358,7 +364,6 @@ export class RangeGroup extends LitElement {
             }
         }
 
-        // Check against next handle
         const nextInput = this._inputs[index + 1];
         if (nextInput) {
             const maxAllowed = Number(nextInput.value) - step;
@@ -372,18 +377,21 @@ export class RangeGroup extends LitElement {
             }
         }
 
-        // Determine the specific constraints for this thumb.
+        // 3. Determine the specific constraints for this thumb from its own attributes.
         // Read the *attribute* to get the original value from HTML, not the property.
         const inputMinAttr = input.getAttribute('min');
         const inputMaxAttr = input.getAttribute('max');
         // Fallback to the component's min/max if the attribute isn't set.
         const inputMin = inputMinAttr !== null ? Number(inputMinAttr) : this.min;
         const inputMax = inputMaxAttr !== null ? Number(inputMaxAttr) : this.max;
-        // The thumb's effective min/max must also be within the range-group's overall bounds.
+
+        // 4. Determine the final effective min/max. The thumb's movement must be
+        // within the range-group's overall bounds AND its own individual bounds.
+        // The most restrictive constraint wins.
         const thumbMin = Math.max(this.min, inputMin);
         const thumbMax = Math.min(this.max, inputMax);
 
-        // Finally, apply the individual thumb constraints after all other logic.
+        // 5. Finally, clamp the value within the calculated effective bounds.
         return Math.max(thumbMin, Math.min(thumbMax, finalValue));
     }
 
@@ -404,12 +412,12 @@ export class RangeGroup extends LitElement {
             <fieldset class="wrapper">
                 <slot name="legend" @slotchange=${this._onSlotChange}></slot>
                 <div class="container" role="group" aria-labelledby=${legendId || ""} @click=${this._handleTrackClick}>
-                    <div part="track" class="track">
+                    <div part="slider-track" class="track">
                         ${segmentPoints.slice(0, -1).map((p, i) => {
                             const left = p;
                             const width = segmentPoints[i + 1] - p;
                             return html`<div
-                                    part="segment segment-${i + 1}"
+                                    part="slider-segment slider-segment-${i + 1}"
                                     class="segment"
                                     style="left: ${left}%; width: ${width}%;"
                             ></div>`;
@@ -419,22 +427,22 @@ export class RangeGroup extends LitElement {
                     ${this._datalistOptions.length > 0
                             ? html`
                                 <div class="ticks-wrapper">
-                                    <div class="tick-marks" part="ticks">
+                                    <div class="tick-marks" part="slider-ticks">
                                         ${this._datalistOptions.map(
                                                 (opt, index) => html`
                                                     <div
-                                                            part="tick tick-${index + 1}"
+                                                            part="slider-tick slider-tick-${index + 1}"
                                                             class="tick"
                                                             style="left: ${this._valueToPercent(Number(opt.value))}%"
                                                     ></div>
                                                 `,
                                         )}
                                     </div>
-                                    <div class="tick-labels" part="tick-labels">
+                                    <div class="tick-labels" part="slider-tick-labels">
                                         ${this._datalistOptions.map(
                                                 (opt, index) => html`
                                                     <div
-                                                            part="tick-label tick-label-${index + 1}"
+                                                            part="slider-tick-label slider-tick-label-${index + 1}"
                                                             class="tick-label"
                                                             style="left: ${this._valueToPercent(Number(opt.value))}%"
                                                     >
@@ -449,7 +457,7 @@ export class RangeGroup extends LitElement {
                     ${this._values.map(
                             (value, index) => html`
                                 <button
-                                        part="thumb thumb-${index + 1}"
+                                        part="slider-thumb slider-thumb-${index + 1}"
                                         class="thumb"
                                         style="left: ${this._valueToPercent(value)}%; z-index: ${index === this._activeThumbIndex
                                                 ? 12
