@@ -22,12 +22,12 @@
         }
 
         /* Styling the component parts from the outside */
-        range-group::part(track) {
+        range-group::part(slider-track) {
             background-color: oklch(25% 0.02 230);
             border-radius: 9999px;
         }
 
-        range-group::part(thumb) {
+        range-group::part(slider-thumb) {
             border: 2px solid oklch(95% 0.01 230);
             border-radius: 50%;
         }
@@ -57,21 +57,21 @@
                 </p>
                 <div class="card">
                     <style>
-                        #price-range::part(segment-1) {
+                        #price-range::part(slider-segment-1) {
                             background-color: oklch(35% 0.02 230);
                         }
-                        #price-range::part(segment-2) {
+                        #price-range::part(slider-segment-2) {
                             background-color: var(--color-purple);
                         }
-                        #price-range::part(segment-3) {
+                        #price-range::part(slider-segment-3) {
                             background-color: oklch(35% 0.02 230);
                         }
                     </style>
                     <range-group id="price-range" min="0" max="1000">
                         <legend slot="legend" class="color-purple">Dual-Handle Base Example</legend>
-                        <label for="price-min-input">Minimum Price</label>
+                        <label for="price-min-input" class="visually-hidden">Minimum Price</label>
                         <input type="range" id="price-min-input" name="price-min" value="250" />
-                        <label for="price-max-input">Maximum Price</label>
+                        <label for="price-max-input" class="visually-hidden">Maximum Price</label>
                         <input type="range" id="price-max-input" name="price-max" value="750" />
                     </range-group>
                 </div>
@@ -83,18 +83,18 @@
                 </p>
                 <div class="card">
                     <style>
-                        #interactive-price-range::part(segment-2) {
+                        #interactive-price-range::part(slider-segment-2) {
                             background: var(--color-teal);
                         }
-                        #interactive-price-range::part(thumb) {
+                        #interactive-price-range::part(slider-thumb) {
                             --thumb-bg: var(--color-teal);
                         }
                     </style>
                     <range-group id="interactive-price-range" min="0" max="1000">
                         <legend slot="legend" class="color-teal">Interactive Price Range</legend>
-                        <label for="interactive-price-min-input">Minimum Price</label>
+                        <label for="interactive-price-min-input" class="visually-hidden">Minimum Price</label>
                         <input type="range" id="interactive-price-min-input" name="price-min" value="250" />
-                        <label for="interactive-price-max-input">Maximum Price</label>
+                        <label for="interactive-price-max-input" class="visually-hidden">Maximum Price</label>
                         <input type="range" id="interactive-price-max-input" name="price-max" value="750" />
                     </range-group>
                     <div class="price-input-container">
@@ -113,22 +113,22 @@
                 <p class="description">You could use stepbetween to prevent thumbs form colliding.</p>
                 <div class="card">
                     <style>
-                        #stepbetween-example::part(segment-1) {
+                        #stepbetween-example::part(slider-segment-1) {
                             background-color: oklch(0.554 0.104 233.66);
                         }
-                        #stepbetween-example::part(segment-2) {
+                        #stepbetween-example::part(slider-segment-2) {
                             background-color: oklch(0.849 0.288 142.427);
                         }
-                        #stepbetween-example::part(segment-3) {
+                        #stepbetween-example::part(slider-segment-3) {
                             background-color: oklch(0.554 0.104 233.66);
                         }
                     </style>
                     <range-group id="stepbetween-example" min="0" max="100" stepbetween="10">
                         <legend slot="legend" class="color-pink">Dual-Handle with 10 stepbetween</legend>
 
-                        <label for="price-min-input-stepbetween">Minimum Price</label>
+                        <label for="price-min-input-stepbetween" class="visually-hidden">Minimum Price</label>
                         <input type="range" id="price-min-input-stepbetween" name="price-min" value="50" />
-                        <label for="price-max-input-stepbetween">Maximum Price</label>
+                        <label for="price-max-input-stepbetween" class="visually-hidden">Maximum Price</label>
                         <input type="range" id="price-max-input-stepbetween" name="price-max" value="80" />
                     </range-group>
                 </div>
@@ -139,51 +139,51 @@
                 </p>
                 <div class="card">
                     <style>
-                        #opening-hours-range::part(segment-1),
-                        #opening-hours-range::part(segment-3),
-                        #opening-hours-range::part(segment-5) {
+                        #opening-hours-range::part(slider-segment-1),
+                        #opening-hours-range::part(slider-segment-3),
+                        #opening-hours-range::part(slider-segment-5) {
                             background-color: oklch(35% 0.02 230); /* Muted track */
                         }
-                        #opening-hours-range::part(segment-2),
-                        #opening-hours-range::part(segment-4) {
+                        #opening-hours-range::part(slider-segment-2),
+                        #opening-hours-range::part(slider-segment-4) {
                             background-color: var(--color-teal);
                         }
-                        #opening-hours-range::part(thumb) {
+                        #opening-hours-range::part(slider-thumb) {
                             --thumb-bg: var(--color-teal);
                         }
 
                         /*nth capability would be handy for this*/
-                        #opening-hours-range::part(tick-label-2),
-                        #opening-hours-range::part(tick-label-4),
-                        #opening-hours-range::part(tick-label-6),
-                        #opening-hours-range::part(tick-label-8),
-                        #opening-hours-range::part(tick-label-10),
-                        #opening-hours-range::part(tick-label-12),
-                        #opening-hours-range::part(tick-label-14),
-                        #opening-hours-range::part(tick-label-16),
-                        #opening-hours-range::part(tick-label-18),
-                        #opening-hours-range::part(tick-label-20),
-                        #opening-hours-range::part(tick-label-22),
-                        #opening-hours-range::part(tick-label-24),
-                        #opening-hours-range::part(tick-label-26),
-                        #opening-hours-range::part(tick-label-28) {
+                        #opening-hours-range::part(slider-tick-label-2),
+                        #opening-hours-range::part(slider-tick-label-4),
+                        #opening-hours-range::part(slider-tick-label-6),
+                        #opening-hours-range::part(slider-tick-label-8),
+                        #opening-hours-range::part(slider-tick-label-10),
+                        #opening-hours-range::part(slider-tick-label-12),
+                        #opening-hours-range::part(slider-tick-label-14),
+                        #opening-hours-range::part(slider-tick-label-16),
+                        #opening-hours-range::part(slider-tick-label-18),
+                        #opening-hours-range::part(slider-tick-label-20),
+                        #opening-hours-range::part(slider-tick-label-22),
+                        #opening-hours-range::part(slider-tick-label-24),
+                        #opening-hours-range::part(slider-tick-label-26),
+                        #opening-hours-range::part(slider-tick-label-28) {
                             display: none;
                         }
 
-                        #opening-hours-range::part(tick-label-29) {
+                        #opening-hours-range::part(slider-tick-label-29) {
                             white-space: nowrap;
                         }
                     </style>
                     <range-group id="opening-hours-range" min="480" max="1320" list="hours-ticks" stepbetween="30">
                         <legend slot="legend" class="color-purple">Opening Hours Selector</legend>
 
-                        <label for="hours-am-start">AM Open</label>
+                        <label for="hours-am-start" class="visually-hidden">AM Open</label>
                         <input type="range" id="hours-am-start" value="540" />
-                        <label for="hours-am-end">AM Close</label>
+                        <label for="hours-am-end" class="visually-hidden">AM Close</label>
                         <input type="range" id="hours-am-end" value="720" />
-                        <label for="hours-pm-start">PM Open</label>
+                        <label for="hours-pm-start" class="visually-hidden">PM Open</label>
                         <input type="range" id="hours-pm-start" value="780" />
-                        <label for="hours-pm-end">PM Close</label>
+                        <label for="hours-pm-end" class="visually-hidden">PM Close</label>
                         <input type="range" id="hours-pm-end" value="1020" />
                     </range-group>
                     <datalist id="hours-ticks">
@@ -203,6 +203,7 @@
                         <option value="1260" label="9 PM"></option><option value="1290"></option>
                         <option value="1320" label="10 PM"></option>
                     </datalist>
+                    <div id="hours-output" class="api-output" style="margin-top: 1.5rem;"></div>
                 </div>
             </section>
             <section>
@@ -211,30 +212,30 @@
                 </p>
                 <div class="card">
                     <style>
-                        #temp-range::part(segment-1) {
+                        #temp-range::part(slider-segment-1) {
                             background-color: oklch(65% 0.25 260);
                         }
-                        #temp-range::part(segment-2) {
+                        #temp-range::part(slider-segment-2) {
                             background-color: oklch(80% 0.25 180);
                         }
-                        #temp-range::part(segment-3) {
+                        #temp-range::part(slider-segment-3) {
                             background-color: oklch(85% 0.25 90);
                         }
-                        #temp-range::part(segment-4) {
+                        #temp-range::part(slider-segment-4) {
                             background-color: oklch(70% 0.28 25);
                         }
 
-                        #temp-range::part(thumb-1) {
+                        #temp-range::part(slider-thumb-1) {
                             --thumb-bg: oklch(65% 0.25 260);
                             border: 2px solid oklch(98% 0.01 230);
                             box-shadow: 0 0 12px 4px oklch(65% 0.25 260 / 0.75);
                         }
-                        #temp-range::part(thumb-2) {
+                        #temp-range::part(slider-thumb-2) {
                             --thumb-bg: oklch(85% 0.25 90);
                             border: 2px solid oklch(98% 0.01 230);
                             box-shadow: 0 0 12px 4px oklch(85% 0.25 90 / 0.75);
                         }
-                        #temp-range::part(thumb-3) {
+                        #temp-range::part(slider-thumb-3) {
                             --thumb-bg: oklch(70% 0.28 25);
                             border: 2px solid oklch(98% 0.01 230);
                             box-shadow: 0 0 12px 4px oklch(70% 0.28 25 / 0.75);
@@ -243,11 +244,11 @@
                     <range-group id="temp-range" min="-100" max="100">
                         <legend slot="legend" class="color-indigo">Multi-Handle Temperature Control</legend>
 
-                        <label for="temp-cold-input">Cold temperature bound</label>
+                        <label for="temp-cold-input" class="visually-hidden">Cold temperature bound</label>
                         <input type="range" id="temp-cold-input" name="temp-cold" value="-50" />
-                        <label for="temp-mild-input">Mild temperature bound</label>
+                        <label for="temp-mild-input" class="visually-hidden">Mild temperature bound</label>
                         <input type="range" id="temp-mild-input" name="temp-mild" value="0" />
-                        <label for="temp-hot-input">Hot temperature bound</label>
+                        <label for="temp-hot-input" class="visually-hidden">Hot temperature bound</label>
                         <input type="range" id="temp-hot-input" name="temp-hot" value="50" />
                     </range-group>
                 </div>
@@ -264,14 +265,14 @@
                             margin-top: 2rem;
                             margin-bottom: 2rem;
                         }
-                        #floating-tooltip-range::part(track) {
+                        #floating-tooltip-range::part(slider-track) {
                             background-color: oklch(40% 0.02 230);
                         }
-                        #floating-tooltip-range::part(segment-2) {
+                        #floating-tooltip-range::part(slider-segment-2) {
                             background: var(--color-pink);
                         }
 
-                        #floating-tooltip-range::part(thumb) {
+                        #floating-tooltip-range::part(slider-thumb) {
                             anchor-name: var(--anchor-name);
                             background: transparent;
                             border: none;
@@ -282,13 +283,13 @@
                             border-radius: 9999px;
                         }
 
-                        #floating-tooltip-range::part(thumb-1) {
+                        #floating-tooltip-range::part(slider-thumb-1) {
                             --thumb-transform: translate(-50%, calc(-100% - var(--track-height) / 2 - 5px));
                             --anchor-name: --floating-thumb-1;
                             transform: var(--thumb-transform);
                         }
 
-                        #floating-tooltip-range::part(thumb-2) {
+                        #floating-tooltip-range::part(slider-thumb-2) {
                             --thumb-transform: translate(-50%, calc(0% + var(--track-height) / 2 + 5px));
                             --anchor-name: --floating-thumb-2;
                             transform: var(--thumb-transform);
@@ -333,14 +334,14 @@
                     </style>
                     <range-group id="floating-tooltip-range" min="0" max="100">
                         <legend slot="legend" class="color-purple">Floating Tooltip Handles</legend>
-                        <label for="floating-tooltip-input-1">Value Handle 1</label>
+                        <label for="floating-tooltip-input-1" class="visually-hidden">Value Handle 1</label>
                         <input
                                 type="range"
                                 id="floating-tooltip-input-1"
                                 name="floating-tooltip-1"
                                 value="40"
                         />
-                        <label for="floating-tooltip-input-2">Value Handle 2</label>
+                        <label for="floating-tooltip-input-2" class="visually-hidden">Value Handle 2</label>
                         <input
                                 type="range"
                                 id="floating-tooltip-input-2"
@@ -360,9 +361,9 @@
                 <div class="card">
                     <range-group min="0" max="100" list="rating-ticks" stepbetween="25">
                         <legend slot="legend" class="color-teal">Datalist Integration & Step Between</legend>
-                        <label for="rating-min-input">Minimum rating</label>
+                        <label for="rating-min-input" class="visually-hidden">Minimum rating</label>
                         <input type="range" id="rating-min-input" name="rating-min" value="20" />
-                        <label for="rating-max-input">Maximum rating</label>
+                        <label for="rating-max-input" class="visually-hidden">Maximum rating</label>
                         <input type="range" id="rating-max-input" name="rating-max" value="80" />
                     </range-group>
                     <datalist id="rating-ticks">
@@ -382,22 +383,22 @@
                 </p>
                 <div class="card">
                     <style>
-                        #constraints-example-1::part(segment-1),
-                        #constraints-example-1::part(segment-3) {
+                        #constraints-example-1::part(slider-segment-1),
+                        #constraints-example-1::part(slider-segment-3) {
                             background-color: oklch(35% 0.02 230); /* Muted track */
                         }
-                        #constraints-example-1::part(segment-2) {
+                        #constraints-example-1::part(slider-segment-2) {
                             background-color: var(--color-orange);
                         }
-                        #constraints-example-1::part(thumb) {
+                        #constraints-example-1::part(slider-thumb) {
                             --thumb-bg: var(--color-orange);
                         }
                     </style>
                     <range-group id="constraints-example-1" min="0" max="300">
                         <legend slot="legend" class="color-orange">Thumb Constraints</legend>
-                        <label for="c1-min-input">Min value with constraint</label>
+                        <label for="c1-min-input" class="visually-hidden">Min value with constraint</label>
                         <input type="range" id="c1-min-input" name="c1-min" value="100" min="50" />
-                        <label for="c1-max-input">Max value with constraint</label>
+                        <label for="c1-max-input" class="visually-hidden">Max value with constraint</label>
                         <input type="range" id="c1-max-input" name="c1-max" value="200" max="250" />
                     </range-group>
                 </div>
@@ -408,18 +409,18 @@
                 </p>
                 <div class="card">
                     <style>
-                        #constraints-example-2::part(segment-2) {
+                        #constraints-example-2::part(slider-segment-2) {
                             background: var(--color-yellow);
                         }
-                        #constraints-example-2::part(thumb) {
+                        #constraints-example-2::part(slider-thumb) {
                             --thumb-bg: var(--color-yellow);
                         }
                     </style>
                     <range-group id="constraints-example-2" min="100" max="200">
                         <legend slot="legend" class="color-yellow">Parent Override Constraints</legend>
-                        <label for="c2-min-input">Min value (constrained by parent)</label>
+                        <label for="c2-min-input" class="visually-hidden">Min value (constrained by parent)</label>
                         <input type="range" id="c2-min-input" name="c2-min" value="125" min="0" />
-                        <label for="c2-max-input">Max value (constrained by parent)</label>
+                        <label for="c2-max-input" class="visually-hidden">Max value (constrained by parent)</label>
                         <input type="range" id="c2-max-input" name="c2-max" value="175" max="300" />
                     </range-group>
                 </div>
@@ -430,23 +431,23 @@
                 </p>
                 <div class="card">
                     <style>
-                        #constraints-example-3::part(segment-1) { background-color: #3949ab; }
-                        #constraints-example-3::part(segment-2) { background-color: var(--color-orange); }
-                        #constraints-example-3::part(segment-3) { background-color: var(--color-yellow); }
-                        #constraints-example-3::part(segment-4) { background-color: #3949ab; }
+                        #constraints-example-3::part(slider-segment-1) { background-color: #3949ab; }
+                        #constraints-example-3::part(slider-segment-2) { background-color: var(--color-orange); }
+                        #constraints-example-3::part(slider-segment-3) { background-color: var(--color-yellow); }
+                        #constraints-example-3::part(slider-segment-4) { background-color: #3949ab; }
 
-                        #constraints-example-3::part(thumb-1) { --thumb-bg: #3949ab; }
-                        #constraints-example-3::part(thumb-2) { --thumb-bg: var(--color-orange); }
-                        #constraints-example-3::part(thumb-3) { --thumb-bg: var(--color-yellow); }
+                        #constraints-example-3::part(slider-thumb-1) { --thumb-bg: #3949ab; }
+                        #constraints-example-3::part(slider-thumb-2) { --thumb-bg: var(--color-orange); }
+                        #constraints-example-3::part(slider-thumb-3) { --thumb-bg: var(--color-yellow); }
                     </style>
                     <range-group id="constraints-example-3" min="0" max="100">
                         <legend slot="legend" class="color-orange">Multi-Handle Constraints</legend>
 
-                        <label for="c3-h1-input">Handle 1</label>
+                        <label for="c3-h1-input" class="visually-hidden">Handle 1</label>
                         <input type="range" id="c3-h1-input" name="c3-h1" value="15" />
-                        <label for="c3-h2-input">Handle 2 (constrained)</label>
+                        <label for="c3-h2-input" class="visually-hidden">Handle 2 (constrained)</label>
                         <input type="range" id="c3-h2-input" name="c3-h2" value="40" min="30" max="70" />
-                        <label for="c3-h3-input">Handle 3</label>
+                        <label for="c3-h3-input" class="visually-hidden">Handle 3</label>
                         <input type="range" id="c3-h3-input" name="c3-h3" value="85" />
                     </range-group>
                 </div>
@@ -464,11 +465,11 @@
                             --track-height: 50px;
                             --thumb-size: 36px;
                         }
-                        #budget-range::part(track) {
+                        #budget-range::part(slider-track) {
                             border-radius: 25px;
                             overflow: hidden;
                         }
-                        #budget-range::part(thumb) {
+                        #budget-range::part(slider-thumb) {
                             border: 4px solid var(--color-card-bg);
                             background-color: white;
                             background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools --%3E%3Csvg width='800px' height='800px' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:none;stroke:%23000000;stroke-linecap:round;stroke-linejoin:bevel;stroke-width:1.5px;%7D%3C/style%3E%3C/defs%3E%3Cg id='ic-chevron-left-right'%3E%3Cpath class='cls-1' d='M15.3,16.78l4.11-4.11a1,1,0,0,0,0-1.41l-4-4'/%3E%3Cpath class='cls-1' d='M8.7,7.22,4.59,11.33a1,1,0,0,0,0,1.41l4,4'/%3E%3C/g%3E%3C/svg%3E");
@@ -481,22 +482,22 @@
                         }
 
                         /* Set anchor-name on segments via a CSS variable, matching the working tooltip pattern */
-                        #budget-range::part(segment) {
+                        #budget-range::part(slider-segment) {
                             anchor-name: var(--anchor-name);
                         }
-                        #budget-range::part(segment-1) {
+                        #budget-range::part(slider-segment-1) {
                             background-color: #e53935;
                             --anchor-name: --budget-segment-1;
                         }
-                        #budget-range::part(segment-2) {
+                        #budget-range::part(slider-segment-2) {
                             background-color: #8e24aa;
                             --anchor-name: --budget-segment-2;
                         }
-                        #budget-range::part(segment-3) {
+                        #budget-range::part(slider-segment-3) {
                             background-color: #fdd835;
                             --anchor-name: --budget-segment-3;
                         }
-                        #budget-range::part(segment-4) {
+                        #budget-range::part(slider-segment-4) {
                             background-color: #3949ab;
                             --anchor-name: --budget-segment-4;
                         }
@@ -531,11 +532,11 @@
                         <range-group id="budget-range" min="0" max="100">
                             <legend slot="legend" class="color-pink">Budget Allocator</legend>
 
-                            <label for="budget-1">Groceries/Rent separator</label>
+                            <label for="budget-1" class="visually-hidden">Groceries/Rent separator</label>
                             <input type="range" id="budget-1" value="25" />
-                            <label for="budget-2">Rent/Transport separator</label>
+                            <label for="budget-2" class="visually-hidden">Rent/Transport separator</label>
                             <input type="range" id="budget-2" value="50" />
-                            <label for="budget-3">Transport/Internet separator</label>
+                            <label for="budget-3" class="visually-hidden">Transport/Internet separator</label>
                             <input type="range" id="budget-3" value="75" />
                         </range-group>
                         <div id="budget-labels" class="budget-labels">
@@ -545,7 +546,7 @@
                             <div id="budget-label-3" class="budget-label"></div>
                         </div>
                     </div>
-                    <div id="budget-announcer" aria-live="polite" role="status"></div>
+                    <div id="budget-announcer" class="visually-hidden" aria-live="polite" role="status"></div>
                 </div>
             </section>
             <section>
@@ -559,16 +560,16 @@
                             --track-height: 4px;
                             --thumb-size: 24px;
                         }
-                        #classic-range::part(track) {
+                        #classic-range::part(slider-track) {
                             background: #444;
                             border: 1px solid #111;
                             border-radius: 0;
                             box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
                         }
-                        #classic-range::part(segment-2) {
+                        #classic-range::part(slider-segment-2) {
                             background: #3b82f6;
                         }
-                        #classic-range::part(thumb) {
+                        #classic-range::part(slider-thumb) {
                             anchor-name: var(--anchor-name);
                             background: linear-gradient(to bottom, #f9fafb, #d1d5db);
                             border: 1px solid #6b7280;
@@ -577,10 +578,10 @@
                             height: var(--thumb-size);
                             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
                         }
-                        #classic-range::part(thumb-1) {
+                        #classic-range::part(slider-thumb-1) {
                             --anchor-name: --classic-thumb-1;
                         }
-                        #classic-range::part(thumb-2) {
+                        #classic-range::part(slider-thumb-2) {
                             --anchor-name: --classic-thumb-2;
                         }
 
@@ -608,9 +609,9 @@
                     </style>
                     <range-group id="classic-range" min="0" max="100">
                         <legend slot="legend" class="color-indigo">Classic Look with anchored Tooltips</legend>
-                        <label for="classic-1">Classic Handle 1</label>
+                        <label for="classic-1" class="visually-hidden">Classic Handle 1</label>
                         <input type="range" id="classic-1" name="classic-1" value="20" />
-                        <label for="classic-2">Classic Handle 2</label>
+                        <label for="classic-2" class="visually-hidden">Classic Handle 2</label>
                         <input type="range" id="classic-2" name="classic-2" value="80" />
                     </range-group>
                     <div id="classic-tooltip-1" class="classic-tooltip" aria-hidden="true">20</div>
@@ -625,13 +626,13 @@
                     <range-group id="api-range" min="0" max="500">
                         <legend slot="legend" class="color-purple">JavaScript API Interaction</legend>
                         <style>
-                            #api-range::part(segment-2) {
+                            #api-range::part(slider-segment-2) {
                                 background: linear-gradient(to right, var(--color-purple), var(--color-pink));
                             }
                         </style>
-                        <label for="api-1-input">API Handle 1</label>
+                        <label for="api-1-input" class="visually-hidden">API Handle 1</label>
                         <input type="range" id="api-1-input" name="api-1" value="100" />
-                        <label for="api-2-input">API Handle 2</label>
+                        <label for="api-2-input" class="visually-hidden">API Handle 2</label>
                         <input type="range" id="api-2-input" name="api-2" value="400" />
                     </range-group>
                     <div class="button-group">
@@ -647,29 +648,29 @@
                 </p>
                 <div class="card">
                     <style>
-                        #custom-ticks-example::part(tick) {
+                        #custom-ticks-example::part(slider-tick) {
                             background: var(--color-text-muted);
                             height: 8px;
                             transition: all 0.2s ease;
                         }
                         /* Style the 3rd tick (value="50") */
-                        #custom-ticks-example::part(tick-3) {
+                        #custom-ticks-example::part(slider-tick-3) {
                             background: var(--color-pink);
                             height: 16px; /* Taller */
                             width: 3px;
                             transform: translateX(-1.5px); /* Re-center */
                         }
                         /* Style the 3rd tick's label */
-                        #custom-ticks-example::part(tick-label-3) {
+                        #custom-ticks-example::part(slider-tick-label-3) {
                             color: var(--color-pink);
                             font-weight: bold;
                         }
                     </style>
                     <range-group id="custom-ticks-example" min="0" max="100" list="custom-ticks-datalist">
                         <legend slot="legend" class="color-pink">Custom Tick Styling</legend>
-                        <label for="custom-tick-1">Value 1</label>
+                        <label for="custom-tick-1" class="visually-hidden">Value 1</label>
                         <input type="range" id="custom-tick-1" value="25" />
-                        <label for="custom-tick-2">Value 2</label>
+                        <label for="custom-tick-2" class="visually-hidden">Value 2</label>
                         <input type="range" id="custom-tick-2" value="75" />
                     </range-group>
                     <datalist id="custom-ticks-datalist">
@@ -688,46 +689,46 @@
                 <div class="card">
                     <style>
                         #timeline-example { --track-height: 2px; }
-                        #timeline-example::part(track) { background: #555; }
-                        #timeline-example::part(thumb) { --thumb-bg: var(--color-teal); }
-                        #timeline-example::part(segment-2) { background: var(--color-teal); }
+                        #timeline-example::part(slider-track) { background: #555; }
+                        #timeline-example::part(slider-thumb) { --thumb-bg: var(--color-teal); }
+                        #timeline-example::part(slider-segment-2) { background: var(--color-teal); }
 
-                        #timeline-example::part(tick) {
+                        #timeline-example::part(slider-tick) {
                             background: #888;
                             width: 2px;
                             height: 10px;
                             border-radius: 2px;
                         }
                         /* Highlight the start (1st), middle (3rd), and end (5th) ticks */
-                        #timeline-example::part(tick-1),
-                        #timeline-example::part(tick-3),
-                        #timeline-example::part(tick-5) {
+                        #timeline-example::part(slider-tick-1),
+                        #timeline-example::part(slider-tick-3),
+                        #timeline-example::part(slider-tick-5) {
                             background: var(--color-teal);
                             height: 20px;
                             width: 4px;
                             transform: translate(-2px, -7px); /* Adjust position for height */
                         }
-                        #timeline-example::part(tick-label) {
+                        #timeline-example::part(slider-tick-label) {
                             color: var(--color-text-muted);
                         }
-                        #timeline-example::part(tick-label-1),
-                        #timeline-example::part(tick-label-3),
-                        #timeline-example::part(tick-label-5) {
+                        #timeline-example::part(slider-tick-label-1),
+                        #timeline-example::part(slider-tick-label-3),
+                        #timeline-example::part(slider-tick-label-5) {
                             color: var(--color-teal);
                             font-weight: bold;
                         }
                     </style>
                     <range-group id="timeline-example" min="0" max="100" list="timeline-datalist">
                         <legend slot="legend" class="color-teal">Styled Timeline</legend>
-                        <label for="timeline-1">Start Date</label>
+                        <label for="timeline-1" class="visually-hidden">Start Date</label>
                         <input type="range" id="timeline-1" value="10" />
-                        <label for="timeline-2">End Date</label>
+                        <label for="timeline-2" class="visually-hidden">End Date</label>
                         <input type="range" id="timeline-2" value="90" />
                     </range-group>
                     <datalist id="timeline-datalist">
-                        <option value="0" label="Q1"></option>
+                        <option value="0" label="start"></option>
                         <option value="25"></option>
-                        <option value="50" label="Q3"></option>
+                        <option value="50" label="mid"></option>
                         <option value="75"></option>
                         <option value="100" label="End"></option>
                     </datalist>
@@ -739,27 +740,27 @@
                 </p>
                 <div class="card">
                     <style>
-                        #multiphase-example::part(tick) { height: 12px; width: 2px; }
+                        #multiphase-example::part(slider-tick) { height: 12px; width: 2px; }
 
-                        #multiphase-example::part(tick-1) { background: #aaa; }
-                        #multiphase-example::part(tick-label-1) { color: #aaa; }
+                        #multiphase-example::part(slider-tick-1) { background: #aaa; }
+                        #multiphase-example::part(slider-tick-label-1) { color: #aaa; }
 
-                        #multiphase-example::part(tick-2) { background: #fdd835; } /* Yellow */
-                        #multiphase-example::part(tick-label-2) { color: #fdd835; }
+                        #multiphase-example::part(slider-tick-2) { background: #fdd835; } /* Yellow */
+                        #multiphase-example::part(slider-tick-label-2) { color: #fdd835; }
 
-                        #multiphase-example::part(tick-3) { background: #4caf50; } /* Green */
-                        #multiphase-example::part(tick-label-3) { color: #4caf50; }
+                        #multiphase-example::part(slider-tick-3) { background: #4caf50; } /* Green */
+                        #multiphase-example::part(slider-tick-label-3) { color: #4caf50; }
 
-                        #multiphase-example::part(tick-4) { background: #3b82f6; } /* Blue */
-                        #multiphase-example::part(tick-label-4) { color: #3b82f6; }
+                        #multiphase-example::part(slider-tick-4) { background: #3b82f6; } /* Blue */
+                        #multiphase-example::part(slider-tick-label-4) { color: #3b82f6; }
                     </style>
                     <range-group id="multiphase-example" min="0" max="100" list="multiphase-datalist">
                         <legend slot="legend" class="color-indigo">Three-Handle Process Flow</legend>
-                        <label for="multiphase-1">Phase 1 End</label>
+                        <label for="multiphase-1" class="visually-hidden">Phase 1 End</label>
                         <input type="range" id="multiphase-1" value="20" />
-                        <label for="multiphase-2">Phase 2 End</label>
+                        <label for="multiphase-2" class="visually-hidden">Phase 2 End</label>
                         <input type="range" id="multiphase-2" value="50" />
-                        <label for="multiphase-3">Phase 3 End</label>
+                        <label for="multiphase-3" class="visually-hidden">Phase 3 End</label>
                         <input type="range" id="multiphase-3" value="80" />
                     </range-group>
                     <datalist id="multiphase-datalist">
@@ -812,7 +813,11 @@
                             fallback.appendChild(component.firstChild);
                         }
 
-
+                        // Make visually-hidden labels visible in the fallback
+                        fallback.querySelectorAll('label.visually-hidden').forEach(label => {
+                            label.classList.remove('visually-hidden');
+                            label.classList.add('fallback-label-visible');
+                        });
 
                         component.style.display = "none";
                         component.parentNode.insertBefore(fallback, component);
@@ -854,7 +859,7 @@
                 syncInputsToSlider(); // Re-sync to handle clamping
             });
 
-            priceRange.addEventListener("change", syncInputsToSlider);
+            priceRange.addEventListener("input", syncInputsToSlider);
             syncInputsToSlider(); // Initial sync
         }
 
@@ -888,7 +893,40 @@
                 budgetAnnouncer.textContent = announcementText.trim();
             };
             updateBudget();
-            budgetRange.addEventListener("change", updateBudget);
+            budgetRange.addEventListener("input", updateBudget);
+        }
+
+        // --- Opening Hours Example ---
+        const openingHoursRange = document.getElementById('opening-hours-range');
+        const hoursOutput = document.getElementById('hours-output');
+
+        if (openingHoursRange && hoursOutput) {
+            // This function will be used for both visible text and screen reader output
+            const minutesToTime = (minutes) => {
+                const h = Math.floor(minutes / 60);
+                const m = minutes % 60;
+                const ampm = h >= 12 ? 'PM' : 'AM';
+                const displayH = h % 12 === 0 ? 12 : h % 12;
+                const displayM = m.toString().padStart(2, '0');
+                return `${displayH}:${displayM} ${ampm}`;
+            };
+
+            // Assign the formatting function to the component for aria-valuetext.
+            openingHoursRange.valueTextFormatter = minutesToTime;
+
+            const updateHoursOutput = () => {
+                const values = openingHoursRange.values;
+                if (values.length >= 4) {
+                    const [amStart, amEnd, pmStart, pmEnd] = values;
+                    hoursOutput.textContent = `Morning: ${minutesToTime(amStart)} - ${minutesToTime(amEnd)}, Afternoon: ${minutesToTime(pmStart)} - ${minutesToTime(pmEnd)}`;
+                }
+            };
+
+            // Update the text output whenever the slider moves
+            openingHoursRange.addEventListener('input', updateHoursOutput);
+
+            // Initial update to show the starting values
+            updateHoursOutput();
         }
 
         // --- Floating Tooltip Example ---
@@ -906,7 +944,7 @@
                 }
             };
             updateFloatingTooltips();
-            floatingRange.addEventListener("change", updateFloatingTooltips);
+            floatingRange.addEventListener("input", updateFloatingTooltips);
         }
 
         // --- Classic Tooltip Example ---
@@ -921,7 +959,7 @@
                 classicTooltip2.textContent = Math.round(values[1]);
             };
             updateClassicTooltips();
-            classicRange.addEventListener("change", updateClassicTooltips);
+            classicRange.addEventListener("input", updateClassicTooltips);
         }
 
         // --- API Example ---
