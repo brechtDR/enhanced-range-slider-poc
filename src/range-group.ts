@@ -1,3 +1,4 @@
+
 import { LitElement, html, css, PropertyValueMap } from "lit";
 import {
     customElement,
@@ -26,8 +27,7 @@ export class RangeGroup extends LitElement {
     private _previousChangeValues: number[] = [];
     @state() private _datalistOptions: { value: string; label: string }[] = [];
 
-    @queryAssignedElements({ selector: 'input[type="range"]' })
-    private _inputs!: HTMLInputElement[];
+    private _inputs: HTMLInputElement[] = [];
 
     @queryAll(".thumb")
     private _thumbs!: HTMLButtonElement[];
@@ -79,6 +79,16 @@ export class RangeGroup extends LitElement {
     }
 
     private _onSlotChange() {
+        const slot = this.shadowRoot?.querySelector('slot:not([name])');
+        // FIX: Check if the slot is an instance of HTMLSlotElement before accessing `assignedElements`.
+        if (slot instanceof HTMLSlotElement) {
+            const assignedElements = slot.assignedElements({ flatten: true });
+            this._inputs = assignedElements.flatMap((el) =>
+                el.matches('input[type="range"]')
+                    ? [el as HTMLInputElement]
+                    : Array.from(el.querySelectorAll('input[type="range"]')),
+            );
+        }
         this._initializeInputs();
     }
 
@@ -97,12 +107,9 @@ export class RangeGroup extends LitElement {
                 controlLabel = input.getAttribute("aria-label");
             }
 
-            // 3. <label for="...">
-            if (!controlLabel && input.id) {
-                const label = document.querySelector<HTMLLabelElement>(
-                    `label[for="${input.id}"]`,
-                );
-                controlLabel = label?.textContent?.trim() || null;
+            // 3. Associated <label> element (via `input.labels`)
+            if (!controlLabel && input.labels && input.labels.length > 0) {
+                controlLabel = input.labels[0].textContent?.trim() || null;
             }
 
             // 4. Fallback to name attribute
