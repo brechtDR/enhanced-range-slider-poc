@@ -69,10 +69,10 @@
                     </style>
                     <range-group id="price-range" min="0" max="1000">
                         <legend slot="legend" class="color-purple">Dual-Handle Base Example</legend>
-                        <label class="visually-hidden">Minimum Price
+                        <label>Minimum Price
                             <input type="range" name="price-min" value="250" />
                         </label>
-                        <label class="visually-hidden">Maximum Price
+                        <label>Maximum Price
                             <input type="range" name="price-max" value="750" />
                         </label>
                     </range-group>
@@ -94,10 +94,10 @@
                     </style>
                     <range-group id="interactive-price-range" min="0" max="1000">
                         <legend slot="legend" class="color-teal">Interactive Price Range</legend>
-                        <label class="visually-hidden">Minimum Price
+                        <label>Minimum Price
                             <input type="range" name="price-min" value="250" />
                         </label>
-                        <label class="visually-hidden">Maximum Price
+                        <label>Maximum Price
                             <input type="range" name="price-max" value="750" />
                         </label>
                     </range-group>
@@ -129,10 +129,10 @@
                     </style>
                     <range-group id="stepbetween-example" min="0" max="100" stepbetween="10">
                         <legend slot="legend" class="color-pink">Dual-Handle with 10 stepbetween</legend>
-                        <label class="visually-hidden">Minimum Price
+                        <label>Minimum Price
                             <input type="range" name="price-min" value="50" />
                         </label>
-                        <label class="visually-hidden">Maximum Price
+                        <label>Maximum Price
                             <input type="range" name="price-max" value="80" />
                         </label>
                     </range-group>
@@ -182,16 +182,16 @@
                     <range-group id="opening-hours-range" min="480" max="1320" list="hours-ticks" stepbetween="30">
                         <legend slot="legend" class="color-purple">Opening Hours Selector</legend>
 
-                        <label class="visually-hidden">AM Open
+                        <label>AM Open
                             <input type="range" value="540" />
                         </label>
-                        <label class="visually-hidden">AM Close
+                        <label>AM Close
                             <input type="range" value="720" />
                         </label>
-                        <label class="visually-hidden">PM Open
+                        <label>PM Open
                             <input type="range" value="780" />
                         </label>
-                        <label class="visually-hidden">PM Close
+                        <label>PM Close
                             <input type="range" value="1020" />
                         </label>
                     </range-group>
@@ -252,13 +252,13 @@
                     </style>
                     <range-group id="temp-range" min="-100" max="100">
                         <legend slot="legend" class="color-indigo">Multi-Handle Temperature Control</legend>
-                        <label class="visually-hidden">Cold temperature bound
+                        <label>Cold temperature bound
                             <input type="range" name="temp-cold" value="-50" />
                         </label>
-                        <label class="visually-hidden">Mild temperature bound
+                        <label>Mild temperature bound
                             <input type="range" name="temp-mild" value="0" />
                         </label>
-                        <label class="visually-hidden">Hot temperature bound
+                        <label>Hot temperature bound
                             <input type="range" name="temp-hot" value="50" />
                         </label>
                     </range-group>
@@ -345,14 +345,14 @@
                     </style>
                     <range-group id="floating-tooltip-range" min="0" max="100">
                         <legend slot="legend" class="color-purple">Floating Tooltip Handles</legend>
-                        <label class="visually-hidden">Value Handle 1
+                        <label>Value Handle 1
                             <input
                                     type="range"
                                     name="floating-tooltip-1"
                                     value="40"
                             />
                         </label>
-                        <label class="visually-hidden">Value Handle 2
+                        <label>Value Handle 2
                             <input
                                     type="range"
                                     name="floating-tooltip-2"
@@ -372,10 +372,10 @@
                 <div class="card">
                     <range-group min="0" max="100" list="rating-ticks" stepbetween="25">
                         <legend slot="legend" class="color-teal">Datalist Integration & Step Between</legend>
-                        <label class="visually-hidden">Minimum rating
+                        <label>Minimum rating
                             <input type="range" name="rating-min" value="20" />
                         </label>
-                        <label class="visually-hidden">Maximum rating
+                        <label>Maximum rating
                             <input type="range" name="rating-max" value="80" />
                         </label>
                     </range-group>
@@ -409,10 +409,10 @@
                     </style>
                     <range-group id="constraints-example-1" min="0" max="300">
                         <legend slot="legend" class="color-orange">Thumb Constraints</legend>
-                        <label class="visually-hidden">Min value with constraint
+                        <label>Min value with constraint
                             <input type="range" name="c1-min" value="100" min="50" />
                         </label>
-                        <label class="visually-hidden">Max value with constraint
+                        <label>Max value with constraint
                             <input type="range" name="c1-max" value="200" max="250" />
                         </label>
                     </range-group>
@@ -433,10 +433,10 @@
                     </style>
                     <range-group id="constraints-example-2" min="100" max="200">
                         <legend slot="legend" class="color-yellow">Parent Override Constraints</legend>
-                        <label class="visually-hidden">Min value (constrained by parent)
+                        <label>Min value (constrained by parent)
                             <input type="range" name="c2-min" value="125" min="0" />
                         </label>
-                        <label class="visually-hidden">Max value (constrained by parent)
+                        <label>Max value (constrained by parent)
                             <input type="range" name="c2-max" value="175" max="300" />
                         </label>
                     </range-group>
@@ -460,13 +460,13 @@
                     <range-group id="constraints-example-3" min="0" max="100">
                         <legend slot="legend" class="color-orange">Multi-Handle Constraints</legend>
 
-                        <label class="visually-hidden">Handle 1
+                        <label>Handle 1
                             <input type="range" name="c3-h1" value="15" />
                         </label>
-                        <label class="visually-hidden">Handle 2 (constrained)
+                        <label>Handle 2 (constrained)
                             <input type="range" name="c3-h2" value="40" min="30" max="70" />
                         </label>
-                        <label class="visually-hidden">Handle 3
+                        <label>Handle 3
                             <input type="range" name="c3-h3" value="85" />
                         </label>
                     </range-group>
@@ -551,13 +551,13 @@
                     <div class="budget-range-wrapper">
                         <range-group id="budget-range" min="0" max="100">
                             <legend slot="legend" class="color-pink">Budget Allocator</legend>
-                            <label class="visually-hidden">Groceries/Rent separator
+                            <label>Groceries/Rent separator
                                 <input type="range" value="25" />
                             </label>
-                            <label class="visually-hidden">Rent/Transport separator
+                            <label>Rent/Transport separator
                                 <input type="range" value="50" />
                             </label>
-                            <label class="visually-hidden">Transport/Internet separator
+                            <label>Transport/Internet separator
                                 <input type="range" value="75" />
                             </label>
                         </range-group>
@@ -568,7 +568,7 @@
                             <div id="budget-label-3" class="budget-label"></div>
                         </div>
                     </div>
-                    <div id="budget-announcer" class="visually-hidden" aria-live="polite" role="status"></div>
+                    <div id="budget-announcer" aria-live="polite" role="status"></div>
                 </div>
             </section>
             <section>
@@ -631,10 +631,10 @@
                     </style>
                     <range-group id="classic-range" min="0" max="100">
                         <legend slot="legend" class="color-indigo">Classic Look with anchored Tooltips</legend>
-                        <label class="visually-hidden">Classic Handle 1
+                        <label>Classic Handle 1
                             <input type="range" name="classic-1" value="20" />
                         </label>
-                        <label class="visually-hidden">Classic Handle 2
+                        <label>Classic Handle 2
                             <input type="range" name="classic-2" value="80" />
                         </label>
                     </range-group>
@@ -654,10 +654,10 @@
                                 background: linear-gradient(to right, var(--color-purple), var(--color-pink));
                             }
                         </style>
-                        <label class="visually-hidden">API Handle 1
+                        <label>API Handle 1
                             <input type="range" name="api-1" value="100" />
                         </label>
-                        <label class="visually-hidden">API Handle 2
+                        <label>API Handle 2
                             <input type="range" name="api-2" value="400" />
                         </label>
                     </range-group>
@@ -694,10 +694,10 @@
                     </style>
                     <range-group id="custom-ticks-example" min="0" max="100" list="custom-ticks-datalist">
                         <legend slot="legend" class="color-pink">Custom Tick Styling</legend>
-                        <label class="visually-hidden">Value 1
+                        <label>Value 1
                             <input type="range" value="25" />
                         </label>
-                        <label class="visually-hidden">Value 2
+                        <label>Value 2
                             <input type="range" value="75" />
                         </label>
                     </range-group>
@@ -748,10 +748,10 @@
                     </style>
                     <range-group id="timeline-example" min="0" max="100" list="timeline-datalist">
                         <legend slot="legend" class="color-teal">Styled Timeline</legend>
-                        <label class="visually-hidden">Start Date
+                        <label>Start Date
                             <input type="range" value="10" />
                         </label>
-                        <label class="visually-hidden">End Date
+                        <label>End Date
                             <input type="range" value="90" />
                         </label>
                     </range-group>
@@ -786,13 +786,13 @@
                     </style>
                     <range-group id="multiphase-example" min="0" max="100" list="multiphase-datalist">
                         <legend slot="legend" class="color-indigo">Three-Handle Process Flow</legend>
-                        <label class="visually-hidden">Phase 1 End
+                        <label>Phase 1 End
                             <input type="range" value="20" />
                         </label>
-                        <label class="visually-hidden">Phase 2 End
+                        <label>Phase 2 End
                             <input type="range" value="50" />
                         </label>
-                        <label class="visually-hidden">Phase 3 End
+                        <label>Phase 3 End
                             <input type="range" value="80" />
                         </label>
                     </range-group>
