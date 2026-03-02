@@ -343,3 +343,206 @@ fieldset {
 fieldset input[type="range"] {
     width: 100%; /* Ensure they take up full width */
 }
+
+
+/* =========================================
+   Prism syntax highlighting — dark theme
+   Adapted from utilitybend-astro
+   ========================================= */
+:root {
+    --prism-text: #eee;
+    --prism-bg: #0e0c16;
+    --prism-punctuation: linen;
+    --prism-blue: #80cbc4;
+    --prism-pink: #ff1493;
+    --prism-purple-light: #c792ea;
+    --prism-css-color: #fd9170;
+    --prism-purple: #e599f7;
+    --prism-purple-on-dark: #ff00d6;
+    --prism-green: #a5e844;
+    --prism-yellow: #ffcb6b;
+    --prism-comment: #888;
+    --prism-regex: #f2ff00;
+    --prism-chrome-bg: rgba(255, 255, 255, 0.04);
+    --prism-chrome-divider: rgba(255, 255, 255, 0.12);
+}
+
+@media (dynamic-range: high) {
+    @supports (color: color(display-p3 0 0 0)) {
+        :root {
+            --prism-blue: color(display-p3 61% 99% 100%);
+            --prism-purple-light: color(display-p3 0.79 0.56 1);
+            --prism-css-color: color(display-p3 0.99 0.62 0.49);
+            --prism-pink: color(display-p3 1 0 1);
+            --prism-purple: color(display-p3 0.5 0 1);
+            --prism-purple-on-dark: color(display-p3 98% 0% 83%);
+            --prism-green: color(display-p3 0.65 0.98 0.1);
+            --prism-yellow: color(display-p3 1 0.77 0.3);
+        }
+    }
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+    background: var(--prism-bg);
+    color: var(--prism-text);
+    text-align: left;
+    white-space: pre;
+    word-break: normal;
+    word-spacing: normal;
+    word-wrap: normal;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    font-family: "Source Code Pro", Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+    hyphens: none;
+    tab-size: 2;
+    border-radius: 0;
+    margin: 0;
+}
+
+pre[class*="language-"] {
+    position: relative;
+    padding: 1.25em;
+    overflow: auto;
+    border: 0;
+    border-radius: 0 0 0.5rem 0.5rem;
+    max-height: 28rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+pre[class*="language-"] > code {
+    display: block;
+}
+
+.language-css > code,
+.language-sass > code,
+.language-scss > code,
+.language-javascript > code {
+    color: var(--prism-css-color);
+}
+
+[class*="language-"] .namespace { opacity: 0.7; }
+
+.token.atrule { color: var(--prism-css-color); }
+.token.atrule .rule { color: var(--prism-purple-light); }
+.token.attr-name { color: var(--prism-yellow); }
+.token.attr-value { color: var(--prism-green); }
+.token.attribute { color: var(--prism-green); }
+.token.boolean { color: var(--prism-purple-light); }
+.token.builtin { color: var(--prism-yellow); }
+.token.cdata { color: var(--prism-blue); }
+.token.char { color: var(--prism-blue); }
+.token.class { color: var(--prism-yellow); }
+.token.class-name { color: var(--prism-regex); }
+.token.comment { color: var(--prism-comment); }
+.token.constant { color: var(--prism-purple-light); }
+.token.deleted { color: #ff6666; }
+.token.doctype { color: #616161; }
+.token.entity { color: #ff6666; }
+.token.function { color: var(--prism-purple-light); }
+.token.hexcode { color: var(--prism-regex); }
+.token.id { color: var(--prism-purple-light); font-weight: bold; }
+.token.important { color: var(--prism-purple-light); font-weight: bold; }
+.token.inserted { color: var(--prism-blue); }
+.token.keyword { color: var(--prism-purple-light); }
+.token.number { color: #fd9170; }
+.token.operator { color: var(--prism-blue); }
+.token.prolog { color: #616161; }
+.token.property { color: var(--prism-blue); }
+.token.pseudo-class { color: var(--prism-green); }
+.token.pseudo-element { color: var(--prism-green); }
+.token.punctuation { color: var(--prism-punctuation); }
+.token.regex { color: var(--prism-regex); }
+.token.selector { color: var(--prism-purple-on-dark); }
+.token.string { color: var(--prism-green); }
+.token.symbol { color: var(--prism-purple-light); }
+.token.tag { color: var(--prism-pink); }
+.token.unit { color: #fd9170; }
+.token.url { color: #ff6666; }
+.token.variable { color: #ff6666; }
+
+
+/* =========================================
+   Code blocks — collapsible + tabbed
+   ========================================= */
+.code-block {
+    margin-top: 1rem;
+    border: 1px solid oklch(30% 0.02 230);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.code-block summary {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    background: oklch(18% 0.02 230);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    user-select: none;
+}
+
+.code-block summary::-webkit-details-marker { display: none; }
+
+.code-block summary::before {
+    content: "▶";
+    font-size: 0.65em;
+    transition: transform 0.2s ease;
+    display: inline-block;
+}
+
+.code-block[open] summary::before {
+    transform: rotate(90deg);
+}
+
+.code-block summary:hover {
+    color: var(--color-text);
+}
+
+.code-block summary:focus-visible {
+    outline: 2px solid oklch(70% 0.28 260);
+    outline-offset: -2px;
+}
+
+.code-block [role="tablist"] {
+    display: flex;
+    background: oklch(12% 0.02 230);
+    border-bottom: 1px solid oklch(25% 0.02 230);
+}
+
+.code-block [role="tab"] {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    color: var(--color-text-muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    position: relative;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.code-block [role="tab"]:hover {
+    color: var(--color-text);
+}
+
+.code-block [role="tab"][aria-selected="true"] {
+    color: var(--color-text);
+    border-bottom-color: var(--color-purple);
+}
+
+.code-block [role="tab"]:focus-visible {
+    outline: 2px solid oklch(70% 0.28 260);
+    outline-offset: -2px;
+}
+
+.code-block [role="tabpanel"] pre {
+    margin: 0;
+    border-radius: 0;
+}
