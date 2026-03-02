@@ -17,6 +17,7 @@ export class RangeGroup extends LitElement {
     @property({ type: Number }) max = 100;
     @property({ type: Number, attribute: "stepbetween" }) stepBetween = 0;
     @property({ type: String }) list = "";
+    @property({ type: Boolean, reflect: true }) disabled = false;
 
     @property({ attribute: false })
     valueTextFormatter: (value: number) => string = (value) => String(Math.round(value));
@@ -56,6 +57,16 @@ export class RangeGroup extends LitElement {
             this._inputs[index].value = String(this._normalizeValue(value, index));
             this._updateValues();
         }
+    }
+
+    private get _isEffectivelyDisabled(): boolean {
+        if (this.disabled) return true;
+        return this._inputs.length > 0 && this._inputs.every((input) => input.disabled);
+    }
+
+    private _isThumbDisabled(index: number): boolean {
+        if (this.disabled) return true;
+        return this._inputs[index]?.disabled ?? false;
     }
 
     connectedCallback() {
@@ -193,7 +204,7 @@ export class RangeGroup extends LitElement {
     }
 
     private _handleContainerPointerDown(e: PointerEvent) {
-        if (e.button !== 0) return;
+        if (e.button !== 0 || this._isEffectivelyDisabled) return;
 
         this._containerRect =
             this.shadowRoot?.querySelector(".container")?.getBoundingClientRect() ??
@@ -208,7 +219,7 @@ export class RangeGroup extends LitElement {
             const thumbIndex = Array.from(this._thumbs).indexOf(
                 target as HTMLButtonElement,
             );
-            if (thumbIndex === -1) return;
+            if (thumbIndex === -1 || this._isThumbDisabled(thumbIndex)) return;
 
             const currentValue = this._values[thumbIndex];
             const overlappingIndices = this._values.reduce((acc, v, i) => {
@@ -242,16 +253,21 @@ export class RangeGroup extends LitElement {
 
             if (this._values.length === 0) return;
 
-            // Find the closest thumb to the click position
-            const thumbIndex = this._values.reduce(
-                (closestIndex, currentValue, currentIndex) => {
+            // Find the closest non-disabled thumb to the click position
+            const enabledIndices = this._values
+                .map((_, i) => i)
+                .filter((i) => !this._isThumbDisabled(i));
+            if (enabledIndices.length === 0) return;
+
+            const thumbIndex = enabledIndices.reduce(
+                (closestIndex, currentIndex) => {
                     const closestDistance = Math.abs(
                         this._values[closestIndex] - value,
                     );
-                    const currentDistance = Math.abs(currentValue - value);
+                    const currentDistance = Math.abs(this._values[currentIndex] - value);
                     return currentDistance < closestDistance ? currentIndex : closestIndex;
                 },
-                0,
+                enabledIndices[0],
             );
 
             // Set the new value, dispatch events, and we're done. No drag.
@@ -300,10 +316,12 @@ export class RangeGroup extends LitElement {
 
     private _handleKeyDown(e: KeyboardEvent, index: number) {
         const input = this._inputs[index];
-        if (!input) return;
+        if (!input || this._isThumbDisabled(index)) return;
 
         let step = Number(input.step) || 1;
         let newValue = Number(input.value);
+
+        const PAGE_STEP_MULTIPLIER = 10;
 
         if (this.list && this._datalistOptions.length > 0) {
             const sortedValues = this._datalistOptions
@@ -315,16 +333,23 @@ export class RangeGroup extends LitElement {
             } else if (e.key === "ArrowRight" || e.key === "ArrowUp") {
                 newValue =
                     sortedValues[Math.min(sortedValues.length - 1, currentIndex + 1)];
+            } else if (e.key === "PageDown") {
+                newValue = sortedValues[Math.max(0, currentIndex - PAGE_STEP_MULTIPLIER)];
+            } else if (e.key === "PageUp") {
+                newValue = sortedValues[Math.min(sortedValues.length - 1, currentIndex + PAGE_STEP_MULTIPLIER)];
             }
         } else {
+            const bigStep = step * PAGE_STEP_MULTIPLIER;
             if (e.key === "ArrowLeft" || e.key === "ArrowDown") newValue -= step;
             else if (e.key === "ArrowRight" || e.key === "ArrowUp") newValue += step;
+            else if (e.key === "PageDown") newValue -= bigStep;
+            else if (e.key === "PageUp") newValue += bigStep;
         }
 
         if (e.key === "Home") newValue = this.min;
         else if (e.key === "End") newValue = this.max;
         else if (
-            !["ArrowLeft", "ArrowDown", "ArrowRight", "ArrowUp"].includes(e.key)
+            !["ArrowLeft", "ArrowDown", "ArrowRight", "ArrowUp", "PageUp", "PageDown"].includes(e.key)
         )
             return;
 
@@ -401,14 +426,16 @@ export class RangeGroup extends LitElement {
             legend.id = `rg-legend-${this._uniqueId}`;
         }
         const legendId = legend?.id;
+        const effectivelyDisabled = this._isEffectivelyDisabled;
 
         return html`
-            <fieldset class="wrapper">
+            <fieldset class="wrapper" ?disabled=${effectivelyDisabled}>
                 <slot name="legend" @slotchange=${this._onSlotChange}></slot>
                 <div
-                        class="container"
+                        class="container ${effectivelyDisabled ? 'disabled' : ''}"
                         role="group"
                         aria-labelledby=${legendId || ""}
+                        aria-disabled=${effectivelyDisabled ? "true" : "false"}
                         @pointerdown=${this._handleContainerPointerDown}
                 >
                     <div part="slider-track" class="track">
@@ -459,10 +486,12 @@ export class RangeGroup extends LitElement {
                             `
                             : ""}
                     ${this._values.map(
-                            (value, index) => html`
+                            (value, index) => {
+                                const thumbDisabled = this._isThumbDisabled(index);
+                                return html`
                                 <button
                                         part="slider-thumb slider-thumb-${index + 1}"
-                                        class="thumb"
+                                        class="thumb ${thumbDisabled ? 'thumb-disabled' : ''}"
                                         style="--thumb-left: ${this._valueToPercent(
                                                 value,
                                         )}%; z-index: ${index === this._activeThumbIndex ? 12 : 10};"
@@ -475,10 +504,12 @@ export class RangeGroup extends LitElement {
                                         aria-valuemax=${this.max}
                                         aria-valuenow=${Math.round(value)}
                                         aria-valuetext=${this.valueTextFormatter(value)}
+                                        aria-disabled=${thumbDisabled ? "true" : "false"}
+                                        tabindex=${thumbDisabled ? -1 : 0}
                                         @keydown=${(e: KeyboardEvent) =>
                                                 this._handleKeyDown(e, index)}
                                 ></button>
-                            `,
+                            `;},
                     )}
                 </div>
                 <slot @slotchange=${this._onSlotChange} style="display: none;"></slot>
@@ -599,6 +630,22 @@ export class RangeGroup extends LitElement {
             transform: translateX(-50%);
             font-size: 0.75rem;
             color: var(--tick-label-color, currentColor);
+        }
+
+        .container.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .thumb-disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .thumb-disabled:hover {
+            transform: translate(-50%, -50%);
         }
     `;
 }
