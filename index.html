@@ -934,105 +934,6 @@
                     </section>
                     <section>
                         <p class="description">
-                            The <code>disabled</code> attribute on <code>&lt;rangegroup&gt;</code> disables the entire
-                            control. All thumbs become non-interactive and are removed from the tab order.
-                        </p>
-                        <div class="card">
-                            <style>
-                                #disabled-group-example::part(slider-segment-2) {
-                                    background-color: var(--color-purple);
-                                }
-                            </style>
-                            <range-group id="disabled-group-example" min="0" max="100" disabled>
-                                <legend slot="legend" class="color-purple">Fully Disabled Group</legend>
-                                <label
-                                    >Minimum
-                                    <input type="range" name="dis-group-min" value="25" />
-                                </label>
-                                <label
-                                    >Maximum
-                                    <input type="range" name="dis-group-max" value="75" />
-                                </label>
-                            </range-group>
-                        </div>
-                        <details class="code-block">
-                            <summary>Show code</summary>
-                            <script type="text/plain" data-lang="html">
-                                <rangegroup min="0" max="100" disabled>
-                                  <legend>Fully Disabled Group</legend>
-                                  <label>Minimum
-                                    <input type="range" name="dis-group-min" value="25">
-                                  </label>
-                                  <label>Maximum
-                                    <input type="range" name="dis-group-max" value="75">
-                                  </label>
-                                </rangegroup>
-                            </script>
-                        </details>
-                    </section>
-                    <section>
-                        <p class="description">
-                            Individual thumbs can be disabled while the rest remain interactive. The minimum handle
-                            below is locked at its value. The button toggles the group-level <code>disabled</code> state
-                            to demonstrate state persistence: re-enabling the group preserves individual disabled states.
-                        </p>
-                        <div class="card">
-                            <style>
-                                #disabled-mixed-example::part(slider-segment-1) {
-                                    background-color: oklch(35% 0.02 230);
-                                }
-                                #disabled-mixed-example::part(slider-segment-2) {
-                                    background-color: var(--color-teal);
-                                }
-                                #disabled-mixed-example::part(slider-segment-3) {
-                                    background-color: oklch(35% 0.02 230);
-                                }
-                                #disabled-mixed-example::part(slider-thumb) {
-                                    --thumb-bg: var(--color-teal);
-                                }
-                            </style>
-                            <range-group id="disabled-mixed-example" min="0" max="100">
-                                <legend slot="legend" class="color-teal">Individual Thumb Disabled</legend>
-                                <label
-                                    >Minimum (locked)
-                                    <input type="range" name="dis-mixed-min" value="30" disabled />
-                                </label>
-                                <label
-                                    >Maximum
-                                    <input type="range" name="dis-mixed-max" value="70" />
-                                </label>
-                            </range-group>
-                            <div class="button-group">
-                                <button id="toggleDisabledBtn" class="btn btn-indigo">Toggle Group Disabled</button>
-                            </div>
-                            <pre id="disabledOutput" class="api-output">Group disabled: false</pre>
-                        </div>
-                        <details class="code-block">
-                            <summary>Show code</summary>
-                            <script type="text/plain" data-lang="html">
-                                <rangegroup min="0" max="100">
-                                  <legend>Individual Thumb Disabled</legend>
-                                  <label>Minimum (locked)
-                                    <input type="range" name="dis-mixed-min" value="30" disabled>
-                                  </label>
-                                  <label>Maximum
-                                    <input type="range" name="dis-mixed-max" value="70">
-                                  </label>
-                                </rangegroup>
-                            </script>
-                            <script type="text/plain" data-lang="javascript">
-                                const rangeGroup = document.querySelector("rangegroup");
-                                const toggleBtn = document.getElementById("toggleDisabledBtn");
-
-                                toggleBtn.addEventListener("click", () => {
-                                  rangeGroup.disabled = !rangeGroup.disabled;
-                                  // Individual disabled states are preserved
-                                });
-                            </script>
-                        </details>
-                    </section>
-                    <section>
-                        <p class="description">
                             A complete visual transformation to create a budget allocation tool. The component's
                             segments are styled as colored bars, and the thumbs as draggable separators. All labels and
                             percentages are updated via JavaScript as well as an aria-polite to give feedback to the
@@ -1958,18 +1859,6 @@
                         apiRange.setRangeValue(0, Math.min(val1, val2));
                         apiRange.setRangeValue(1, Math.max(val1, val2));
                         apiOutput.textContent = `Set to: [${apiRange.values.join(", ")}]`;
-                    });
-                }
-
-                // --- Disabled Toggle Example ---
-                const disabledMixed = document.getElementById("disabled-mixed-example");
-                const toggleDisabledBtn = document.getElementById("toggleDisabledBtn");
-                const disabledOutput = document.getElementById("disabledOutput");
-
-                if (disabledMixed && toggleDisabledBtn && disabledOutput) {
-                    toggleDisabledBtn.addEventListener("click", () => {
-                        disabledMixed.disabled = !disabledMixed.disabled;
-                        disabledOutput.textContent = `Group disabled: ${disabledMixed.disabled}`;
                     });
                 }
 
