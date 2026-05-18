@@ -442,9 +442,18 @@ export class RangeGroup extends LitElement {
                         ${segmentPoints.slice(0, -1).map((p, i) => {
                             const left = p;
                             const width = segmentPoints[i + 1] - p;
+                            const isFillSegment =
+                                i > 0 && i < segmentPoints.length - 2;
+                            const partTokens = [
+                                "slider-segment",
+                                `slider-segment-${i + 1}`,
+                                isFillSegment ? "slider-fill" : "",
+                            ]
+                                .filter(Boolean)
+                                .join(" ");
                             return html`<div
-                                    part="slider-segment slider-segment-${i + 1}"
-                                    class="segment"
+                                    part=${partTokens}
+                                    class="segment ${isFillSegment ? "segment-fill" : ""}"
                                     style="--segment-left: ${left}%; --segment-width: ${width}%;"
                             ></div>`;
                         })}
@@ -521,9 +530,13 @@ export class RangeGroup extends LitElement {
         :host {
             display: block;
             position: relative;
-            --_thumb-size: var(--thumb-size, 24px);
-            --_track-height: var(--track-height, 6px);
-            --thumb-bg: #007bff; /* Default thumb background */
+            --_thumb-size: var(--thumb-size, 16px);
+            --_track-height: var(--track-height, 4px);
+            --thumb-bg: var(--slider-thumb-color, #0a84ff);
+            --track-bg: var(--slider-track-color, #d8d8de);
+            --segment-bg: var(--slider-segment-color, #d8d8de);
+            --fill-bg: var(--slider-fill-color, #0a84ff);
+            --thumb-ring: var(--slider-thumb-ring-color, #9bc8ff);
             padding-block: calc(var(--_thumb-size) / 2);
         }
 
@@ -546,7 +559,8 @@ export class RangeGroup extends LitElement {
             width: 100%;
             height: var(--_track-height);
             transform: translateY(-50%);
-            background-color: #ccc;
+            background-color: var(--track-bg);
+            border-radius: 999px;
         }
 
         .segment {
@@ -555,7 +569,11 @@ export class RangeGroup extends LitElement {
             height: 100%;
             left: var(--segment-left);
             width: var(--segment-width);
-            background-color: #999;
+            background-color: var(--segment-bg);
+        }
+
+        .segment-fill {
+            background-color: var(--fill-bg);
         }
 
         .thumb {
@@ -569,9 +587,11 @@ export class RangeGroup extends LitElement {
             transform: translate(-50%, -50%);
             cursor: pointer;
             touch-action: none;
-            box-shadow: 0 0 8px 0 var(--thumb-bg);
+            box-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.35),
+                0 0 0 1px rgba(255, 255, 255, 0.8) inset;
             transition: transform 0.1s ease-in-out;
-            border: none;
+            border: 1px solid rgba(0, 0, 0, 0.18);
             padding: 0;
         }
 
@@ -592,8 +612,8 @@ export class RangeGroup extends LitElement {
         }
 
         .thumb:focus-visible {
-            outline: 2px solid var(--thumb-bg);
-            outline-offset: 4px;
+            outline: 3px solid var(--thumb-ring);
+            outline-offset: 2px;
         }
 
         .ticks-wrapper {
