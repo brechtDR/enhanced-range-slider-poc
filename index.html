@@ -1432,7 +1432,7 @@
                                 position: absolute;
                                 background: white;
                                 border: 1px solid color-mix(in oklab, var(--hours-open) 30%, var(--border));
-                                color: var(--text-strong);
+                                color: var(--p-color-warm-text-strong);
                                 font-size: 0.74rem;
                                 letter-spacing: 0.04em;
                                 font-weight: 700;
@@ -1442,6 +1442,12 @@
                                 white-space: nowrap;
                                 box-shadow: 0 4px 12px rgba(20, 184, 166, 0.18);
                                 z-index: 2;
+                            }
+                            html.dark .hours-card .hours-shift-label {
+                                background: var(--p-color-cool-surface-2);
+                                border-color: color-mix(in oklab, var(--hours-open) 35%, var(--p-color-cool-border));
+                                color: var(--p-color-cool-text-strong);
+                                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
                             }
                             .hours-shift-label strong {
                                 color: var(--hours-open);
@@ -1630,6 +1636,25 @@
                               bottom: anchor(top);
                               left: anchor(center);
                               translate: -50% -12px;
+                            }
+
+                            /* pill labels: fixed light/dark colours (body --text-strong follows theme) */
+                            .hours-shift-label {
+                              background: #ffffff;
+                              border: 1px solid color-mix(in oklab, #14b8a6 30%, #e5e7eb);
+                              color: #0b1220;
+                              font-size: 0.74rem;
+                              font-weight: 700;
+                              padding: 5px 11px;
+                              border-radius: 999px;
+                            }
+                            .hours-shift-label strong {
+                              color: #14b8a6;
+                            }
+                            html.dark .hours-shift-label {
+                              background: #1a2538;
+                              border-color: color-mix(in oklab, #14b8a6 35%, #233049);
+                              color: #f8fafc;
                             }
 
                             /* play / stop glyphs on alternating thumbs */
@@ -2124,7 +2149,7 @@
                                 --anchor-name: --budget-segment-2;
                             }
                             #budget-range::part(slider-segment-3) {
-                                background-color: #fdd835;
+                                background-color: #f57c00;
                                 --anchor-name: --budget-segment-3;
                             }
                             #budget-range::part(slider-segment-4) {
@@ -2225,7 +2250,7 @@
                               anchor-name: --budget-segment-2;
                             }
                             rangegroup::slider-segment(3) {
-                              background-color: #fdd835;
+                              background-color: #f57c00;
                               anchor-name: --budget-segment-3;
                             }
                             rangegroup::slider-segment(4) {
@@ -2321,7 +2346,7 @@
                                 position: absolute;
                                 position-anchor: var(--anchor-name);
                                 pointer-events: none;
-                                border: none;
+                                border: 1px solid var(--s-border-subtle);
                                 border-radius: 9999px;
                                 background: white;
                                 box-shadow:
@@ -2329,13 +2354,21 @@
                                     0 2px 4px -1px rgb(0 0 0 / 0.1);
                                 width: 40px;
                                 height: 28px;
-                                color: var(--text-strong);
+                                color: var(--p-color-warm-text-strong);
                                 font-weight: 700;
                                 font-size: 0.875rem;
                                 display: flex;
                                 align-items: center;
                                 justify-content: center;
                                 z-index: 10;
+                            }
+                            html.dark #floating-tooltips .floating-tooltip {
+                                background: var(--p-color-cool-surface-2);
+                                border-color: var(--p-color-cool-border);
+                                color: var(--p-color-cool-text-strong);
+                                box-shadow:
+                                    0 4px 6px -1px rgb(0 0 0 / 0.45),
+                                    0 2px 4px -1px rgb(0 0 0 / 0.25);
                             }
                             #floating-tooltip-1 {
                                 --anchor-name: --floating-thumb-1;
@@ -2392,12 +2425,20 @@
                             .floating-tooltip {
                               position: absolute;
                               width: 40px; height: 28px;
-                              background: white;
+                              background: #ffffff;
+                              border: 1px solid #e5e7eb;
                               border-radius: 9999px;
+                              color: #0b1220;
                               box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.25);
                               display: grid;
                               place-items: center;
                               font-weight: 700;
+                            }
+                            html.dark .floating-tooltip {
+                              background: #1a2538;
+                              border-color: #233049;
+                              color: #f8fafc;
+                              box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.45);
                             }
                             #floating-tooltip-1 {
                               position-anchor: --floating-thumb-1;
@@ -3511,10 +3552,18 @@
                     }
                 };
 
+                const prefersDarkMql = window.matchMedia("(prefers-color-scheme: dark)");
+
                 const setThemeClasses = (theme) => {
                     htmlEl.classList.remove("light", "dark");
-                    if (theme === "light" || theme === "dark") {
-                        htmlEl.classList.add(theme);
+                    if (theme === "light") {
+                        htmlEl.classList.add("light");
+                    } else if (theme === "dark") {
+                        htmlEl.classList.add("dark");
+                    } else {
+                        // System: use the same html.light / html.dark hooks as explicit themes so all
+                        // theme-scoped CSS (TOC active state, anchored pills, etc.) stays consistent.
+                        htmlEl.classList.add(prefersDarkMql.matches ? "dark" : "light");
                     }
                 };
 
@@ -3534,6 +3583,17 @@
                 let activeTheme = getStoredTheme();
                 setThemeClasses(activeTheme);
                 syncThemeToggleLabel(activeTheme);
+
+                const onSystemColorSchemeChange = () => {
+                    if (activeTheme === "system") {
+                        setThemeClasses(activeTheme);
+                    }
+                };
+                if (typeof prefersDarkMql.addEventListener === "function") {
+                    prefersDarkMql.addEventListener("change", onSystemColorSchemeChange);
+                } else if (typeof prefersDarkMql.addListener === "function") {
+                    prefersDarkMql.addListener(onSystemColorSchemeChange);
+                }
 
                 if (themeToggles.length) {
                     themeToggles.forEach((themeToggle) =>

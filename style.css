@@ -428,6 +428,11 @@ code {
     border-left-color: var(--accent);
 }
 
+html.dark .sidebar a.is-active,
+html.dark .sidebar a.is-active:hover {
+    color: #ffffff;
+}
+
 .sidebar a.is-active .nav-label {
     font-weight: 600;
 }
