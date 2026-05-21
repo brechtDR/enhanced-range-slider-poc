@@ -1,0 +1,51 @@
+/* ============================
+   Buttons
+   ============================ */
+.btn {
+    color: white;
+    font-weight: 600;
+    padding: 0.55rem 1.1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.15s ease;
+}
+
+.btn-primary,
+.btn-indigo {
+    background: var(--accent);
+    color: #fff;
+}
+
+.btn-primary:hover,
+.btn-indigo:hover {
+    background: var(--accent-deep);
+}
+
+.btn-secondary,
+.btn-pink {
+    background: var(--surface);
+    color: var(--text-strong);
+    border: 1px solid var(--border-strong);
+}
+
+.btn-secondary:hover,
+.btn-pink:hover {
+    background: var(--s-surface-hover);
+}
+
+.btn:focus-visible {
+    outline: 2px solid var(--s-focus-ring);
+    outline-offset: 2px;
+}
+
+.button-group {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}

@@ -1,0 +1,75 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="multi-handle-constraints" eyebrow="Constraints and state" title="Multi-handle constraints">
+    <Fragment slot="description">
+        Three handles where the middle one is constrained to a small central zone (30&ndash;70), while the outer handles
+        have full range and can push it.
+    </Fragment>
+    <div slot="demo">
+        <style is:global>
+            #constraints-example-3::part(slider-segment-1) {
+                background-color: #3949ab;
+            }
+            #constraints-example-3::part(slider-segment-2) {
+                background-color: var(--color-orange);
+            }
+            #constraints-example-3::part(slider-segment-3) {
+                background-color: var(--color-yellow);
+            }
+            #constraints-example-3::part(slider-segment-4) {
+                background-color: #3949ab;
+            }
+
+            #constraints-example-3::part(slider-thumb-1) {
+                --slider-thumb-color: #3949ab;
+            }
+            #constraints-example-3::part(slider-thumb-2) {
+                --slider-thumb-color: var(--color-orange);
+            }
+            #constraints-example-3::part(slider-thumb-3) {
+                --slider-thumb-color: var(--color-yellow);
+            }
+        </style>
+        <range-group id="constraints-example-3" min="0" max="100">
+            <legend slot="legend" class="visually-hidden">Multi-handle constraints</legend>
+            <label class="visually-hidden">Handle 1 <input type="range" value="15" /></label>
+            <label class="visually-hidden">
+                Handle 2 (constrained)
+                <input type="range" value="40" min="30" max="70" />
+            </label>
+            <label class="visually-hidden">Handle 3 <input type="range" value="85" /></label>
+        </range-group>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup min="0" max="100">
+  <legend>Multi-handle constraints</legend>
+  <label>Handle 1 <input type="range" value="15"></label>
+  <label>Handle 2 (constrained) <input type="range" value="40" min="30" max="70"></label>
+  <label>Handle 3 <input type="range" value="85"></label>
+</rangegroup>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+/* four-segment track, one band per zone */
+rangegroup::slider-segment(1) { background-color: #3949ab; }
+rangegroup::slider-segment(2) { background-color: #f97316; }
+rangegroup::slider-segment(3) { background-color: #eab308; }
+rangegroup::slider-segment(4) { background-color: #3949ab; }
+
+/* match each thumb to its leading segment */
+rangegroup::slider-thumb(1) { background-color: #3949ab; }
+rangegroup::slider-thumb(2) { background-color: #f97316; }
+rangegroup::slider-thumb(3) { background-color: #eab308; }
+`}
+        />
+    </ExampleCodeBlock>
+</ExampleSection>

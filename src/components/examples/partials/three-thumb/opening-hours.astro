@@ -1,0 +1,480 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="opening-hours" eyebrow="Three-plus thumb patterns" title="Opening hours selector">
+    <Fragment slot="description">
+        Four handles define morning and afternoon shifts on a single 8&nbsp;AM&ndash;10&nbsp;PM timeline. The datalist
+        provides hourly tick labels with half-hour granularity.
+    </Fragment>
+    <div slot="demo" class="hours-card">
+        <style is:global>
+            .hours-card {
+                --hours-open: #14b8a6;
+                --hours-closed: #d6dbe2;
+                --hours-day: #f59e0b;
+                --hours-night: #4f46e5;
+            }
+            .hours-stage {
+                position: relative;
+                padding-top: 64px;
+            }
+            .hours-atmosphere {
+                position: absolute;
+                top: 30px;
+                left: 8px;
+                right: 8px;
+                height: 14px;
+                border-radius: 999px;
+                background: linear-gradient(to right, #fde68a 0%, #fbbf24 25%, #fb923c 55%, #6366f1 100%);
+                opacity: 0.5;
+                z-index: 0;
+            }
+            .hours-icon {
+                position: absolute;
+                top: 6px;
+                width: 26px;
+                height: 26px;
+                pointer-events: none;
+                z-index: 3;
+            }
+            .hours-icon-sun {
+                left: -2px;
+                color: var(--hours-day);
+            }
+            .hours-icon-moon {
+                right: -2px;
+                color: var(--hours-night);
+            }
+            #opening-hours-range {
+                position: relative;
+                z-index: 1;
+            }
+            #opening-hours-range::part(slider-segment-1),
+            #opening-hours-range::part(slider-segment-3),
+            #opening-hours-range::part(slider-segment-5) {
+                background-color: var(--hours-closed);
+            }
+            #opening-hours-range::part(slider-segment-2) {
+                background-color: var(--hours-open);
+                anchor-name: --hours-shift-am;
+            }
+            #opening-hours-range::part(slider-segment-4) {
+                background-color: var(--hours-open);
+                anchor-name: --hours-shift-pm;
+            }
+            #opening-hours-range::part(slider-thumb-1),
+            #opening-hours-range::part(slider-thumb-3) {
+                background-color: var(--hours-open);
+                background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'><path d='M5.5 3.4v9.2L13 8z'/></svg>");
+                background-position: 58% center;
+                background-repeat: no-repeat;
+                background-size: 58%;
+                border-color: color-mix(in oklab, var(--hours-open) 70%, black 25%);
+            }
+            #opening-hours-range::part(slider-thumb-2),
+            #opening-hours-range::part(slider-thumb-4) {
+                background-color: #475569;
+                background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'><rect x='4.5' y='4.5' width='7' height='7' rx='1.2'/></svg>");
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: 55%;
+                border-color: #334155;
+            }
+            #opening-hours-range::part(slider-tick) {
+                background: var(--text-soft);
+            }
+            #opening-hours-range::part(slider-tick-label) {
+                color: var(--text-muted);
+            }
+            #opening-hours-range::part(slider-tick-label-2),
+            #opening-hours-range::part(slider-tick-label-4),
+            #opening-hours-range::part(slider-tick-label-6),
+            #opening-hours-range::part(slider-tick-label-8),
+            #opening-hours-range::part(slider-tick-label-10),
+            #opening-hours-range::part(slider-tick-label-12),
+            #opening-hours-range::part(slider-tick-label-14),
+            #opening-hours-range::part(slider-tick-label-16),
+            #opening-hours-range::part(slider-tick-label-18),
+            #opening-hours-range::part(slider-tick-label-20),
+            #opening-hours-range::part(slider-tick-label-22),
+            #opening-hours-range::part(slider-tick-label-24),
+            #opening-hours-range::part(slider-tick-label-26),
+            #opening-hours-range::part(slider-tick-label-28) {
+                display: none;
+            }
+            #opening-hours-range::part(slider-tick-label-29) {
+                white-space: nowrap;
+            }
+            .hours-shift-label {
+                position: absolute;
+                background: white;
+                border: 1px solid color-mix(in oklab, var(--hours-open) 30%, var(--border));
+                color: var(--p-color-warm-text-strong);
+                font-size: 0.74rem;
+                letter-spacing: 0.04em;
+                font-weight: 700;
+                padding: 5px 11px;
+                border-radius: 999px;
+                pointer-events: none;
+                white-space: nowrap;
+                box-shadow: 0 4px 12px rgba(20, 184, 166, 0.18);
+                z-index: 2;
+            }
+            html.dark .hours-card .hours-shift-label {
+                background: var(--p-color-cool-surface-2);
+                border-color: color-mix(in oklab, var(--hours-open) 35%, var(--p-color-cool-border));
+                color: var(--p-color-cool-text-strong);
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+            }
+            .hours-shift-label strong {
+                color: var(--hours-open);
+                font-family: "Source Code Pro", "JetBrains Mono", monospace;
+                margin-left: 6px;
+                font-weight: 700;
+            }
+            .hours-shift-am {
+                position-anchor: --hours-shift-am;
+                bottom: anchor(top);
+                left: anchor(center);
+                translate: -50% -12px;
+            }
+            .hours-shift-pm {
+                position-anchor: --hours-shift-pm;
+                bottom: anchor(top);
+                left: anchor(center);
+                translate: -50% -12px;
+            }
+            .hours-readout {
+                margin-top: 1.75rem;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .hours-readout-cell {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                padding: 12px 14px;
+                display: grid;
+                gap: 4px;
+            }
+            .hours-readout-cell::before {
+                content: "";
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--hours-open);
+                margin-bottom: 2px;
+            }
+            .hours-readout-label {
+                font-size: 0.7rem;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--text-soft);
+                font-weight: 700;
+            }
+            .hours-readout-value {
+                font-family: "Source Code Pro", "JetBrains Mono", monospace;
+                font-size: 0.95rem;
+                color: var(--text-strong);
+                font-weight: 600;
+            }
+
+            @media (max-width: 700px) {
+                #opening-hours-range::part(slider-tick),
+                #opening-hours-range::part(slider-tick-label) {
+                    display: none;
+                }
+                .hours-stage {
+                    padding-top: 56px;
+                }
+                .hours-atmosphere {
+                    top: 28px;
+                    height: 12px;
+                }
+                .hours-icon {
+                    width: 22px;
+                    height: 22px;
+                    top: 8px;
+                }
+                .hours-shift-label {
+                    font-size: 0.67rem;
+                    letter-spacing: 0.02em;
+                    padding: 4px 8px;
+                }
+                .hours-shift-label strong {
+                    margin-left: 4px;
+                }
+                .hours-shift-am,
+                .hours-shift-pm {
+                    translate: -50% -8px;
+                }
+                .hours-readout {
+                    margin-top: 1.2rem;
+                    grid-template-columns: 1fr;
+                    gap: 8px;
+                }
+                .hours-readout-cell {
+                    padding: 10px 11px;
+                }
+            }
+
+            @media (max-width: 420px) {
+                .hours-stage {
+                    padding-top: 52px;
+                }
+                .hours-atmosphere {
+                    left: 5px;
+                    right: 5px;
+                    top: 26px;
+                }
+                .hours-icon {
+                    width: 20px;
+                    height: 20px;
+                    top: 7px;
+                }
+                .hours-shift-label {
+                    font-size: 0.62rem;
+                    padding: 3px 7px;
+                }
+                .hours-shift-label strong {
+                    margin-left: 3px;
+                }
+            }
+        </style>
+        <div class="hours-stage">
+            <div class="hours-atmosphere" aria-hidden="true"></div>
+            <svg class="hours-icon hours-icon-sun" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <circle cx="12" cy="12" r="4.5"></circle>
+                <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="12" y1="2.5" x2="12" y2="5"></line>
+                    <line x1="12" y1="19" x2="12" y2="21.5"></line>
+                    <line x1="2.5" y1="12" x2="5" y2="12"></line>
+                    <line x1="19" y1="12" x2="21.5" y2="12"></line>
+                    <line x1="5.4" y1="5.4" x2="7.2" y2="7.2"></line>
+                    <line x1="16.8" y1="16.8" x2="18.6" y2="18.6"></line>
+                    <line x1="18.6" y1="5.4" x2="16.8" y2="7.2"></line>
+                    <line x1="7.2" y1="16.8" x2="5.4" y2="18.6"></line>
+                </g>
+            </svg>
+            <svg class="hours-icon hours-icon-moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20.5 14.5A9 9 0 0 1 9.5 3.5a.5.5 0 0 0-.65-.65 9 9 0 1 0 12.3 12.3.5.5 0 0 0-.65-.65z"></path>
+            </svg>
+            <range-group id="opening-hours-range" min="480" max="1320" list="hours-ticks" stepbetween="30">
+                <legend slot="legend" class="visually-hidden">Opening hours</legend>
+                <label class="visually-hidden">AM Open <input type="range" value="540" /></label>
+                <label class="visually-hidden">AM Close <input type="range" value="720" /></label>
+                <label class="visually-hidden">PM Open <input type="range" value="780" /></label>
+                <label class="visually-hidden">PM Close <input type="range" value="1020" /></label>
+            </range-group>
+            <div class="hours-shift-label hours-shift-am" aria-hidden="true">
+                Morning shift<strong id="hours-shift-am-duration">3h 0m</strong>
+            </div>
+            <div class="hours-shift-label hours-shift-pm" aria-hidden="true">
+                Afternoon shift<strong id="hours-shift-pm-duration">4h 0m</strong>
+            </div>
+        </div>
+        <datalist id="hours-ticks">
+            <option value="480" label="8 AM"></option>
+            <option value="510"></option>
+            <option value="540" label="9 AM"></option>
+            <option value="570"></option>
+            <option value="600" label="10 AM"></option>
+            <option value="630"></option>
+            <option value="660" label="11 AM"></option>
+            <option value="690"></option>
+            <option value="720" label="12 PM"></option>
+            <option value="750"></option>
+            <option value="780" label="1 PM"></option>
+            <option value="810"></option>
+            <option value="840" label="2 PM"></option>
+            <option value="870"></option>
+            <option value="900" label="3 PM"></option>
+            <option value="930"></option>
+            <option value="960" label="4 PM"></option>
+            <option value="990"></option>
+            <option value="1020" label="5 PM"></option>
+            <option value="1050"></option>
+            <option value="1080" label="6 PM"></option>
+            <option value="1110"></option>
+            <option value="1140" label="7 PM"></option>
+            <option value="1170"></option>
+            <option value="1200" label="8 PM"></option>
+            <option value="1230"></option>
+            <option value="1260" label="9 PM"></option>
+            <option value="1290"></option>
+            <option value="1320" label="10 PM"></option>
+        </datalist>
+        <div class="hours-readout">
+            <div class="hours-readout-cell">
+                <span class="hours-readout-label">Morning shift</span>
+                <span class="hours-readout-value" id="hours-am">9:00 AM – 12:00 PM</span>
+            </div>
+            <div class="hours-readout-cell">
+                <span class="hours-readout-label">Afternoon shift</span>
+                <span class="hours-readout-value" id="hours-pm">1:00 PM – 5:00 PM</span>
+            </div>
+        </div>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup id="opening-hours-range" min="480" max="1320" list="hours-ticks" stepbetween="30">
+  <label>AM Open <input type="range" value="540"></label>
+  <label>AM Close <input type="range" value="720"></label>
+  <label>PM Open <input type="range" value="780"></label>
+  <label>PM Close <input type="range" value="1020"></label>
+</rangegroup>
+
+<!-- decorative atmosphere band + sun / moon icons -->
+<div class="hours-atmosphere"></div>
+<svg class="hours-icon-sun"  viewBox="0 0 24 24">...</svg>
+<svg class="hours-icon-moon" viewBox="0 0 24 24">...</svg>
+
+<!-- floating shift labels, anchored to the OPEN segments -->
+<div class="hours-shift-label hours-shift-am">Morning shift <strong>3h 0m</strong></div>
+<div class="hours-shift-label hours-shift-pm">Afternoon shift <strong>4h 0m</strong></div>
+
+<div class="hours-readout">
+  <div><span>Morning shift</span><span id="hours-am">9:00 AM – 12:00 PM</span></div>
+  <div><span>Afternoon shift</span><span id="hours-pm">1:00 PM – 5:00 PM</span></div>
+</div>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+/* closed gaps in cool grey, open shifts in brand teal */
+rangegroup::slider-segment(1),
+rangegroup::slider-segment(3),
+rangegroup::slider-segment(5) { background: #d6dbe2; }
+rangegroup::slider-segment(2),
+rangegroup::slider-segment(4) { background: #14b8a6; }
+
+/* anchor the floating shift labels to the OPEN segments */
+rangegroup::slider-segment(2) { anchor-name: --hours-shift-am; }
+rangegroup::slider-segment(4) { anchor-name: --hours-shift-pm; }
+
+.hours-shift-am {
+  position-anchor: --hours-shift-am;
+  bottom: anchor(top);
+  left: anchor(center);
+  translate: -50% -12px;
+}
+
+/* pill labels: fixed light/dark colours (body --text-strong follows theme) */
+.hours-shift-label {
+  background: #ffffff;
+  border: 1px solid color-mix(in oklab, #14b8a6 30%, #e5e7eb);
+  color: #0b1220;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 5px 11px;
+  border-radius: 999px;
+}
+.hours-shift-label strong {
+  color: #14b8a6;
+}
+html.dark .hours-shift-label {
+  background: #1a2538;
+  border-color: color-mix(in oklab, #14b8a6 35%, #233049);
+  color: #f8fafc;
+}
+
+/* play / stop glyphs on alternating thumbs */
+rangegroup::slider-thumb(1),
+rangegroup::slider-thumb(3) {
+  background-color: #14b8a6;
+  background-image: url("...play arrow svg...");
+}
+rangegroup::slider-thumb(2),
+rangegroup::slider-thumb(4) {
+  background-color: #475569;
+  background-image: url("...stop square svg...");
+}
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const rg    = document.querySelector("#opening-hours-range");
+const amOut = document.querySelector("#hours-am");
+const pmOut = document.querySelector("#hours-pm");
+const amLabel = document.querySelector(".hours-shift-am strong");
+const pmLabel = document.querySelector(".hours-shift-pm strong");
+
+const minutesToTime = (m) => {
+  const h = Math.floor(m / 60);
+  const ampm = h >= 12 ? "PM" : "AM";
+  const displayH = h % 12 === 0 ? 12 : h % 12;
+  return \`\${displayH}:\${String(m % 60).padStart(2, "0")} \${ampm}\`;
+};
+const minutesToDuration = (mins) =>
+  \`\${Math.floor(mins / 60)}h \${mins % 60}m\`;
+
+/* feeds aria-valuetext + tick labels via the component's formatter API */
+rg.valueTextFormatter = minutesToTime;
+
+rg.addEventListener("input", () => {
+  const [amS, amE, pmS, pmE] = rg.values;
+  amOut.textContent = \`\${minutesToTime(amS)} – \${minutesToTime(amE)}\`;
+  pmOut.textContent = \`\${minutesToTime(pmS)} – \${minutesToTime(pmE)}\`;
+  amLabel.textContent = minutesToDuration(amE - amS);
+  pmLabel.textContent = minutesToDuration(pmE - pmS);
+});
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg    = document.querySelector("#opening-hours-range");
+                const amOut = document.querySelector("#hours-am");
+                const pmOut = document.querySelector("#hours-pm");
+                const amLabel = document.querySelector(".hours-shift-am strong");
+                const pmLabel = document.querySelector(".hours-shift-pm strong");
+                
+                const minutesToTime = (m) => {
+                  const h = Math.floor(m / 60);
+                  const ampm = h >= 12 ? "PM" : "AM";
+                  const displayH = h % 12 === 0 ? 12 : h % 12;
+                  return `${displayH}:${String(m % 60).padStart(2, "0")} ${ampm}`;
+                };
+                const minutesToDuration = (mins) =>
+                  `${Math.floor(mins / 60)}h ${mins % 60}m`;
+                
+                /* feeds aria-valuetext + tick labels via the component's formatter API */
+                rg.valueTextFormatter = minutesToTime;
+                
+                rg.addEventListener("input", () => {
+                  const [amS, amE, pmS, pmE] = rg.values;
+                  amOut.textContent = `${minutesToTime(amS)} – ${minutesToTime(amE)}`;
+                  pmOut.textContent = `${minutesToTime(pmS)} – ${minutesToTime(pmE)}`;
+                  amLabel.textContent = minutesToDuration(amE - amS);
+                  pmLabel.textContent = minutesToDuration(pmE - pmS);
+                });
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

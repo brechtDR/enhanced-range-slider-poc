@@ -1,0 +1,133 @@
+/* ============================
+   Responsive
+   ============================ */
+@media (max-width: 860px) {
+    html {
+        scroll-padding-top: 64px;
+    }
+
+    .topbar-inner {
+        padding: 12px 18px;
+        gap: 14px;
+    }
+
+    .brand {
+        font-size: 0.9rem;
+    }
+
+    .brand-sub {
+        font-size: 0.8rem;
+    }
+
+    .topbar-links {
+        width: 100%;
+        gap: 10px;
+        justify-content: flex-start;
+    }
+
+    .layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 24px;
+        padding: 0 18px 72px;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .main {
+        padding-top: 28px;
+        gap: 48px;
+    }
+
+    .hero {
+        gap: 14px;
+    }
+
+    .hero h1 {
+        font-size: clamp(1.8rem, 8vw, 2.5rem);
+    }
+
+    .lead {
+        font-size: 1rem;
+    }
+
+    .example {
+        scroll-margin-top: 74px;
+    }
+
+    .card {
+        padding: 1.2rem;
+    }
+
+    .price-input-container {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .topbar-inner {
+        align-items: center;
+        padding: 10px 14px;
+        gap: 10px;
+    }
+
+    .brand {
+        align-items: flex-start;
+        gap: 0;
+        font-size: 0.9rem;
+    }
+
+    .brand-sub {
+        display: none;
+    }
+
+    body.has-popover-menu .topbar-links {
+        display: none;
+    }
+
+    body.has-popover-menu .mobile-menu-button {
+        display: inline-grid;
+        margin-left: auto;
+    }
+
+    .topbar-links a,
+    .pe-toggle-label,
+    .theme-toggle {
+        font-size: 0.78rem;
+    }
+
+    .topbar-links a {
+        padding: 2px 0;
+    }
+
+    .theme-toggle {
+        inline-size: 1.85rem;
+        block-size: 1.85rem;
+        padding: 0.28rem;
+    }
+
+    .pe-toggle-container {
+        padding: 4px 10px;
+        gap: 8px;
+    }
+
+    .hero-actions {
+        width: 100%;
+    }
+
+    .hero-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html,
+    .sidebar {
+        scroll-behavior: auto;
+    }
+
+    .mobile-header-menu,
+    .mobile-header-menu::backdrop {
+        transition-duration: 0.01ms;
+    }
+}

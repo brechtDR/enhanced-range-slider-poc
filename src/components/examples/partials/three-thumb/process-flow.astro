@@ -1,0 +1,96 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="process-flow" eyebrow="Three-plus thumb patterns" title="Three-handle process flow">
+    <Fragment slot="description">
+        Three handles and styled ticks represent the boundaries between phases in a process. Each major tick gets its
+        own colour, signaling the phase it marks.
+    </Fragment>
+    <div slot="demo">
+        <style is:global>
+            #multiphase-example::part(slider-tick) {
+                height: 12px;
+                width: 2px;
+            }
+            #multiphase-example::part(slider-tick-1) {
+                background: #aaa;
+            }
+            #multiphase-example::part(slider-tick-label-1) {
+                color: #777;
+            }
+            #multiphase-example::part(slider-tick-2) {
+                background: #d97706;
+            }
+            #multiphase-example::part(slider-tick-label-2) {
+                color: #d97706;
+            }
+            #multiphase-example::part(slider-tick-3) {
+                background: #16a34a;
+            }
+            #multiphase-example::part(slider-tick-label-3) {
+                color: #16a34a;
+            }
+            #multiphase-example::part(slider-tick-4) {
+                background: #2563eb;
+            }
+            #multiphase-example::part(slider-tick-label-4) {
+                color: #2563eb;
+            }
+        </style>
+        <range-group id="multiphase-example" min="0" max="100" list="multiphase-datalist">
+            <legend slot="legend" class="visually-hidden">Process flow</legend>
+            <label class="visually-hidden">Phase 1 End <input type="range" value="20" /></label>
+            <label class="visually-hidden">Phase 2 End <input type="range" value="50" /></label>
+            <label class="visually-hidden">Phase 3 End <input type="range" value="80" /></label>
+        </range-group>
+        <datalist id="multiphase-datalist">
+            <option value="0" label="Start"></option>
+            <option value="33" label="Review"></option>
+            <option value="66" label="Approved"></option>
+            <option value="100" label="Complete"></option>
+        </datalist>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup min="0" max="100" list="multiphase-datalist">
+  <legend>Process flow</legend>
+  <label>Phase 1 end <input type="range" value="20"></label>
+  <label>Phase 2 end <input type="range" value="50"></label>
+  <label>Phase 3 end <input type="range" value="80"></label>
+</rangegroup>
+
+<datalist id="multiphase-datalist">
+  <option value="0"   label="Start"></option>
+  <option value="33"  label="Review"></option>
+  <option value="66"  label="Approved"></option>
+  <option value="100" label="Complete"></option>
+</datalist>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+/* taller, thinner tick marks */
+rangegroup::slider-tick(*) {
+  height: 12px;
+  width: 2px;
+}
+
+/* colour-code each phase boundary */
+rangegroup::slider-tick(1)       { background: #aaa;    }
+rangegroup::slider-tick-label(1) { color: #777;         }
+rangegroup::slider-tick(2)       { background: #d97706; }
+rangegroup::slider-tick-label(2) { color: #d97706;      }
+rangegroup::slider-tick(3)       { background: #16a34a; }
+rangegroup::slider-tick-label(3) { color: #16a34a;      }
+rangegroup::slider-tick(4)       { background: #2563eb; }
+rangegroup::slider-tick-label(4) { color: #2563eb;      }
+`}
+        />
+    </ExampleCodeBlock>
+</ExampleSection>

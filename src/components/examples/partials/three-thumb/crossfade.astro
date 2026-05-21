@@ -1,0 +1,515 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="crossfade" eyebrow="Three-plus thumb patterns" title="Crossfade overlap editor">
+    <Fragment slot="description">
+        A 3-thumb pattern modeled on a DAW crossfade. The outer thumbs set when Track&nbsp;A starts fading out and when
+        Track&nbsp;B reaches full volume; the middle thumb biases the crossover point that determines which track
+        dominates the overlap.
+    </Fragment>
+    <div slot="demo" class="crossfade-card">
+        <style is:global>
+            .crossfade-card {
+                --cf-a: #ec4899;
+                --cf-b: #06b6d4;
+                --cf-weight: #6366f1;
+                --start-pct: 20%;
+                --weight-pct: 50%;
+                --end-pct: 78%;
+                display: grid;
+                gap: 1.5rem;
+            }
+
+            .crossfade-stage {
+                position: relative;
+                padding: 0 0 26px;
+            }
+
+            .crossfade-tracks {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .crossfade-track {
+                position: relative;
+                height: 44px;
+                border-radius: 8px;
+                background: var(--surface);
+                overflow: hidden;
+                isolation: isolate;
+            }
+
+            .crossfade-track-fill {
+                position: absolute;
+                inset: 0;
+                z-index: 0;
+            }
+
+            .crossfade-track-a .crossfade-track-fill {
+                background: linear-gradient(
+                    to right,
+                    var(--cf-a) 0%,
+                    var(--cf-a) var(--start-pct),
+                    transparent var(--end-pct),
+                    transparent 100%
+                );
+            }
+
+            .crossfade-track-b .crossfade-track-fill {
+                background: linear-gradient(
+                    to right,
+                    transparent 0%,
+                    transparent var(--start-pct),
+                    var(--cf-b) var(--end-pct),
+                    var(--cf-b) 100%
+                );
+            }
+
+            .crossfade-wave {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 1;
+                color: var(--text-soft);
+                opacity: 0.45;
+                pointer-events: none;
+            }
+
+            .crossfade-track-a .crossfade-wave,
+            .crossfade-track-b .crossfade-wave {
+                color: rgba(255, 255, 255, 0.85);
+                mix-blend-mode: soft-light;
+                opacity: 0.95;
+            }
+
+            .crossfade-wave rect {
+                fill: currentColor;
+            }
+
+            .crossfade-track-tag {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 0.65rem;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                font-weight: 700;
+                font-family: "Source Code Pro", monospace;
+                z-index: 3;
+                color: white;
+                padding: 3px 8px;
+                border-radius: 4px;
+                left: 10px;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+            }
+            .crossfade-track-a .crossfade-track-tag {
+                background: var(--cf-a);
+            }
+            .crossfade-track-b .crossfade-track-tag {
+                background: var(--cf-b);
+            }
+
+            .crossfade-guides {
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                z-index: 4;
+            }
+
+            .crossfade-guide {
+                position: absolute;
+                top: -4px;
+                bottom: -4px;
+                width: 2px;
+                transform: translateX(-50%);
+                border-radius: 999px;
+            }
+
+            .crossfade-guide-start {
+                left: var(--start-pct);
+                background: var(--cf-a);
+            }
+            .crossfade-guide-weight {
+                left: var(--weight-pct);
+                background: var(--cf-weight);
+                box-shadow: 0 0 0 5px color-mix(in oklab, var(--cf-weight) 18%, transparent);
+            }
+            .crossfade-guide-end {
+                left: var(--end-pct);
+                background: var(--cf-b);
+            }
+
+            .crossfade-guide-label {
+                position: absolute;
+                top: calc(100% + 6px);
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 0.7rem;
+                font-weight: 700;
+                font-family: "Source Code Pro", monospace;
+                white-space: nowrap;
+                background: var(--page-bg);
+                padding: 2px 7px;
+                border-radius: 999px;
+                border: 1px solid var(--border);
+                line-height: 1.4;
+            }
+            .crossfade-guide-start .crossfade-guide-label {
+                color: var(--cf-a);
+                border-color: color-mix(in oklab, var(--cf-a) 45%, var(--border));
+            }
+            .crossfade-guide-weight .crossfade-guide-label {
+                color: var(--cf-weight);
+                border-color: color-mix(in oklab, var(--cf-weight) 45%, var(--border));
+            }
+            .crossfade-guide-end .crossfade-guide-label {
+                color: var(--cf-b);
+                border-color: color-mix(in oklab, var(--cf-b) 45%, var(--border));
+            }
+
+            #crossfade-range {
+                --thumb-size: 18px;
+                --track-height: 4px;
+            }
+            #crossfade-range::part(slider-track) {
+                background: var(--border);
+            }
+            #crossfade-range::part(slider-segment-1) {
+                background: var(--cf-a);
+            }
+            #crossfade-range::part(slider-segment-2) {
+                background: linear-gradient(to right, var(--cf-a), var(--cf-weight));
+            }
+            #crossfade-range::part(slider-segment-3) {
+                background: linear-gradient(to right, var(--cf-weight), var(--cf-b));
+            }
+            #crossfade-range::part(slider-segment-4) {
+                background: var(--cf-b);
+            }
+            #crossfade-range::part(slider-thumb-1) {
+                --slider-thumb-color: var(--cf-a);
+                --slider-thumb-ring-color: color-mix(in oklab, var(--cf-a) 55%, white);
+            }
+            #crossfade-range::part(slider-thumb-2) {
+                --slider-thumb-color: var(--cf-weight);
+                --slider-thumb-ring-color: color-mix(in oklab, var(--cf-weight) 55%, white);
+            }
+            #crossfade-range::part(slider-thumb-3) {
+                --slider-thumb-color: var(--cf-b);
+                --slider-thumb-ring-color: color-mix(in oklab, var(--cf-b) 55%, white);
+            }
+
+            .crossfade-readout {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+
+            .crossfade-readout-item {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                padding: 12px 14px;
+                background: var(--surface);
+                border-radius: 10px;
+                border: 1px solid var(--border);
+            }
+
+            .crossfade-readout-label {
+                font-size: 0.68rem;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--text-soft);
+                font-weight: 700;
+            }
+
+            .crossfade-readout-value {
+                font-family: "Source Code Pro", monospace;
+                font-size: 1.15rem;
+                font-weight: 700;
+                color: var(--text-strong);
+                line-height: 1.2;
+            }
+
+            .crossfade-readout-item[data-role="start"] .crossfade-readout-value {
+                color: var(--cf-a);
+            }
+            .crossfade-readout-item[data-role="end"] .crossfade-readout-value {
+                color: var(--cf-b);
+            }
+            .crossfade-readout-item[data-role="bias"] .crossfade-readout-value {
+                color: var(--cf-weight);
+            }
+
+            @media (max-width: 700px) {
+                .crossfade-card {
+                    gap: 1.1rem;
+                }
+                .crossfade-track {
+                    height: 40px;
+                }
+                .crossfade-track-tag {
+                    font-size: 0.58rem;
+                    letter-spacing: 0.1em;
+                    padding: 2px 6px;
+                }
+                .crossfade-guide-label {
+                    font-size: 0.63rem;
+                    padding: 2px 6px;
+                }
+                .crossfade-readout {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 8px;
+                }
+                .crossfade-readout-item {
+                    padding: 10px 11px;
+                }
+                .crossfade-readout-value {
+                    font-size: 1rem;
+                }
+            }
+
+            @media (max-width: 420px) {
+                .crossfade-track {
+                    height: 38px;
+                }
+                .crossfade-track-tag {
+                    left: 8px;
+                }
+                .crossfade-guide-label {
+                    font-size: 0.58rem;
+                    padding: 2px 5px;
+                }
+                .crossfade-readout {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+
+        <div class="crossfade-stage">
+            <div class="crossfade-tracks">
+                <div class="crossfade-track crossfade-track-a">
+                    <div class="crossfade-track-fill"></div>
+                    <svg
+                        class="crossfade-wave"
+                        viewBox="0 0 200 44"
+                        preserveAspectRatio="none"
+                        aria-hidden="true"
+                        data-cf-wave="a"></svg>
+                    <span class="crossfade-track-tag">Track A</span>
+                </div>
+                <div class="crossfade-track crossfade-track-b">
+                    <div class="crossfade-track-fill"></div>
+                    <svg
+                        class="crossfade-wave"
+                        viewBox="0 0 200 44"
+                        preserveAspectRatio="none"
+                        aria-hidden="true"
+                        data-cf-wave="b"></svg>
+                    <span class="crossfade-track-tag">Track B</span>
+                </div>
+                <div class="crossfade-guides" aria-hidden="true">
+                    <div class="crossfade-guide crossfade-guide-start">
+                        <span class="crossfade-guide-label" id="cf-guide-start">2.0s</span>
+                    </div>
+                    <div class="crossfade-guide crossfade-guide-weight">
+                        <span class="crossfade-guide-label" id="cf-guide-weight">× 50 / 50</span>
+                    </div>
+                    <div class="crossfade-guide crossfade-guide-end">
+                        <span class="crossfade-guide-label" id="cf-guide-end">7.8s</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <range-group id="crossfade-range" min="0" max="100" stepbetween="2">
+            <legend slot="legend" class="visually-hidden">Crossfade overlap editor</legend>
+            <label class="visually-hidden">
+                Overlap start (seconds)
+                <input type="range" name="crossfade-start" value="20" />
+            </label>
+            <label class="visually-hidden">
+                Crossfade weight
+                <input type="range" name="crossfade-weight" value="50" />
+            </label>
+            <label class="visually-hidden">
+                Overlap end (seconds)
+                <input type="range" name="crossfade-end" value="78" />
+            </label>
+        </range-group>
+
+        <div class="crossfade-readout">
+            <div class="crossfade-readout-item" data-role="start">
+                <span class="crossfade-readout-label">Start</span>
+                <span class="crossfade-readout-value" id="cf-start">2.0s</span>
+            </div>
+            <div class="crossfade-readout-item" data-role="end">
+                <span class="crossfade-readout-label">End</span>
+                <span class="crossfade-readout-value" id="cf-end">7.8s</span>
+            </div>
+            <div class="crossfade-readout-item">
+                <span class="crossfade-readout-label">Overlap</span>
+                <span class="crossfade-readout-value" id="cf-overlap">5.8s</span>
+            </div>
+            <div class="crossfade-readout-item" data-role="bias">
+                <span class="crossfade-readout-label">A / B bias</span>
+                <span class="crossfade-readout-value" id="cf-bias">50 / 50</span>
+            </div>
+        </div>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup id="crossfade-range" min="0" max="100" stepbetween="2">
+  <label>Overlap start <input type="range" value="20"></label>
+  <label>Crossfade weight <input type="range" value="50"></label>
+  <label>Overlap end <input type="range" value="78"></label>
+</rangegroup>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+/* Thumb + segment colors drive the entire crossfade narrative */
+rangegroup::slider-segment(1) { background: var(--cf-a); }
+rangegroup::slider-segment(2) {
+  background: linear-gradient(to right, var(--cf-a), var(--cf-weight));
+}
+rangegroup::slider-segment(3) {
+  background: linear-gradient(to right, var(--cf-weight), var(--cf-b));
+}
+rangegroup::slider-segment(4) { background: var(--cf-b); }
+
+rangegroup::slider-thumb(1) { background: var(--cf-a); }
+rangegroup::slider-thumb(2) { background: var(--cf-weight); }
+rangegroup::slider-thumb(3) { background: var(--cf-b); }
+
+/* Track-A volume fades from full at "start" to 0 at "end" */
+.crossfade-track-a .crossfade-track-fill {
+  background: linear-gradient(to right,
+    var(--cf-a) 0%,
+    var(--cf-a) var(--start-pct),
+    transparent var(--end-pct),
+    transparent 100%);
+}
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const rg   = document.querySelector("#crossfade-range");
+const card = document.querySelector(".crossfade-card");
+const startEl   = document.querySelector("#cf-start");
+const endEl     = document.querySelector("#cf-end");
+const overlapEl = document.querySelector("#cf-overlap");
+const biasEl    = document.querySelector("#cf-bias");
+
+const TRACK_SECONDS = 10;
+const fmt = pct => (pct / 100 * TRACK_SECONDS).toFixed(1) + "s";
+
+const update = () => {
+  const [start, weight, end] = rg.values.map(v => Math.round(v));
+
+  /* feed CSS variables so the stacked tracks + guides re-paint */
+  card.style.setProperty("--start-pct",  start  + "%");
+  card.style.setProperty("--weight-pct", weight + "%");
+  card.style.setProperty("--end-pct",    end    + "%");
+
+  /* derive timecode + A/B bias from the three thumb positions */
+  startEl.textContent   = fmt(start);
+  endEl.textContent     = fmt(end);
+  overlapEl.textContent = fmt(end - start);
+  const a = end > start
+    ? Math.round(((end - weight) / (end - start)) * 100)
+    : 50;
+  biasEl.textContent = a + " / " + (100 - a);
+};
+
+rg.addEventListener("input", update);
+update();
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const crossfadeRoot = document.querySelector("#crossfade");
+                const rg = document.querySelector("#crossfade-range");
+                const card = document.querySelector(".crossfade-card");
+                const startEl = document.querySelector("#cf-start");
+                const endEl = document.querySelector("#cf-end");
+                const overlapEl = document.querySelector("#cf-overlap");
+                const biasEl = document.querySelector("#cf-bias");
+                if (!crossfadeRoot || !rg || !card || !startEl || !endEl || !overlapEl || !biasEl) return;
+
+                crossfadeRoot.querySelectorAll("[data-cf-wave]").forEach((svg) => {
+                    const isA = svg.dataset.cfWave === "a";
+                    const seed = isA ? 17.3 : 41.7;
+                    const bars = 80;
+                    const viewW = 200;
+                    const viewH = 44;
+                    const slot = viewW / bars;
+                    const barW = slot * 0.55;
+                    let frag = "";
+                    for (let i = 0; i < bars; i++) {
+                        const n =
+                            Math.sin(seed + i * 0.73) * 11 +
+                            Math.sin(seed * 0.27 + i * 0.21) * 7 +
+                            Math.sin(seed * 1.61 + i * 0.42) * 4;
+                        const h = Math.max(3, Math.min(viewH - 4, Math.abs(n) * 1.6 + 4));
+                        const x = i * slot + (slot - barW) / 2;
+                        const y = (viewH - h) / 2;
+                        frag += `<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${barW.toFixed(2)}" height="${h.toFixed(2)}" rx="0.8"/>`;
+                    }
+                    svg.innerHTML = frag;
+                });
+
+                const TRACK_SECONDS = 10;
+                const fmt = (pct) => ((pct / 100) * TRACK_SECONDS).toFixed(1) + "s";
+
+                const update = () => {
+                    const [start, weight, end] = rg.values.map((v) => Math.round(v));
+
+                    /* feed CSS variables so the stacked tracks + guides re-paint */
+                    card.style.setProperty("--start-pct", start + "%");
+                    card.style.setProperty("--weight-pct", weight + "%");
+                    card.style.setProperty("--end-pct", end + "%");
+
+                    /* derive timecode + A/B bias from the three thumb positions */
+                    startEl.textContent = fmt(start);
+                    endEl.textContent = fmt(end);
+                    overlapEl.textContent = fmt(end - start);
+                    const a = end > start ? Math.round(((end - weight) / (end - start)) * 100) : 50;
+                    biasEl.textContent = a + " / " + (100 - a);
+                };
+
+                rg.addEventListener("input", update);
+                update();
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

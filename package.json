@@ -4,27 +4,20 @@
   "version": "1.0.0",
   "description": "A Lit-based multi-handle range slider web component.",
   "type": "module",
-  "main": "./dist/range-group.umd.cjs",
-  "module": "./dist/range-group.js",
-  "exports": {
-    ".": {
-      "import": "./dist/range-group.js",
-      "require": "./dist/range-group.umd.cjs"
-    }
-  },
-  "files": [
-    "dist"
-  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
   },
   "dependencies": {
     "lit": "^3.1.2"
   },
   "devDependencies": {
-    "typescript": "^5.2.2",
-    "vite": "^5.2.0"
+    "@astrojs/check": "^0.9.9",
+    "astro": "^6.3.6",
+    "postcss-import": "^16.1.1",
+    "prettier": "^3.8.3",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^5.2.2"
   }
 }

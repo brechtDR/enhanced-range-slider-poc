@@ -1,0 +1,119 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="disabled-mixed" eyebrow="Constraints and state" title="Mixed disabled state">
+    <Fragment slot="description">
+        Individual thumbs can be disabled while the rest remain interactive. The button toggles the group-level <code
+            >disabled</code
+        > state to show that individual disabled flags persist on re-enable.
+    </Fragment>
+    <div slot="demo">
+        <style is:global>
+            #disabled-mixed-example::part(slider-segment-1),
+            #disabled-mixed-example::part(slider-segment-3) {
+                background-color: #d8d8de;
+            }
+            #disabled-mixed-example::part(slider-segment-2) {
+                background-color: var(--color-teal);
+            }
+            #disabled-mixed-example::part(slider-thumb) {
+                --slider-thumb-color: var(--color-teal);
+            }
+        </style>
+        <range-group id="disabled-mixed-example" min="0" max="100">
+            <legend slot="legend" class="visually-hidden">Mixed disabled</legend>
+            <label class="visually-hidden">
+                Minimum (locked)
+                <input type="range" name="dis-mixed-min" value="30" disabled />
+            </label>
+            <label class="visually-hidden">
+                Maximum
+                <input type="range" name="dis-mixed-max" value="70" />
+            </label>
+        </range-group>
+        <div class="button-group">
+            <button id="toggleDisabledBtn" class="btn btn-primary">Toggle group disabled</button>
+        </div>
+        <pre id="disabledOutput" class="api-output">Group disabled: false</pre>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup id="disabled-mixed-example" min="0" max="100">
+  <legend>Mixed disabled</legend>
+  <label>Minimum (locked) <input type="range" value="30" disabled></label>
+  <label>Maximum <input type="range" value="70"></label>
+</rangegroup>
+<button id="toggleDisabledBtn">Toggle group disabled</button>
+<pre id="disabledOutput">Group disabled: false</pre>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+rangegroup::slider-segment(1),
+rangegroup::slider-segment(3) {
+  background-color: #d8d8de;        /* outside selected range */
+}
+rangegroup::slider-segment(2) {
+  background-color: #14b8a6;        /* selected range */
+}
+rangegroup::slider-thumb(*) {
+  background-color: #14b8a6;
+}
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const rg     = document.querySelector("#disabled-mixed-example");
+const btn    = document.querySelector("#toggleDisabledBtn");
+const output = document.querySelector("#disabledOutput");
+
+btn.addEventListener("click", () => {
+  rg.disabled = !rg.disabled;
+  output.textContent = \`Group disabled: \${rg.disabled}\`;
+  /* The first input keeps its own \`disabled\` attribute, so
+     toggling the group back on leaves it locked. */
+});
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg     = document.querySelector("#disabled-mixed-example");
+                const btn    = document.querySelector("#toggleDisabledBtn");
+                const output = document.querySelector("#disabledOutput");
+                
+                btn.addEventListener("click", () => {
+                  rg.disabled = !rg.disabled;
+                  output.textContent = `Group disabled: ${rg.disabled}`;
+                  /* The first input keeps its own `disabled` attribute, so
+                     toggling the group back on leaves it locked. */
+                });
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

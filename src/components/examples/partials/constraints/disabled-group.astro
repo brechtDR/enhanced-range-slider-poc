@@ -1,0 +1,58 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="disabled-group" eyebrow="Constraints and state" title="Fully disabled group">
+    <Fragment slot="description">
+        The <code>disabled</code> attribute disables the whole control. All thumbs become non-interactive and are removed
+        from the tab order.
+    </Fragment>
+    <div slot="demo">
+        <style is:global>
+            #disabled-group-example::part(slider-segment-2) {
+                background-color: var(--color-purple);
+            }
+            #disabled-group-example::part(slider-thumb) {
+                --slider-thumb-color: var(--color-purple);
+            }
+        </style>
+        <range-group id="disabled-group-example" min="0" max="100" disabled>
+            <legend slot="legend" class="visually-hidden">Fully disabled group</legend>
+            <label class="visually-hidden">
+                Minimum
+                <input type="range" name="dis-group-min" value="25" />
+            </label>
+            <label class="visually-hidden">
+                Maximum
+                <input type="range" name="dis-group-max" value="75" />
+            </label>
+        </range-group>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup min="0" max="100" disabled>
+  <legend>Fully disabled group</legend>
+  <label>Minimum <input type="range" value="25"></label>
+  <label>Maximum <input type="range" value="75"></label>
+</rangegroup>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+rangegroup::slider-segment(2) {
+  background-color: #a855f7;        /* selected range */
+}
+rangegroup::slider-thumb(*) {
+  background-color: #a855f7;
+}
+/* The :disabled state itself is handled by user-agent styles -
+   desaturated thumbs, muted track, removed from tab order. */
+`}
+        />
+    </ExampleCodeBlock>
+</ExampleSection>

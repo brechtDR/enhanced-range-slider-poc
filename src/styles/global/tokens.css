@@ -1,0 +1,81 @@
+:root {
+    /* Primitive tokens */
+    --p-color-warm-bg: #ffffff;
+    --p-color-warm-surface-1: #f4f6f9;
+    --p-color-warm-surface-2: #f8fafc;
+    --p-color-warm-border: #e5e7eb;
+    --p-color-warm-border-strong: #d4dae3;
+    --p-color-warm-text-strong: #0b1220;
+    --p-color-warm-text: #1f2937;
+    --p-color-warm-text-muted: #475467;
+    --p-color-warm-text-soft: #94a3b8;
+
+    --p-color-cool-bg: #0a1020;
+    --p-color-cool-surface-1: #131c2d;
+    --p-color-cool-surface-2: #1a2538;
+    --p-color-cool-border: #233049;
+    --p-color-cool-border-strong: #30405f;
+    --p-color-cool-text-strong: #f8fafc;
+    --p-color-cool-text: #d8e0ec;
+    --p-color-cool-text-muted: #bfcbdb;
+    --p-color-cool-text-soft: #8194ad;
+
+    --p-color-brand-500: #399a4b;
+    --p-color-brand-500-vivid: #53be66;
+    --p-color-brand-700: #2d7d3c;
+
+    /* Semantic tokens */
+    --s-color-bg: light-dark(var(--p-color-warm-bg), var(--p-color-cool-bg));
+    --s-surface-1: light-dark(var(--p-color-warm-surface-1), var(--p-color-cool-surface-1));
+    --s-surface-2: light-dark(var(--p-color-warm-surface-2), var(--p-color-cool-surface-2));
+    --s-surface-hover: light-dark(#eef1f5, #24344f);
+    --s-border-subtle: light-dark(var(--p-color-warm-border), var(--p-color-cool-border));
+    --s-border-strong: light-dark(var(--p-color-warm-border-strong), var(--p-color-cool-border-strong));
+    --s-color-text-strong: light-dark(var(--p-color-warm-text-strong), var(--p-color-cool-text-strong));
+    --s-color-text: light-dark(var(--p-color-warm-text), var(--p-color-cool-text));
+    --s-color-text-muted: light-dark(var(--p-color-warm-text-muted), var(--p-color-cool-text-muted));
+    --s-color-text-soft: light-dark(var(--p-color-warm-text-soft), var(--p-color-cool-text-soft));
+    --s-color-accent: light-dark(var(--p-color-brand-500), var(--p-color-brand-500-vivid));
+    --s-color-accent-strong: light-dark(var(--p-color-brand-700), var(--p-color-brand-500-vivid));
+    --s-color-accent-soft: light-dark(#eaf5ec, #1f3927);
+    --s-topbar-bg: light-dark(rgb(255 255 255 / 0.85), rgb(10 16 32 / 0.82));
+    --s-switch-track: light-dark(#cfd6df, #3a4d6d);
+    --s-switch-thumb: light-dark(#ffffff, #f8fafc);
+    --s-focus-ring: light-dark(var(--p-color-brand-500), #71d382);
+    --s-scrollbar-thumb: light-dark(#4aa85a, #53be66);
+    --s-scrollbar-thumb-hover: light-dark(#2d7d3c, #71d382);
+    --s-scrollbar-track: light-dark(#e7f2e9, #1f3927);
+
+    /* Backwards-compatible "text" tokens used inside individual example styles */
+    --page-bg: var(--s-color-bg);
+    --surface: var(--s-surface-1);
+    --surface-soft: var(--s-surface-2);
+    --border: var(--s-border-subtle);
+    --border-strong: var(--s-border-strong);
+    --text-strong: var(--s-color-text-strong);
+    --text: var(--s-color-text);
+    --text-muted: var(--s-color-text-muted);
+    --text-soft: var(--s-color-text-soft);
+    --accent: var(--s-color-accent);
+    --accent-soft: var(--s-color-accent-soft);
+    --accent-deep: var(--s-color-accent-strong);
+
+    --color-text: var(--s-color-text-strong);
+    --color-text-muted: var(--s-color-text-muted);
+    --color-text-description: var(--s-color-text);
+    --color-bg: var(--s-color-bg);
+    --color-card-bg: var(--s-surface-2);
+
+    /* Creative palette retained for example overrides (kept from original) */
+    --color-purple: oklch(55% 0.22 300);
+    --color-pink: oklch(55% 0.22 340);
+    --color-teal: oklch(50% 0.14 195);
+    --color-indigo: oklch(45% 0.22 260);
+    --color-orange: oklch(60% 0.18 50);
+    --color-yellow: oklch(60% 0.18 90);
+
+    --color-indigo-strong: oklch(45% 0.22 260);
+    --color-indigo-hover: oklch(40% 0.22 260);
+    --color-pink-strong: oklch(55% 0.22 340);
+    --color-pink-hover: oklch(50% 0.22 340);
+}

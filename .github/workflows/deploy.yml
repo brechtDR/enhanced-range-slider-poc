@@ -28,7 +28,7 @@ jobs:
             - name: Install pnpm
               uses: pnpm/action-setup@v3
               with:
-                  version: 8 # You can specify a pnpm version
+                  version: 10
 
             - name: Set up Node.js
               uses: actions/setup-node@v4
@@ -37,10 +37,10 @@ jobs:
                   cache: "pnpm" # Use pnpm's cache
 
             - name: Install dependencies
-              run: pnpm install
+              run: pnpm install --frozen-lockfile
 
             - name: Build
-              # The 'base' in vite.config.ts ensures assets load correctly
+              # The 'base' in astro.config.mjs ensures assets load correctly
               run: pnpm build
 
             - name: Setup Pages

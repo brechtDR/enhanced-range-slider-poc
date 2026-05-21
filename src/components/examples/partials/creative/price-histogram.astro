@@ -1,0 +1,373 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="price-histogram" eyebrow="Creative styling" title="Histogram price filter">
+    <Fragment slot="description">
+        An Airbnb-style price filter. The histogram behind the slider previews item distribution; bars inside the active
+        range light up in the brand accent. Pill thumbs with grip lines carry floating price tags via CSS Anchor
+        Positioning.
+    </Fragment>
+    <div slot="demo" class="price-histogram-card">
+        <style is:global>
+            .price-histogram-card {
+                --hist-active: #14b8a6;
+                --hist-inactive: #d6dbe2;
+                position: relative;
+            }
+            .price-histogram-stage {
+                position: relative;
+                padding-top: 32px;
+            }
+            .price-histogram-svg {
+                width: 100%;
+                height: 84px;
+                display: block;
+            }
+            .price-histogram-svg rect {
+                fill: var(--hist-inactive);
+                transition: fill 0.12s ease;
+            }
+            .price-histogram-svg rect[data-in-range="true"] {
+                fill: var(--hist-active);
+            }
+            #price-histogram-range {
+                --thumb-size: 28px;
+                --track-height: 6px;
+                margin-top: -2px;
+            }
+            #price-histogram-range::part(slider-track) {
+                background: var(--hist-inactive);
+                border-radius: 999px;
+            }
+            #price-histogram-range::part(slider-segment-2) {
+                background: var(--hist-active);
+            }
+            #price-histogram-range::part(slider-thumb) {
+                width: 16px;
+                height: 28px;
+                border-radius: 8px;
+                background-color: white;
+                border: 2px solid var(--hist-active);
+                background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 28'><line x1='6' y1='9' x2='6' y2='19' stroke='%2314b8a6' stroke-width='1.5' stroke-linecap='round'/><line x1='10' y1='9' x2='10' y2='19' stroke='%2314b8a6' stroke-width='1.5' stroke-linecap='round'/></svg>");
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
+                box-shadow: 0 2px 6px rgba(20, 184, 166, 0.25);
+            }
+            #price-histogram-range::part(slider-thumb-1) {
+                anchor-name: --price-hist-1;
+            }
+            #price-histogram-range::part(slider-thumb-2) {
+                anchor-name: --price-hist-2;
+            }
+            .price-tag {
+                position: absolute;
+                background: var(--hist-active);
+                color: white;
+                font-family: "Source Code Pro", "JetBrains Mono", monospace;
+                font-weight: 700;
+                font-size: 0.78rem;
+                letter-spacing: 0.01em;
+                padding: 4px 9px;
+                border-radius: 999px;
+                white-space: nowrap;
+                pointer-events: none;
+                box-shadow: 0 4px 12px rgba(20, 184, 166, 0.32);
+            }
+            .price-tag::after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                bottom: -3px;
+                width: 7px;
+                height: 7px;
+                background: var(--hist-active);
+                transform: translateX(-50%) rotate(45deg);
+                border-radius: 1px;
+            }
+            #price-tag-1 {
+                position-anchor: --price-hist-1;
+                bottom: anchor(top);
+                left: anchor(center);
+                translate: -50% -8px;
+            }
+            #price-tag-2 {
+                position-anchor: --price-hist-2;
+                bottom: anchor(top);
+                left: anchor(center);
+                translate: -50% -8px;
+            }
+            .price-histogram-meta {
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                margin-top: 1.25rem;
+                gap: 1rem;
+            }
+            .price-histogram-bounds {
+                color: var(--text-soft);
+                font-family: "Source Code Pro", "JetBrains Mono", monospace;
+                font-size: 0.82rem;
+            }
+            .price-histogram-count {
+                font-size: 0.9rem;
+                color: var(--text);
+            }
+            .price-histogram-count strong {
+                color: var(--hist-active);
+                font-family: "Source Code Pro", "JetBrains Mono", monospace;
+                font-size: 1.05rem;
+                font-weight: 700;
+                margin-right: 4px;
+            }
+
+            @media (max-width: 700px) {
+                .price-histogram-stage {
+                    padding-top: 28px;
+                }
+                .price-histogram-svg {
+                    height: 72px;
+                }
+                .price-tag {
+                    font-size: 0.7rem;
+                    padding: 3px 7px;
+                    max-inline-size: calc(50vw - 18px);
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                .price-tag::after {
+                    width: 6px;
+                    height: 6px;
+                }
+                #price-tag-1,
+                #price-tag-2 {
+                    translate: -50% -6px;
+                }
+                .price-histogram-meta {
+                    margin-top: 1rem;
+                    align-items: flex-start;
+                    flex-direction: column;
+                    gap: 0.35rem;
+                }
+            }
+
+            @media (max-width: 420px) {
+                .price-histogram-stage {
+                    padding-top: 24px;
+                }
+                .price-histogram-svg {
+                    height: 64px;
+                }
+                .price-tag {
+                    font-size: 0.64rem;
+                    padding: 3px 6px;
+                }
+                .price-tag::after {
+                    display: none;
+                }
+                .price-histogram-bounds {
+                    font-size: 0.76rem;
+                }
+                .price-histogram-count {
+                    font-size: 0.84rem;
+                }
+                .price-histogram-count strong {
+                    font-size: 0.95rem;
+                }
+            }
+        </style>
+        <div class="price-histogram-stage">
+            <svg
+                id="price-histogram-svg"
+                class="price-histogram-svg"
+                viewBox="0 0 200 84"
+                preserveAspectRatio="none"
+                aria-hidden="true"></svg>
+        </div>
+        <range-group id="price-histogram-range" min="0" max="1000">
+            <legend slot="legend" class="visually-hidden">Price range</legend>
+            <label class="visually-hidden">Min price <input type="range" value="200" /></label>
+            <label class="visually-hidden">Max price <input type="range" value="780" /></label>
+        </range-group>
+        <div id="price-tag-1" class="price-tag" aria-hidden="true">$200</div>
+        <div id="price-tag-2" class="price-tag" aria-hidden="true">$780</div>
+        <div class="price-histogram-meta">
+            <span class="price-histogram-bounds">$0 – $1,000</span>
+            <span class="price-histogram-count">
+                <strong id="price-histogram-count">1,247</strong>items match
+            </span>
+        </div>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup id="price-histogram-range" min="0" max="1000">
+  <legend>Price range</legend>
+  <label>Min price <input type="range" value="200"></label>
+  <label>Max price <input type="range" value="780"></label>
+</rangegroup>
+
+<!-- distribution preview drawn behind the slider -->
+<svg id="price-histogram-svg" class="price-histogram-svg"></svg>
+
+<!-- floating price tags follow each thumb via anchor positioning -->
+<div id="price-tag-1" class="price-tag">$200</div>
+<div id="price-tag-2" class="price-tag">$780</div>
+
+<p class="price-histogram-count">
+  <strong id="price-histogram-count">1,247</strong>items match
+</p>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+rangegroup::slider-track {
+  background: #d6dbe2;
+  border-radius: 999px;
+}
+rangegroup::slider-segment(2) {
+  background: #14b8a6;
+}
+
+/* pill thumb with two-bar grip icon */
+rangegroup::slider-thumb(*) {
+  width: 16px; height: 28px;
+  border-radius: 8px;
+  background-color: white;
+  border: 2px solid #14b8a6;
+  background-image: url("...two-bar grip svg...");
+  box-shadow: 0 2px 6px rgba(20, 184, 166, 0.25);
+}
+rangegroup::slider-thumb(1) { anchor-name: --price-hist-1; }
+rangegroup::slider-thumb(2) { anchor-name: --price-hist-2; }
+
+/* histogram bars repaint as the range moves */
+.price-histogram-svg rect                        { fill: #d6dbe2; }
+.price-histogram-svg rect[data-in-range="true"]  { fill: #14b8a6; }
+
+/* one price tag per thumb, anchored above it */
+.price-tag {
+  position: absolute;
+  bottom: anchor(top);
+  left:   anchor(center);
+  translate: -50% -8px;
+  background: #14b8a6;
+  color: white;
+  padding: 4px 9px;
+  border-radius: 999px;
+}
+#price-tag-1 { position-anchor: --price-hist-1; }
+#price-tag-2 { position-anchor: --price-hist-2; }
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const rg    = document.querySelector("#price-histogram-range");
+const tag1  = document.querySelector("#price-tag-1");
+const tag2  = document.querySelector("#price-tag-2");
+const count = document.querySelector("#price-histogram-count");
+const bars  = document.querySelectorAll("#price-histogram-svg rect");
+
+/* bars are pre-generated with random "weights"; matches = active weight */
+const weights = Array.from(bars, b => Number(b.dataset.weight));
+const total   = weights.reduce((a, b) => a + b, 0);
+const fmt     = new Intl.NumberFormat("en-US");
+
+rg.addEventListener("input", () => {
+  const [lo, hi] = rg.values.map(v => Math.round(v));
+  tag1.textContent = \`$\${lo}\`;
+  tag2.textContent = \`$\${hi}\`;
+
+  let active = 0;
+  bars.forEach((bar, i) => {
+    const v = (i / (bars.length - 1)) * 1000;
+    const inRange = v >= lo && v <= hi;
+    bar.dataset.inRange = String(inRange);
+    if (inRange) active += weights[i];
+  });
+  count.textContent = fmt.format(Math.round(active / total * 1923));
+});
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg = document.querySelector("#price-histogram-range");
+                const histSvg = document.querySelector("#price-histogram-svg");
+                const histCount = document.querySelector("#price-histogram-count");
+                const histTag1 = document.querySelector("#price-tag-1");
+                const histTag2 = document.querySelector("#price-tag-2");
+                if (!rg || !histSvg || !histCount || !histTag1 || !histTag2) return;
+
+                const BAR_COUNT = 44;
+                const SVG_W = 200;
+                const SVG_H = 84;
+                const slot = SVG_W / BAR_COUNT;
+                const barW = slot * 0.7;
+                const weights = [];
+                for (let i = 0; i < BAR_COUNT; i++) {
+                    const t = i / (BAR_COUNT - 1);
+                    const peak = Math.exp(-Math.pow((t - 0.34) / 0.18, 2));
+                    const tail = Math.exp(-Math.pow((t - 0.76) / 0.14, 2)) * 0.55;
+                    const wiggle = Math.abs(Math.sin(i * 1.7) * 0.07 + Math.sin(i * 0.43) * 0.04);
+                    weights.push(peak + tail + wiggle);
+                }
+                const maxW = Math.max(...weights);
+                histSvg.innerHTML = weights
+                    .map((w, i) => {
+                        const h = (w / maxW) * (SVG_H - 6) + 3;
+                        const x = i * slot + (slot - barW) / 2;
+                        const y = SVG_H - h;
+                        return `<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${barW.toFixed(2)}" height="${h.toFixed(2)}" rx="1.2"/>`;
+                    })
+                    .join("");
+                const bars = Array.from(histSvg.querySelectorAll("rect"));
+                const totalWeight = weights.reduce((a, b) => a + b, 0);
+                const TOTAL_ITEMS = 1923;
+                const numberFormat = new Intl.NumberFormat("en-US");
+                const updateHist = () => {
+                    const [loRaw, hiRaw] = rg.values;
+                    const lo = Math.round(loRaw);
+                    const hi = Math.round(hiRaw);
+                    let activeWeight = 0;
+                    bars.forEach((bar, i) => {
+                        const value = (i / (BAR_COUNT - 1)) * 1000;
+                        const inRange = value >= lo && value <= hi;
+                        bar.dataset.inRange = String(inRange);
+                        if (inRange) activeWeight += weights[i];
+                    });
+                    const matches = Math.max(1, Math.round((activeWeight / totalWeight) * TOTAL_ITEMS));
+                    histCount.textContent = numberFormat.format(matches);
+                    histTag1.textContent = `$${lo}`;
+                    histTag2.textContent = `$${hi}`;
+                };
+                rg.addEventListener("input", updateHist);
+                updateHist();
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

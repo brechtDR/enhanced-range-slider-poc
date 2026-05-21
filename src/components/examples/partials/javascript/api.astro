@@ -1,0 +1,112 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="api" eyebrow="JavaScript API" title="Programmatic interaction">
+    <Fragment slot="description">
+        Use the component&rsquo;s public methods and properties to get and set values from script.
+    </Fragment>
+    <div slot="demo">
+        <style is:global>
+            #api-range::part(slider-segment-2) {
+                background: linear-gradient(to right, var(--color-purple), var(--color-pink));
+            }
+        </style>
+        <range-group id="api-range" min="0" max="500">
+            <legend slot="legend" class="visually-hidden">JS API interaction</legend>
+            <label class="visually-hidden">
+                API Handle 1
+                <input type="range" name="api-1" value="100" />
+            </label>
+            <label class="visually-hidden">
+                API Handle 2
+                <input type="range" name="api-2" value="400" />
+            </label>
+        </range-group>
+        <div class="button-group">
+            <button id="getValuesBtn" class="btn btn-primary">Get values</button>
+            <button id="setValuesBtn" class="btn btn-secondary">Set random values</button>
+        </div>
+        <pre id="apiOutput" class="api-output"></pre>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup id="api-range" min="0" max="500">
+  <legend>JS API interaction</legend>
+  <label>API Handle 1 <input type="range" value="100"></label>
+  <label>API Handle 2 <input type="range" value="400"></label>
+</rangegroup>
+
+<button id="getValuesBtn">Get values</button>
+<button id="setValuesBtn">Set random values</button>
+<pre id="apiOutput"></pre>
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const rg     = document.querySelector("#api-range");
+const getBtn = document.querySelector("#getValuesBtn");
+const setBtn = document.querySelector("#setValuesBtn");
+const output = document.querySelector("#apiOutput");
+
+/* read: .values returns a number[] in slot order */
+getBtn.addEventListener("click", () => {
+  output.textContent = \`Values: [\${rg.values.join(", ")}]\`;
+});
+
+/* write: setRangeValue(index, value) moves a single thumb */
+setBtn.addEventListener("click", () => {
+  const v1 = Math.round(Math.random() * 500);
+  const v2 = Math.round(Math.random() * 500);
+  rg.setRangeValue(0, Math.min(v1, v2));
+  rg.setRangeValue(1, Math.max(v1, v2));
+});
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg     = document.querySelector("#api-range");
+                const getBtn = document.querySelector("#getValuesBtn");
+                const setBtn = document.querySelector("#setValuesBtn");
+                const output = document.querySelector("#apiOutput");
+                
+                /* read: .values returns a number[] in slot order */
+                getBtn.addEventListener("click", () => {
+                  output.textContent = `Values: [${rg.values.join(", ")}]`;
+                });
+                
+                /* write: setRangeValue(index, value) moves a single thumb */
+                setBtn.addEventListener("click", () => {
+                  const v1 = Math.round(Math.random() * 500);
+                  const v2 = Math.round(Math.random() * 500);
+                  rg.setRangeValue(0, Math.min(v1, v2));
+                  rg.setRangeValue(1, Math.max(v1, v2));
+                });
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

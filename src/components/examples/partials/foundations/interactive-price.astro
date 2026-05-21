@@ -1,0 +1,148 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="interactive-price" eyebrow="Foundations" title="Interactive price editor">
+    <Fragment slot="description">
+        Two-way binding between the component values and number inputs. Drag the handles to update the fields, or type
+        in the fields to move the handles.
+    </Fragment>
+    <div slot="demo">
+        <style is:global>
+            #interactive-price-range::part(slider-segment-2) {
+                background: var(--color-teal);
+            }
+            #interactive-price-range::part(slider-thumb) {
+                --slider-thumb-color: var(--color-teal);
+                --slider-thumb-ring-color: color-mix(in oklab, var(--color-teal) 55%, white);
+            }
+        </style>
+        <range-group id="interactive-price-range" min="0" max="1000">
+            <legend slot="legend" class="visually-hidden">Interactive price range</legend>
+            <label class="visually-hidden">
+                Minimum
+                <input type="range" name="price-min" value="250" />
+            </label>
+            <label class="visually-hidden">
+                Maximum
+                <input type="range" name="price-max" value="750" />
+            </label>
+        </range-group>
+        <div class="price-input-container">
+            <div class="price-input-group">
+                <label for="price-min-num-input">Min price</label>
+                <input type="number" id="price-min-num-input" min="0" max="1000" />
+            </div>
+            <div class="price-input-group">
+                <label for="price-max-num-input">Max price</label>
+                <input type="number" id="price-max-num-input" min="0" max="1000" />
+            </div>
+        </div>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup id="interactive-price-range" min="0" max="1000">
+  <legend>Interactive price range</legend>
+  <label>Minimum <input type="range" name="price-min" value="250"></label>
+  <label>Maximum <input type="range" name="price-max" value="750"></label>
+</rangegroup>
+<label>Min price <input type="number" id="price-min-num-input" min="0" max="1000"></label>
+<label>Max price <input type="number" id="price-max-num-input" min="0" max="1000"></label>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+/* selected range segment (between two handles) */
+rangegroup::slider-segment(2) {
+  background: #14b8a6;
+}
+rangegroup::slider-thumb(*) {
+  background-color: #14b8a6;
+}
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const rg       = document.querySelector("#interactive-price-range");
+const minInput = document.querySelector("#price-min-num-input");
+const maxInput = document.querySelector("#price-max-num-input");
+
+/* slider -> inputs (also keeps reciprocal min/max in sync) */
+const syncInputsToSlider = () => {
+  const [lo, hi] = rg.values.map(v => Math.round(v));
+  minInput.value = lo;
+  maxInput.value = hi;
+  minInput.max = hi;   // min input can't exceed current max
+  maxInput.min = lo;   // max input can't go below current min
+};
+
+/* inputs -> slider */
+minInput.addEventListener("input", () => {
+  rg.setRangeValue(0, parseInt(minInput.value, 10));
+  syncInputsToSlider();
+});
+maxInput.addEventListener("input", () => {
+  rg.setRangeValue(1, parseInt(maxInput.value, 10));
+  syncInputsToSlider();
+});
+
+rg.addEventListener("input", syncInputsToSlider);
+syncInputsToSlider();
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg = document.querySelector("#interactive-price-range");
+                const minInput = document.querySelector("#price-min-num-input");
+                const maxInput = document.querySelector("#price-max-num-input");
+
+                /* slider -> inputs (also keeps reciprocal min/max in sync) */
+                const syncInputsToSlider = () => {
+                    const [lo, hi] = rg.values.map((v) => Math.round(v));
+                    minInput.value = lo;
+                    maxInput.value = hi;
+                    minInput.max = hi; // min input can't exceed current max
+                    maxInput.min = lo; // max input can't go below current min
+                };
+
+                /* inputs -> slider */
+                minInput.addEventListener("input", () => {
+                    rg.setRangeValue(0, parseInt(minInput.value, 10));
+                    syncInputsToSlider();
+                });
+                maxInput.addEventListener("input", () => {
+                    rg.setRangeValue(1, parseInt(maxInput.value, 10));
+                    syncInputsToSlider();
+                });
+
+                rg.addEventListener("input", syncInputsToSlider);
+                syncInputsToSlider();
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

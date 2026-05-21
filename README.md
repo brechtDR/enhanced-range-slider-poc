@@ -10,6 +10,8 @@ This component is a **proof-of-concept** and a technical demonstration. It is bu
 
 A highly customizable, multi-handle range slider web component built with [Lit](https://lit.dev/). This component is inspired by the WICG `<rangegroup>` proposal and provides a flexible foundation for creating complex range selection UIs.
 
+The demo site is built with [Astro](https://astro.build/) and published as static files to GitHub Pages.
+
 ## Features
 
 - **Multiple Handles**: Use any number of handles on a single track.
@@ -22,7 +24,7 @@ A highly customizable, multi-handle range slider web component built with [Lit](
 
 ## Demo
 
-The `index.html` in this repository serves as a live demo page showcasing various configurations.
+The demo lives in `src/pages/index.astro` and showcases various configurations.
 
 ---
 
@@ -38,20 +40,20 @@ To run the demo page locally and start developing, follow these steps:
 
 2.  **Install dependencies:**
     ```bash
-    npm install
+    pnpm install
     ```
 
 3.  **Start the development server:**
     ```bash
-    npm run dev
+    pnpm dev
     ```
-    This will open a local server, typically at `http://localhost:5173`.
+    This will open a local server, typically at `http://localhost:4321`.
 
 4.  **Build for production:**
     ```bash
-    npm run build
+    pnpm build
     ```
-    This command compiles the component into distributable JavaScript files in the `/dist` folder, ready for publishing.
+    This command builds the static demo site into the `/dist` folder, ready for GitHub Pages deployment.
 
 ---
 

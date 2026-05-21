@@ -1,0 +1,187 @@
+/* ============================
+   Budget allocator helpers (kept from original)
+   ============================ */
+.budget-labels {
+    position: absolute;
+    top: 0;
+    left: 2rem;
+    right: 2rem;
+    bottom: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+}
+
+.budget-label {
+    position: absolute;
+    transform: translateX(-50%);
+    color: white;
+    text-align: center;
+    font-size: 0.875rem;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+    line-height: 1.2;
+}
+
+.budget-label strong {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.budget-range-wrapper {
+    position: relative;
+}
+
+/* ============================
+   Price input pair (interactive example)
+   ============================ */
+.price-input-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.price-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex-grow: 1;
+}
+
+.price-input-group label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.price-input-group input[type="number"] {
+    background: var(--page-bg);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    color: var(--text-strong);
+    font-size: 1rem;
+    width: 100%;
+}
+
+.price-input-group input[type="number"]::-webkit-inner-spin-button,
+.price-input-group input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.price-input-group input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* ============================
+   PE toggle (component vs native)
+   ============================ */
+.pe-toggle-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--page-bg);
+}
+
+.pe-toggle-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.pe-toggle-label code {
+    color: var(--accent-deep);
+    background: transparent;
+    padding: 0;
+}
+
+.pe-toggle-explainer {
+    display: none;
+}
+
+.pe-toggle-switch {
+    --switch-width: 36px;
+    --switch-height: 20px;
+    --thumb-size: 14px;
+    position: relative;
+    width: var(--switch-width);
+    height: var(--switch-height);
+    appearance: none;
+    background: var(--s-switch-track);
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border: none;
+    flex-shrink: 0;
+}
+
+.pe-toggle-switch::before {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: var(--thumb-size);
+    height: var(--thumb-size);
+    background-color: var(--s-switch-thumb);
+    border-radius: 50%;
+    transition: transform 0.2s ease-in-out;
+}
+
+.pe-toggle-switch:checked {
+    background: var(--accent);
+}
+
+.pe-toggle-switch:checked::before {
+    transform: translateX(calc(var(--switch-width) - var(--switch-height)));
+}
+
+/* ============================
+   Fallback (PE off) styling
+   ============================ */
+fieldset.fallback-container {
+    border: 1px dashed var(--border-strong);
+    padding: 1.2rem;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: var(--page-bg);
+}
+
+fieldset.fallback-container > legend {
+    padding: 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-strong);
+}
+
+fieldset.fallback-container input[type="range"] {
+    width: 100%;
+}
+
+.fallback-label-visible {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+/* Hide top-level <legend slot="legend"> nodes when they sit inside fallback fieldsets
+   (we have an in-component visually-hidden one already) */
+.fallback-container > legend.visually-hidden {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0 0 0.5rem 0;
+    clip: auto;
+    white-space: normal;
+    color: var(--text-strong);
+    font-size: 1rem;
+    font-weight: 700;
+}

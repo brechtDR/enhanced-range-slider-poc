@@ -1,0 +1,97 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    color-scheme: light dark;
+    scroll-behavior: smooth;
+    scroll-padding-top: 0;
+    scrollbar-gutter: stable;
+}
+
+html.light {
+    color-scheme: light only;
+}
+
+html.dark {
+    color-scheme: dark only;
+}
+
+body {
+    margin: 0;
+    background: var(--page-bg);
+    color: var(--text);
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+}
+
+a {
+    color: var(--s-color-accent-strong);
+    text-underline-offset: 3px;
+}
+
+code {
+    font-family: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.9em;
+    background: var(--surface);
+    padding: 0.05em 0.4em;
+    border-radius: 4px;
+    color: var(--accent-deep);
+}
+
+* {
+    scrollbar-color: var(--s-scrollbar-thumb) var(--s-scrollbar-track);
+    scrollbar-width: thin;
+}
+
+@supports not (scrollbar-color: auto) {
+    *::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: var(--s-scrollbar-track);
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background: var(--s-scrollbar-thumb);
+        border-radius: 999px;
+        border: 2px solid var(--s-scrollbar-track);
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+        background: var(--s-scrollbar-thumb-hover);
+    }
+}
+
+@media (prefers-contrast: more) {
+    * {
+        scrollbar-color: CanvasText Canvas;
+    }
+
+    @supports not (scrollbar-color: auto) {
+        *::-webkit-scrollbar-track {
+            background: Canvas;
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background: CanvasText;
+            border-color: Canvas;
+        }
+    }
+}

@@ -1,0 +1,43 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="baseline" eyebrow="Foundations" title="Baseline — native default">
+    <Fragment slot="description">
+        Two thumbs with no <code>::part</code> overrides at all. The component&rsquo;s built-in defaults aim for the Chromium-on-macOS
+        <code>input[type="range"]</code> look: 16px blue thumbs, a 4px rounded track, and a blue fill between the thumbs.
+    </Fragment>
+    <div slot="demo">
+        <range-group id="baseline-range" min="0" max="1000">
+            <legend slot="legend" class="visually-hidden">Baseline price range</legend>
+            <label class="visually-hidden">
+                Minimum
+                <input type="range" name="baseline-min" value="250" />
+            </label>
+            <label class="visually-hidden">
+                Maximum
+                <input type="range" name="baseline-max" value="760" />
+            </label>
+        </range-group>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup min="0" max="1000">
+  <legend>Baseline price range</legend>
+  <label>Minimum <input type="range" value="250"></label>
+  <label>Maximum <input type="range" value="760"></label>
+</rangegroup>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+/* No CSS required — uses Chromium-on-macOS-like defaults. */
+`}
+        />
+    </ExampleCodeBlock>
+</ExampleSection>

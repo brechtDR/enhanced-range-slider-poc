@@ -1,0 +1,271 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="budget" eyebrow="Three-plus thumb patterns" title="Budget allocator">
+    <Fragment slot="description">
+        A complete visual transformation. Three thumbs split a 0&ndash;100 range into four colored budget bars, with
+        category labels anchored to each segment via CSS Anchor Positioning. An
+        <code>aria-live</code> region announces changes for assistive tech.
+    </Fragment>
+    <div slot="demo" style="position: relative">
+        <style is:global>
+            #budget-range {
+                --track-height: 50px;
+                --thumb-size: 36px;
+            }
+            #budget-range::part(slider-track) {
+                border-radius: 25px;
+                overflow: hidden;
+            }
+            #budget-range::part(slider-thumb) {
+                border: 4px solid #ffffff;
+                background-color: white;
+                background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' stroke='%230b1220' stroke-linecap='round' stroke-linejoin='bevel' stroke-width='1.5' d='M15.3 16.78l4.11-4.11a1 1 0 000-1.41l-4-4M8.7 7.22L4.59 11.33a1 1 0 000 1.41l4 4'/%3E%3C/svg%3E");
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: 60%;
+                box-shadow:
+                    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+                    0 2px 4px -1px rgba(0, 0, 0, 0.1);
+            }
+
+            #budget-range::part(slider-segment) {
+                anchor-name: var(--anchor-name);
+            }
+            #budget-range::part(slider-segment-1) {
+                background-color: #e53935;
+                --anchor-name: --budget-segment-1;
+            }
+            #budget-range::part(slider-segment-2) {
+                background-color: #8e24aa;
+                --anchor-name: --budget-segment-2;
+            }
+            #budget-range::part(slider-segment-3) {
+                background-color: #f57c00;
+                --anchor-name: --budget-segment-3;
+            }
+            #budget-range::part(slider-segment-4) {
+                background-color: #3949ab;
+                --anchor-name: --budget-segment-4;
+            }
+
+            .budget-label {
+                position: fixed;
+                color: white;
+                position-anchor: var(--anchor);
+                top: anchor(var(--anchor) top);
+                left: anchor(var(--anchor) center);
+                translate: 0 25%;
+                text-align: center;
+                font-size: 0.875rem;
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+                line-height: 1.2;
+                pointer-events: none;
+            }
+            #budget-label-0 {
+                --anchor: --budget-segment-1;
+            }
+            #budget-label-1 {
+                --anchor: --budget-segment-2;
+            }
+            #budget-label-2 {
+                --anchor: --budget-segment-3;
+            }
+            #budget-label-3 {
+                --anchor: --budget-segment-4;
+            }
+
+            .budget-label strong {
+                font-size: 1rem;
+                font-weight: 700;
+            }
+
+            @media (max-width: 700px) {
+                #budget-range {
+                    --track-height: 44px;
+                    --thumb-size: 32px;
+                }
+                #budget-range::part(slider-track) {
+                    border-radius: 22px;
+                }
+                .budget-label {
+                    font-size: 0.76rem;
+                    line-height: 1.1;
+                    translate: 0 30%;
+                }
+                .budget-label strong {
+                    font-size: 0.86rem;
+                }
+            }
+
+            @media (max-width: 420px) {
+                .budget-label {
+                    font-size: 0.66rem;
+                    line-height: 1;
+                    translate: 0 36%;
+                }
+                .budget-label strong {
+                    display: none;
+                }
+            }
+        </style>
+        <div class="budget-range-wrapper">
+            <range-group id="budget-range" min="0" max="100">
+                <legend slot="legend" class="visually-hidden">Budget allocator</legend>
+                <label class="visually-hidden">
+                    Groceries/Rent separator
+                    <input type="range" value="25" />
+                </label>
+                <label class="visually-hidden">
+                    Rent/Transport separator
+                    <input type="range" value="50" />
+                </label>
+                <label class="visually-hidden">
+                    Transport/Internet separator
+                    <input type="range" value="75" />
+                </label>
+            </range-group>
+            <div id="budget-labels" class="budget-labels">
+                <div id="budget-label-0" class="budget-label"></div>
+                <div id="budget-label-1" class="budget-label"></div>
+                <div id="budget-label-2" class="budget-label"></div>
+                <div id="budget-label-3" class="budget-label"></div>
+            </div>
+        </div>
+        <div id="budget-announcer" aria-live="polite" role="status" class="visually-hidden"></div>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup id="budget-range" min="0" max="100">
+  <legend>Budget allocator</legend>
+  <label>Groceries / Rent     <input type="range" value="25"></label>
+  <label>Rent / Transport     <input type="range" value="50"></label>
+  <label>Transport / Internet <input type="range" value="75"></label>
+</rangegroup>
+
+<!-- floating category labels, each anchored to its segment -->
+<div class="budget-label" id="budget-label-0"></div>
+<div class="budget-label" id="budget-label-1"></div>
+<div class="budget-label" id="budget-label-2"></div>
+<div class="budget-label" id="budget-label-3"></div>
+
+<!-- announces the split for assistive tech -->
+<div id="budget-announcer" aria-live="polite" role="status"></div>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+/* fat 50px track with a fully rounded fill */
+rangegroup::slider-track {
+  height: 50px;
+  border-radius: 25px;
+  overflow: hidden;
+}
+
+/* one colour per category, plus an anchor name we can target */
+rangegroup::slider-segment(1) {
+  background-color: #e53935;
+  anchor-name: --budget-segment-1;
+}
+rangegroup::slider-segment(2) {
+  background-color: #8e24aa;
+  anchor-name: --budget-segment-2;
+}
+rangegroup::slider-segment(3) {
+  background-color: #f57c00;
+  anchor-name: --budget-segment-3;
+}
+rangegroup::slider-segment(4) {
+  background-color: #3949ab;
+  anchor-name: --budget-segment-4;
+}
+
+/* anchor each label to the centre of its segment */
+.budget-label {
+  position: fixed;
+  top: anchor(top);
+  left: anchor(center);
+  translate: 0 25%;
+  color: white;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+#budget-label-0 { position-anchor: --budget-segment-1; }
+#budget-label-1 { position-anchor: --budget-segment-2; }
+#budget-label-2 { position-anchor: --budget-segment-3; }
+#budget-label-3 { position-anchor: --budget-segment-4; }
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const rg        = document.querySelector("#budget-range");
+const announcer = document.querySelector("#budget-announcer");
+const labels    = document.querySelectorAll(".budget-label");
+const categories = ["Groceries", "Rent", "Transport", "Internet"];
+
+const update = () => {
+  const stops = [0, ...rg.values, 100];
+  let announcement = "Budget updated. ";
+  labels.forEach((label, i) => {
+    const pct = Math.round(stops[i + 1] - stops[i]);
+    label.innerHTML = "<strong>" + categories[i] + "</strong><br>" + pct + "%";
+    announcement += categories[i] + ": " + pct + "%. ";
+  });
+  announcer.textContent = announcement.trim();
+};
+
+rg.addEventListener("input", update);
+update();
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg = document.querySelector("#budget-range");
+                const announcer = document.querySelector("#budget-announcer");
+                const labels = document.querySelectorAll(".budget-label");
+                const categories = ["Groceries", "Rent", "Transport", "Internet"];
+
+                const update = () => {
+                    const stops = [0, ...rg.values, 100];
+                    let announcement = "Budget updated. ";
+                    labels.forEach((label, i) => {
+                        const pct = Math.round(stops[i + 1] - stops[i]);
+                        label.innerHTML = "<strong>" + categories[i] + "</strong><br>" + pct + "%";
+                        announcement += categories[i] + ": " + pct + "%. ";
+                    });
+                    announcer.textContent = announcement.trim();
+                };
+
+                rg.addEventListener("input", update);
+                update();
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>
