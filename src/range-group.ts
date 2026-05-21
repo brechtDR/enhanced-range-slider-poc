@@ -1,5 +1,6 @@
 
-import { LitElement, html, css, PropertyValueMap } from "lit";
+import { LitElement, html, css } from "lit";
+import type { PropertyValueMap } from "lit";
 import {
     customElement,
     property,

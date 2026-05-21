@@ -1,0 +1,56 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="parent-override" eyebrow="Constraints and state" title="Parent override constraints">
+    <Fragment slot="description">
+        If a thumb&rsquo;s bounds exceed the component&rsquo;s range, the component clamps them. Here the track is
+        100&ndash;200 but the thumbs try to go 0&ndash;300.
+    </Fragment>
+    <div slot="demo">
+        <style is:global>
+            #constraints-example-2::part(slider-segment-2) {
+                background: var(--color-yellow);
+            }
+            #constraints-example-2::part(slider-thumb) {
+                --slider-thumb-color: var(--color-yellow);
+            }
+        </style>
+        <range-group id="constraints-example-2" min="100" max="200">
+            <legend slot="legend" class="visually-hidden">Parent override constraints</legend>
+            <label class="visually-hidden">
+                Min (constrained by parent)
+                <input type="range" name="c2-min" value="125" min="0" />
+            </label>
+            <label class="visually-hidden">
+                Max (constrained by parent)
+                <input type="range" name="c2-max" value="175" max="300" />
+            </label>
+        </range-group>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup min="100" max="200">
+  <legend>Parent override constraints</legend>
+  <label>Min <input type="range" value="125" min="0"></label>
+  <label>Max <input type="range" value="175" max="300"></label>
+</rangegroup>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+rangegroup::slider-segment(2) {
+  background: #eab308;              /* selected range */
+}
+rangegroup::slider-thumb(*) {
+  background-color: #eab308;
+}
+`}
+        />
+    </ExampleCodeBlock>
+</ExampleSection>

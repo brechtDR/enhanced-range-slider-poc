@@ -1,0 +1,250 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="star-rating" eyebrow="Creative styling" title="Star rating filter">
+    <Fragment slot="description">
+        A two-thumb 1&ndash;5 star rating filter. The five stars below the track act as labels and snap targets via <code
+            >list</code
+        > &mdash; stars inside the selected range fill in gold, the rest stay hollow.
+    </Fragment>
+    <div slot="demo" class="star-rating-card">
+        <style is:global>
+            .star-rating-card {
+                --star-gold: #facc15;
+                --star-empty: #d6dbe2;
+                --star-shadow: rgba(250, 204, 21, 0.4);
+            }
+            #star-rating-range {
+                --thumb-size: 26px;
+                --track-height: 4px;
+            }
+            #star-rating-range::part(slider-track) {
+                background: var(--star-empty);
+                border-radius: 999px;
+            }
+            #star-rating-range::part(slider-segment-2) {
+                background: var(--star-gold);
+            }
+            #star-rating-range::part(slider-tick) {
+                display: none;
+            }
+            #star-rating-range::part(slider-tick-label) {
+                display: none;
+            }
+            #star-rating-range::part(slider-thumb) {
+                background-color: var(--star-gold);
+                background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z'/></svg>");
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: 60%;
+                border-color: color-mix(in oklab, var(--star-gold) 75%, black 25%);
+                box-shadow:
+                    0 2px 8px var(--star-shadow),
+                    inset 0 0 0 1.5px color-mix(in oklab, var(--star-gold) 70%, black 20%);
+            }
+            .star-rating-scale {
+                position: relative;
+                margin-top: 1.5rem;
+                padding-inline: 13px;
+            }
+            .star-rating-stars {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                height: 32px;
+            }
+            .star-rating-star {
+                width: 28px;
+                height: 28px;
+                color: var(--star-empty);
+                transition:
+                    color 0.15s ease,
+                    transform 0.15s ease,
+                    filter 0.15s ease;
+            }
+            .star-rating-star[data-in-range="true"] {
+                color: var(--star-gold);
+                transform: scale(1.08);
+                filter: drop-shadow(0 2px 3px var(--star-shadow));
+            }
+            .star-rating-captions {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                margin-top: 4px;
+                font-size: 0.7rem;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--text-soft);
+                font-weight: 700;
+            }
+            .star-rating-captions span:nth-child(1) {
+                text-align: left;
+            }
+            .star-rating-captions span:nth-child(2) {
+                text-align: center;
+            }
+            .star-rating-captions span:nth-child(3) {
+                text-align: right;
+            }
+            .star-rating-readout {
+                margin-top: 1.25rem;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.9rem;
+                color: var(--text-muted);
+            }
+        </style>
+        <range-group id="star-rating-range" min="0" max="100" list="star-rating-ticks" stepbetween="25">
+            <legend slot="legend" class="visually-hidden">Star rating filter</legend>
+            <label class="visually-hidden">Min rating <input type="range" value="50" /></label>
+            <label class="visually-hidden">Max rating <input type="range" value="100" /></label>
+        </range-group>
+        <datalist id="star-rating-ticks">
+            <option value="0"></option>
+            <option value="25"></option>
+            <option value="50"></option>
+            <option value="75"></option>
+            <option value="100"></option>
+        </datalist>
+        <div class="star-rating-scale">
+            <div id="star-rating-stars" class="star-rating-stars" aria-hidden="true"></div>
+            <div class="star-rating-captions" aria-hidden="true">
+                <span>Poor</span>
+                <span>Good</span>
+                <span>Excellent</span>
+            </div>
+        </div>
+        <div class="star-rating-readout">
+            <span class="value-chip" id="star-rating-min-chip">3 stars</span>
+            <span aria-hidden="true">to</span>
+            <span class="value-chip" id="star-rating-max-chip">5 stars</span>
+        </div>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup id="star-rating-range" min="0" max="100" list="star-ticks" stepbetween="25">
+  <legend>Star rating range</legend>
+  <label>Min rating <input type="range" value="50"></label>
+  <label>Max rating <input type="range" value="100"></label>
+</rangegroup>
+
+<datalist id="star-ticks">
+  <option value="0"></option>
+  <option value="25"></option>
+  <option value="50"></option>
+  <option value="75"></option>
+  <option value="100"></option>
+</datalist>
+
+<!-- 5 fixed star icons + caption row, distributed across the track -->
+<div class="star-rating-stars">
+  <svg class="star-rating-star" data-value="0"   viewBox="0 0 24 24"><path d="..."/></svg>
+  <svg class="star-rating-star" data-value="25"  viewBox="0 0 24 24"><path d="..."/></svg>
+  <svg class="star-rating-star" data-value="50"  viewBox="0 0 24 24"><path d="..."/></svg>
+  <svg class="star-rating-star" data-value="75"  viewBox="0 0 24 24"><path d="..."/></svg>
+  <svg class="star-rating-star" data-value="100" viewBox="0 0 24 24"><path d="..."/></svg>
+</div>
+<div class="star-rating-captions">
+  <span>Poor</span><span>Good</span><span>Excellent</span>
+</div>
+
+<span class="value-chip" id="star-rating-min-chip">3 stars</span>
+<span class="value-chip" id="star-rating-max-chip">5 stars</span>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+rangegroup::slider-track { background: #e9eaee; border-radius: 999px; }
+rangegroup::slider-segment(2) { background: #facc15; }
+
+/* round gold thumb with a centred white star */
+rangegroup::slider-thumb(*) {
+  background-color: #facc15;
+  background-image: url("...star icon svg...");
+  background-size: 60%;
+  border-color: #b78a0d;
+}
+
+/* stars whose value is within [lo, hi] fill in gold */
+.star-rating-star                       { color: #e9eaee; }
+.star-rating-star[data-in-range="true"] { color: #facc15; }
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const rg     = document.querySelector("#star-rating-range");
+const stars  = document.querySelectorAll(".star-rating-star");
+const minOut = document.querySelector("#star-rating-min-chip");
+const maxOut = document.querySelector("#star-rating-max-chip");
+const toStars = v => Math.round(v / 25) + 1;   /* 0–100 -> 1–5 stars */
+
+rg.addEventListener("input", () => {
+  const [lo, hi] = rg.values;
+  stars.forEach(s => {
+    s.dataset.inRange = String(+s.dataset.value >= lo && +s.dataset.value <= hi);
+  });
+  minOut.textContent = \`\${toStars(lo)} stars\`;
+  maxOut.textContent = \`\${toStars(hi)} stars\`;
+});
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg = document.querySelector("#star-rating-range");
+                const starsHost = document.querySelector("#star-rating-stars");
+                const minOut = document.querySelector("#star-rating-min-chip");
+                const maxOut = document.querySelector("#star-rating-max-chip");
+                if (!rg || !starsHost || !minOut || !maxOut) return;
+
+                const STAR_PATH = "M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z";
+                const starValues = [0, 25, 50, 75, 100];
+                starsHost.innerHTML = starValues
+                    .map(
+                        (v) =>
+                            `<svg class="star-rating-star" data-value="${v}" viewBox="0 0 24 24" fill="currentColor"><path d="${STAR_PATH}"/></svg>`,
+                    )
+                    .join("");
+                const starEls = Array.from(starsHost.querySelectorAll(".star-rating-star"));
+                const toStars = (v) => Math.round(v / 25) + 1;
+                const updateStars = () => {
+                    const [lo, hi] = rg.values;
+                    starEls.forEach((el) => {
+                        const v = Number(el.dataset.value);
+                        el.dataset.inRange = v >= lo && v <= hi ? "true" : "false";
+                    });
+                    minOut.textContent = `${toStars(lo)} stars`;
+                    maxOut.textContent = `${toStars(hi)} stars`;
+                };
+                rg.addEventListener("input", updateStars);
+                updateStars();
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

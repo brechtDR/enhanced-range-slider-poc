@@ -1,0 +1,110 @@
+---
+import "../../style.css";
+import Topbar from "../components/layout/Topbar.astro";
+import SidebarNav from "../components/layout/SidebarNav.astro";
+import BaselineExample from "../components/examples/partials/foundations/baseline.astro";
+import InteractivePriceExample from "../components/examples/partials/foundations/interactive-price.astro";
+import DatalistExample from "../components/examples/partials/foundations/datalist.astro";
+import StepbetweenExample from "../components/examples/partials/constraints/stepbetween.astro";
+import PerThumbExample from "../components/examples/partials/constraints/per-thumb.astro";
+import ParentOverrideExample from "../components/examples/partials/constraints/parent-override.astro";
+import MultiHandleConstraintsExample from "../components/examples/partials/constraints/multi-handle-constraints.astro";
+import DisabledGroupExample from "../components/examples/partials/constraints/disabled-group.astro";
+import DisabledMixedExample from "../components/examples/partials/constraints/disabled-mixed.astro";
+import CrossfadeExample from "../components/examples/partials/three-thumb/crossfade.astro";
+import OpeningHoursExample from "../components/examples/partials/three-thumb/opening-hours.astro";
+import TemperatureExample from "../components/examples/partials/three-thumb/temperature.astro";
+import ProcessFlowExample from "../components/examples/partials/three-thumb/process-flow.astro";
+import BudgetExample from "../components/examples/partials/three-thumb/budget.astro";
+import FloatingTooltipsExample from "../components/examples/partials/creative/floating-tooltips.astro";
+import ClassicExample from "../components/examples/partials/creative/classic.astro";
+import CustomTicksExample from "../components/examples/partials/creative/custom-ticks.astro";
+import PriceHistogramExample from "../components/examples/partials/creative/price-histogram.astro";
+import StarRatingExample from "../components/examples/partials/creative/star-rating.astro";
+import GradientStopsExample from "../components/examples/partials/creative/gradient-stops.astro";
+import TimelineExample from "../components/examples/partials/creative/timeline.astro";
+import ApiExample from "../components/examples/partials/javascript/api.astro";
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>&lt;rangegroup&gt; proposal — Open UI</title>
+        <link rel="preload" href="/enhanced-range-slider-poc/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&display=swap"
+            rel="stylesheet"
+        />
+        <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" data-manual></script>
+        <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"
+        ></script>
+        <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"
+        ></script>
+        <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"
+        ></script>
+    </head>
+    <body>
+        <Topbar />
+
+        <div class="layout">
+            <SidebarNav />
+
+            <main class="main">
+                <section class="hero">
+                    <p class="eyebrow">Open UI Proposal &middot; Draft</p>
+                    <h1>The <code>&lt;rangegroup&gt;</code> element</h1>
+                    <p class="lead">
+                        A proof-of-concept for the proposed native multi-thumb range control. The baseline below renders
+                        with no custom CSS (approximates Chromium on macOS as an example for UA styles). Every other
+                        example demonstrates a different facet of the component&rsquo;s API, constraints, and
+                        pseudo-element-based stylability. This is a proof-of-concept and the code at the moment is
+                        hypothetical.
+                    </p>
+                    <div class="hero-actions">
+                        <a
+                            class="btn btn-primary"
+                            href="https://open-ui.org/components/enhanced-range-input.explainer/"
+                            target="_blank">Read the explainer</a
+                        >
+                        <a
+                            class="btn btn-secondary"
+                            href="https://github.com/brechtDR/enhanced-range-slider-poc"
+                            target="_blank">View source</a
+                        >
+                    </div>
+                </section>
+
+                <BaselineExample />
+                <InteractivePriceExample />
+                <DatalistExample />
+                <StepbetweenExample />
+                <PerThumbExample />
+                <ParentOverrideExample />
+                <MultiHandleConstraintsExample />
+                <DisabledGroupExample />
+                <DisabledMixedExample />
+                <CrossfadeExample />
+                <OpeningHoursExample />
+                <TemperatureExample />
+                <ProcessFlowExample />
+                <BudgetExample />
+                <FloatingTooltipsExample />
+                <ClassicExample />
+                <CustomTicksExample />
+                <PriceHistogramExample />
+                <StarRatingExample />
+                <GradientStopsExample />
+                <TimelineExample />
+                <ApiExample />
+            </main>
+        </div>
+        <script>
+            import "../scripts/demo.ts";
+        </script>
+    </body>
+</html>

@@ -1,0 +1,125 @@
+/* ============================
+   Layout — sidebar + main
+   ============================ */
+.layout {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px 96px;
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 56px;
+    align-items: start;
+}
+
+.sidebar {
+    position: sticky;
+    top: 80px;
+    align-self: start;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    padding: 32px 0;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.nav-eyebrow {
+    margin: 0 0 4px 0;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    font-weight: 700;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border-left: 3px solid transparent;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    line-height: 1.35;
+    border-radius: 0 6px 6px 0;
+}
+
+.sidebar a:hover {
+    color: var(--text-strong);
+    background: var(--surface);
+}
+
+.sidebar a.is-active {
+    color: var(--accent-deep);
+    background: var(--accent-soft);
+    border-left-color: var(--accent);
+}
+
+html.dark .sidebar a.is-active,
+html.dark .sidebar a.is-active:hover {
+    color: #ffffff;
+}
+
+.sidebar a.is-active .nav-label {
+    font-weight: 600;
+}
+
+/* Reserve bold-weight width so toggling the active state never causes a reflow.
+   The ::after pseudo renders an invisible bold copy of the label in the same
+   grid cell, forcing the cell to size to the bold metric. */
+.nav-label {
+    display: inline-grid;
+    grid-template-columns: max-content;
+    min-width: 0;
+}
+
+.nav-label::after {
+    content: attr(data-title);
+    grid-area: 1 / 1;
+    font-weight: 600;
+    height: 0;
+    visibility: hidden;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+    white-space: pre;
+}
+
+.sidebar a .new-pill {
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.main {
+    min-width: 0;
+    padding: 40px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+}

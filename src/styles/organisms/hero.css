@@ -1,0 +1,60 @@
+/* ============================
+   Hero
+   ============================ */
+.hero {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.hero h1 {
+    margin: 0;
+    font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--text-strong);
+    font-weight: 800;
+    background: none;
+    background-clip: initial;
+    -webkit-background-clip: initial;
+    text-shadow: none;
+}
+
+.hero h1 code {
+    background: none;
+    padding: 0;
+    color: var(--accent);
+    font-size: inherit;
+    font-weight: inherit;
+    font-family: inherit;
+}
+
+.lead {
+    margin: 0;
+    max-width: 64ch;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.hero-actions .btn {
+    box-shadow: none;
+}

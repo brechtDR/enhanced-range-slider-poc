@@ -1,0 +1,318 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="gradient-stops" eyebrow="Creative styling" title="Color-stop gradient editor">
+    <Fragment slot="description">
+        Three color swatches author a <code>linear-gradient(...)</code> string. Each thumb's position becomes a gradient stop
+        in the preview above and in the slider's own segments below. The CSS string updates live; preset chips drive the <code
+            >setRangeValue</code
+        > API.
+    </Fragment>
+    <div slot="demo" class="gradient-stops-card">
+        <style is:global>
+            .gradient-stops-card {
+                --gs-1: #f59e0b;
+                --gs-2: #ef4444;
+                --gs-3: #6366f1;
+                --p1: 20%;
+                --p2: 50%;
+                --p3: 80%;
+                display: grid;
+                gap: 1rem;
+            }
+            .gradient-preview {
+                height: 80px;
+                border-radius: 12px;
+                background: linear-gradient(
+                    to right,
+                    var(--gs-1),
+                    var(--gs-1) var(--p1),
+                    var(--gs-2) var(--p2),
+                    var(--gs-3) var(--p3),
+                    var(--gs-3)
+                );
+                box-shadow:
+                    inset 0 0 0 1px rgba(0, 0, 0, 0.08),
+                    0 6px 18px rgba(0, 0, 0, 0.08);
+            }
+            #gradient-stops-range {
+                --thumb-size: 28px;
+                --track-height: 16px;
+            }
+            #gradient-stops-range::part(slider-track) {
+                background: var(--surface);
+                border-radius: 999px;
+                box-shadow: inset 0 0 0 1px var(--border);
+            }
+            #gradient-stops-range::part(slider-segment-1) {
+                background: var(--gs-1);
+            }
+            #gradient-stops-range::part(slider-segment-2) {
+                background: linear-gradient(to right, var(--gs-1), var(--gs-2));
+            }
+            #gradient-stops-range::part(slider-segment-3) {
+                background: linear-gradient(to right, var(--gs-2), var(--gs-3));
+            }
+            #gradient-stops-range::part(slider-segment-4) {
+                background: var(--gs-3);
+            }
+            #gradient-stops-range::part(slider-thumb) {
+                border: 3px solid white;
+                box-shadow:
+                    0 4px 14px rgba(0, 0, 0, 0.22),
+                    inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+            }
+            #gradient-stops-range::part(slider-thumb-1) {
+                background-color: var(--gs-1);
+            }
+            #gradient-stops-range::part(slider-thumb-2) {
+                background-color: var(--gs-2);
+            }
+            #gradient-stops-range::part(slider-thumb-3) {
+                background-color: var(--gs-3);
+            }
+            .gradient-code {
+                background: #0b1220;
+                color: #e2e8f0;
+                font-family: "Source Code Pro", "JetBrains Mono", monospace;
+                font-size: 0.85rem;
+                padding: 12px 16px;
+                border-radius: 10px;
+                line-height: 1.6;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            .gradient-code .punct {
+                color: #94a3b8;
+            }
+            .gradient-code .fn {
+                color: #7dd3fc;
+            }
+            .gradient-code .pct {
+                color: #fbbf24;
+            }
+            .gradient-code .col {
+                font-weight: 700;
+            }
+            .gradient-presets {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                align-items: center;
+            }
+            .gradient-presets-label {
+                font-size: 0.78rem;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: var(--text-soft);
+                font-weight: 700;
+                margin-right: 4px;
+            }
+            .gradient-preset {
+                border: 1px solid var(--border-strong);
+                background: var(--page-bg);
+                padding: 6px 12px 6px 8px;
+                border-radius: 999px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                color: var(--text);
+                font-family: inherit;
+                transition:
+                    border-color 0.15s ease,
+                    color 0.15s ease;
+            }
+            .gradient-preset:hover {
+                border-color: var(--accent);
+                color: var(--accent-deep);
+            }
+            .gradient-preset:focus-visible {
+                outline: 2px solid var(--accent);
+                outline-offset: 2px;
+            }
+            .gradient-preset-swatch {
+                width: 28px;
+                height: 14px;
+                border-radius: 4px;
+                border: 1px solid rgba(0, 0, 0, 0.12);
+                flex-shrink: 0;
+            }
+        </style>
+        <div class="gradient-preview" aria-hidden="true"></div>
+        <range-group id="gradient-stops-range" min="0" max="100" stepbetween="4">
+            <legend slot="legend" class="visually-hidden">Color stop positions</legend>
+            <label class="visually-hidden">Stop 1 <input type="range" value="20" /></label>
+            <label class="visually-hidden">Stop 2 <input type="range" value="50" /></label>
+            <label class="visually-hidden">Stop 3 <input type="range" value="80" /></label>
+        </range-group>
+        <div class="gradient-code" id="gradient-code" aria-live="polite"></div>
+        <div class="gradient-presets">
+            <span class="gradient-presets-label">Presets</span>
+            <button class="gradient-preset" data-preset="sunset" type="button">
+                <span
+                    class="gradient-preset-swatch"
+                    style="background: linear-gradient(to right, #fb923c, #ec4899, #1e3a8a)"></span>
+                Sunset
+            </button>
+            <button class="gradient-preset" data-preset="ocean" type="button">
+                <span
+                    class="gradient-preset-swatch"
+                    style="background: linear-gradient(to right, #06b6d4, #3b82f6, #1e3a8a)"></span>
+                Ocean
+            </button>
+            <button class="gradient-preset" data-preset="forest" type="button">
+                <span
+                    class="gradient-preset-swatch"
+                    style="background: linear-gradient(to right, #facc15, #22c55e, #064e3b)"></span>
+                Forest
+            </button>
+        </div>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup id="gradient-stops-range" min="0" max="100" stepbetween="4">
+  <label>Stop 1 <input type="range" value="20"></label>
+  <label>Stop 2 <input type="range" value="50"></label>
+  <label>Stop 3 <input type="range" value="80"></label>
+</rangegroup>
+<div class="gradient-preview"></div>
+<code id="gradient-code"></code>
+
+<div class="gradient-presets">
+  <button data-preset="sunset">Sunset</button>
+  <button data-preset="ocean">Ocean</button>
+  <button data-preset="forest">Forest</button>
+</div>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+/* preview band mirrors the live linear-gradient */
+.gradient-preview {
+  background: linear-gradient(
+    to right,
+    var(--gs-1),
+    var(--gs-1) var(--p1),
+    var(--gs-2) var(--p2),
+    var(--gs-3) var(--p3),
+    var(--gs-3)
+  );
+}
+
+/* the 4 segments adopt the same gradient slices —
+   the slider literally IS the gradient */
+rangegroup::slider-segment(1) { background: var(--gs-1); }
+rangegroup::slider-segment(2) { background: linear-gradient(to right, var(--gs-1), var(--gs-2)); }
+rangegroup::slider-segment(3) { background: linear-gradient(to right, var(--gs-2), var(--gs-3)); }
+rangegroup::slider-segment(4) { background: var(--gs-3); }
+
+/* each thumb is a colour swatch matching its stop */
+rangegroup::slider-thumb(*)  { border: 3px solid white; }
+rangegroup::slider-thumb(1)  { background-color: var(--gs-1); }
+rangegroup::slider-thumb(2)  { background-color: var(--gs-2); }
+rangegroup::slider-thumb(3)  { background-color: var(--gs-3); }
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const rg = document.querySelector("#gradient-stops-range");
+const card = document.querySelector(".gradient-stops-card");
+const code = document.querySelector("#gradient-code");
+
+const readColor = i =>
+  getComputedStyle(card).getPropertyValue(\`--gs-\${i}\`).trim();
+
+const update = () => {
+  const [p1, p2, p3] = rg.values.map(v => Math.round(v));
+  card.style.setProperty("--p1", \`\${p1}%\`);
+  card.style.setProperty("--p2", \`\${p2}%\`);
+  card.style.setProperty("--p3", \`\${p3}%\`);
+  code.textContent =
+    \`linear-gradient(to right, \${readColor(1)} \${p1}%, \` +
+    \`\${readColor(2)} \${p2}%, \${readColor(3)} \${p3}%)\`;
+};
+rg.addEventListener("input", update);
+
+const presets = {
+  sunset: { colors: ["#fb923c", "#ec4899", "#1e3a8a"], stops: [25, 55, 85] },
+  ocean:  { colors: ["#06b6d4", "#3b82f6", "#1e3a8a"], stops: [15, 50, 90] },
+  forest: { colors: ["#facc15", "#22c55e", "#064e3b"], stops: [20, 50, 80] },
+};
+document.querySelectorAll(".gradient-presets button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const { colors, stops } = presets[btn.dataset.preset];
+    colors.forEach((c, i) => card.style.setProperty(\`--gs-\${i + 1}\`, c));
+    stops.forEach((s, i)  => rg.setRangeValue(i, s));
+    update();
+  });
+});
+update();
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg = document.querySelector("#gradient-stops-range");
+                const card = document.querySelector(".gradient-stops-card");
+                const code = document.querySelector("#gradient-code");
+                
+                const readColor = i =>
+                  getComputedStyle(card).getPropertyValue(`--gs-${i}`).trim();
+                
+                const update = () => {
+                  const [p1, p2, p3] = rg.values.map(v => Math.round(v));
+                  card.style.setProperty("--p1", `${p1}%`);
+                  card.style.setProperty("--p2", `${p2}%`);
+                  card.style.setProperty("--p3", `${p3}%`);
+                  code.textContent =
+                    `linear-gradient(to right, ${readColor(1)} ${p1}%, ` +
+                    `${readColor(2)} ${p2}%, ${readColor(3)} ${p3}%)`;
+                };
+                rg.addEventListener("input", update);
+                
+                const presets = {
+                  sunset: { colors: ["#fb923c", "#ec4899", "#1e3a8a"], stops: [25, 55, 85] },
+                  ocean:  { colors: ["#06b6d4", "#3b82f6", "#1e3a8a"], stops: [15, 50, 90] },
+                  forest: { colors: ["#facc15", "#22c55e", "#064e3b"], stops: [20, 50, 80] },
+                };
+                document.querySelectorAll(".gradient-presets button").forEach(btn => {
+                  btn.addEventListener("click", () => {
+                    const { colors, stops } = presets[btn.dataset.preset];
+                    colors.forEach((c, i) => card.style.setProperty(`--gs-${i + 1}`, c));
+                    stops.forEach((s, i)  => rg.setRangeValue(i, s));
+                    update();
+                  });
+                });
+                update();
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

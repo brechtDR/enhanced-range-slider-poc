@@ -1,0 +1,85 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="custom-ticks" eyebrow="Creative styling" title="Custom tick styling">
+    <Fragment slot="description">
+        Individual ticks and tick labels can be styled via CSS Parts. The 50% tick is highlighted with a different
+        colour and height.
+    </Fragment>
+    <div slot="demo">
+        <style is:global>
+            #custom-ticks-example::part(slider-tick) {
+                background: var(--text-soft);
+                height: 8px;
+                transition: all 0.2s ease;
+            }
+            #custom-ticks-example::part(slider-tick-3) {
+                background: var(--color-pink);
+                height: 16px;
+                width: 3px;
+                transform: translateX(-1.5px);
+            }
+            #custom-ticks-example::part(slider-tick-label-3) {
+                color: var(--color-pink);
+                font-weight: bold;
+            }
+        </style>
+        <range-group id="custom-ticks-example" min="0" max="100" list="custom-ticks-datalist">
+            <legend slot="legend" class="visually-hidden">Custom tick styling</legend>
+            <label class="visually-hidden">Value 1 <input type="range" value="25" /></label>
+            <label class="visually-hidden">Value 2 <input type="range" value="75" /></label>
+        </range-group>
+        <datalist id="custom-ticks-datalist">
+            <option value="0" label="0%"></option>
+            <option value="25"></option>
+            <option value="50" label="50%"></option>
+            <option value="75"></option>
+            <option value="100" label="100%"></option>
+        </datalist>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup min="0" max="100" list="custom-ticks-datalist">
+  <legend>Custom tick styling</legend>
+  <label>Value 1 <input type="range" value="25"></label>
+  <label>Value 2 <input type="range" value="75"></label>
+</rangegroup>
+
+<datalist id="custom-ticks-datalist">
+  <option value="0"   label="0%"></option>
+  <option value="25"></option>
+  <option value="50"  label="50%"></option>
+  <option value="75"></option>
+  <option value="100" label="100%"></option>
+</datalist>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+/* baseline tick rule */
+rangegroup::slider-tick(*) {
+  background: #94a3b8;
+  height: 8px;
+  transition: all 0.2s ease;
+}
+
+/* highlight the centre tick + label */
+rangegroup::slider-tick(3) {
+  background: #ec4899;
+  height: 16px;
+  width: 3px;
+}
+rangegroup::slider-tick-label(3) {
+  color: #ec4899;
+  font-weight: bold;
+}
+`}
+        />
+    </ExampleCodeBlock>
+</ExampleSection>

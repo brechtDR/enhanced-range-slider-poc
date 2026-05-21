@@ -1,0 +1,53 @@
+/* ============================
+   Section descriptors & cards
+   ============================ */
+.example {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    scroll-margin-top: 82px;
+}
+
+.example > .eyebrow {
+    color: var(--text-soft);
+}
+
+.example > h2 {
+    margin: 0;
+    font-size: 1.85rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.example > h2 .new-pill {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.description {
+    margin: 0;
+    max-width: 64ch;
+    color: var(--text-muted);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.card {
+    background: var(--surface-soft);
+    padding: 1.75rem;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    box-shadow: none;
+}

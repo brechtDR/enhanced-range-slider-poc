@@ -1,0 +1,52 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="stepbetween" eyebrow="Constraints and state" title="Stepbetween distance">
+    <Fragment slot="description">
+        <code>stepbetween="10"</code> enforces a minimum distance between adjacent handles, so they can never collide.
+    </Fragment>
+    <div slot="demo">
+        <style is:global>
+            #stepbetween-example::part(slider-segment-1) {
+                background-color: oklch(0.554 0.104 233.66);
+            }
+            #stepbetween-example::part(slider-segment-2) {
+                background-color: oklch(0.65 0.18 142);
+            }
+            #stepbetween-example::part(slider-segment-3) {
+                background-color: oklch(0.554 0.104 233.66);
+            }
+        </style>
+        <range-group id="stepbetween-example" min="0" max="100" stepbetween="10">
+            <legend slot="legend" class="visually-hidden">Stepbetween example</legend>
+            <label class="visually-hidden">Minimum <input type="range" value="40" /></label>
+            <label class="visually-hidden">Maximum <input type="range" value="70" /></label>
+        </range-group>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup min="0" max="100" stepbetween="10">
+  <label>Minimum <input type="range" value="40"></label>
+  <label>Maximum <input type="range" value="70"></label>
+</rangegroup>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+rangegroup::slider-segment(1),
+rangegroup::slider-segment(3) {
+  background-color: oklch(0.554 0.104 233.66);
+}
+rangegroup::slider-segment(2) {
+  background-color: oklch(0.65 0.18 142);
+}
+`}
+        />
+    </ExampleCodeBlock>
+</ExampleSection>

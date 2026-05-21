@@ -1,0 +1,89 @@
+---
+import MobileMenu from "./MobileMenu.astro";
+---
+
+<header class="topbar">
+    <div class="topbar-inner">
+        <div class="brand">
+            rangegroup proposal
+            <span class="brand-sub">/ Open UI Community Group</span>
+        </div>
+        <button
+            class="mobile-menu-button"
+            type="button"
+            popovertarget="mobile-header-menu"
+            popovertargetaction="toggle"
+            aria-label="Open navigation and controls"
+            aria-expanded="false"
+        >
+            <svg class="mobile-menu-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                    d="M4 7h16M4 12h16M4 17h16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"></path>
+            </svg>
+        </button>
+        <div class="topbar-links">
+            <a href="https://open-ui.org/components/enhanced-range-input.explainer/" target="_blank">Explainer</a>
+            <a href="https://github.com/openui/open-ui/issues" target="_blank">GitHub</a>
+            <button
+                id="theme-toggle"
+                class="theme-toggle"
+                type="button"
+                data-theme-toggle
+                data-theme="system"
+                aria-label="Theme: system"
+                title="Theme"
+            >
+                <svg class="theme-icon theme-icon-system" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                        d="M4.5 5.5h15a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"></path>
+                    <path
+                        d="M9 19.5h6M10.6 16.5v3M13.4 16.5v3"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linecap="round"></path>
+                    <path
+                        d="M12 9.3a2.1 2.1 0 1 0 0 4.2 2.1 2.1 0 0 1 0-4.2Z"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"></path>
+                </svg>
+                <svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
+                    <path
+                        d="M12 2v2.5M12 19.5V22M22 12h-2.5M4.5 12H2M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8M19.1 19.1l-1.8-1.8M6.7 6.7 4.9 4.9"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"></path>
+                </svg>
+                <svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                        d="M21 12.8A8.8 8.8 0 1 1 11.2 3a7.2 7.2 0 0 0 9.8 9.8Z"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"></path>
+                </svg>
+            </button>
+            <label class="pe-toggle-container">
+                <span class="pe-toggle-label">Use component</span>
+                <input type="checkbox" id="pe-toggle" class="pe-toggle-switch js-pe-toggle" checked />
+            </label>
+        </div>
+
+        <MobileMenu />
+    </div>
+</header>

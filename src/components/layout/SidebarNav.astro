@@ -1,0 +1,26 @@
+---
+import { exampleNav } from "../examples/example-nav";
+---
+
+<aside class="sidebar" aria-label="Examples">
+    <nav>
+        {
+            exampleNav.map((group) => (
+                <div class="nav-group">
+                    <h3 class="nav-eyebrow">{group.eyebrow}</h3>
+                    <ul>
+                        {group.items.map((item) => (
+                            <li>
+                                <a href={`#${item.id}`}>
+                                    <span class="nav-label" data-title={item.title}>
+                                        {item.label}
+                                    </span>
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ))
+        }
+    </nav>
+</aside>

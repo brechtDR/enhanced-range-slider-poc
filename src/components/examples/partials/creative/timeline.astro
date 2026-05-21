@@ -1,0 +1,139 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="timeline" eyebrow="Creative styling" title="Styled timeline">
+    <Fragment slot="description">
+        Ticks dressed up as milestones on a project timeline. The start, middle, and end ticks are promoted with a
+        distinct colour and height.
+    </Fragment>
+    <div slot="demo">
+        <style is:global>
+            #timeline-example {
+                --track-height: 2px;
+            }
+            #timeline-example::part(slider-track) {
+                background: #b8bfc8;
+            }
+            #timeline-example::part(slider-thumb) {
+                --slider-thumb-color: var(--color-teal);
+            }
+            #timeline-example::part(slider-segment-2) {
+                background: var(--color-teal);
+            }
+
+            #timeline-example::part(slider-tick) {
+                background: var(--text-soft);
+                width: 2px;
+                height: 10px;
+                border-radius: 2px;
+            }
+            #timeline-example::part(slider-tick-1),
+            #timeline-example::part(slider-tick-3),
+            #timeline-example::part(slider-tick-5) {
+                background: var(--color-teal);
+                height: 20px;
+                width: 4px;
+                transform: translate(-2px, -7px);
+            }
+            #timeline-example::part(slider-tick-label) {
+                color: var(--text-muted);
+            }
+            #timeline-example::part(slider-tick-label-1),
+            #timeline-example::part(slider-tick-label-3),
+            #timeline-example::part(slider-tick-label-5) {
+                color: var(--color-teal);
+                font-weight: bold;
+            }
+
+            @media (max-width: 700px) {
+                #timeline-example::part(slider-tick) {
+                    height: 8px;
+                }
+                #timeline-example::part(slider-tick-1),
+                #timeline-example::part(slider-tick-3),
+                #timeline-example::part(slider-tick-5) {
+                    height: 15px;
+                    width: 3px;
+                    transform: translate(-1px, -4px);
+                }
+                #timeline-example::part(slider-tick-label) {
+                    font-size: 0.7rem;
+                }
+            }
+
+            @media (max-width: 420px) {
+                #timeline-example::part(slider-tick-label) {
+                    font-size: 0.64rem;
+                }
+            }
+        </style>
+        <range-group id="timeline-example" min="0" max="100" list="timeline-datalist">
+            <legend slot="legend" class="visually-hidden">Styled timeline</legend>
+            <label class="visually-hidden">Start Date <input type="range" value="10" /></label>
+            <label class="visually-hidden">End Date <input type="range" value="90" /></label>
+        </range-group>
+        <datalist id="timeline-datalist">
+            <option value="0" label="start"></option>
+            <option value="25"></option>
+            <option value="50" label="mid"></option>
+            <option value="75"></option>
+            <option value="100" label="End"></option>
+        </datalist>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup min="0" max="100" list="timeline-datalist">
+  <legend>Project timeline</legend>
+  <label>Start date <input type="range" value="10"></label>
+  <label>End date   <input type="range" value="90"></label>
+</rangegroup>
+
+<datalist id="timeline-datalist">
+  <option value="0"   label="start"></option>
+  <option value="25"></option>
+  <option value="50"  label="mid"></option>
+  <option value="75"></option>
+  <option value="100" label="End"></option>
+</datalist>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+/* a hair-thin track */
+rangegroup::slider-track     { background: #b8bfc8; height: 2px; }
+rangegroup::slider-segment(2) { background: #14b8a6; }
+rangegroup::slider-thumb(*)  { background-color: #14b8a6; }
+
+/* baseline ticks: short, grey */
+rangegroup::slider-tick(*) {
+  background: #94a3b8;
+  width: 2px;
+  height: 10px;
+  border-radius: 2px;
+}
+rangegroup::slider-tick-label { color: #6b7280; }
+
+/* milestone ticks (start / mid / end) stand out */
+rangegroup::slider-tick(1),
+rangegroup::slider-tick(3),
+rangegroup::slider-tick(5) {
+  background: #14b8a6;
+  height: 20px;
+  width: 4px;
+}
+rangegroup::slider-tick-label(1),
+rangegroup::slider-tick-label(3),
+rangegroup::slider-tick-label(5) {
+  color: #14b8a6;
+  font-weight: bold;
+}
+`}
+        />
+    </ExampleCodeBlock>
+</ExampleSection>

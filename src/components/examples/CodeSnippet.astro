@@ -1,0 +1,10 @@
+---
+interface Props {
+    lang: "html" | "css" | "javascript";
+    code: string;
+}
+
+const { lang, code } = Astro.props as Props;
+---
+
+<script type="text/plain" data-lang={lang} set:html={code} />

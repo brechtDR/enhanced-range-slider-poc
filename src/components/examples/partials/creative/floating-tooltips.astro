@@ -1,0 +1,208 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="floating-tooltips" eyebrow="Creative styling" title="Floating anchored tooltips">
+    <Fragment slot="description">
+        Invisible handles plus CSS Anchor Positioning makes external tooltips read as the draggable thumbs. The visible
+        &ldquo;handle&rdquo; pills are just anchored DIVs.
+    </Fragment>
+    <div slot="demo" style="position: relative">
+        <style is:global>
+            #floating-tooltip-range {
+                --track-height: 12px;
+                --thumb-size: 40px;
+                margin-top: 2rem;
+                margin-bottom: 2rem;
+            }
+            #floating-tooltip-range::part(slider-track) {
+                background-color: #d8d8de;
+            }
+            #floating-tooltip-range::part(slider-segment-2) {
+                background: var(--color-pink);
+            }
+            #floating-tooltip-range::part(slider-thumb) {
+                anchor-name: var(--anchor-name);
+                background: transparent;
+                border: none;
+                box-shadow: none;
+                width: 40px;
+                height: 20px;
+                padding: 0;
+                border-radius: 9999px;
+            }
+            #floating-tooltip-range::part(slider-thumb-1) {
+                --thumb-transform: translate(-50%, calc(-100% - var(--track-height) / 2 - 5px));
+                --anchor-name: --floating-thumb-1;
+                transform: var(--thumb-transform);
+            }
+            #floating-tooltip-range::part(slider-thumb-2) {
+                --thumb-transform: translate(-50%, calc(0% + var(--track-height) / 2 + 5px));
+                --anchor-name: --floating-thumb-2;
+                transform: var(--thumb-transform);
+            }
+
+            .floating-tooltip {
+                position: absolute;
+                position-anchor: var(--anchor-name);
+                pointer-events: none;
+                border: 1px solid var(--s-border-subtle);
+                border-radius: 9999px;
+                background: white;
+                box-shadow:
+                    0 4px 6px -1px rgb(0 0 0 / 0.25),
+                    0 2px 4px -1px rgb(0 0 0 / 0.1);
+                width: 40px;
+                height: 28px;
+                color: var(--p-color-warm-text-strong);
+                font-weight: 700;
+                font-size: 0.875rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10;
+            }
+            html.dark #floating-tooltips .floating-tooltip {
+                background: var(--p-color-cool-surface-2);
+                border-color: var(--p-color-cool-border);
+                color: var(--p-color-cool-text-strong);
+                box-shadow:
+                    0 4px 6px -1px rgb(0 0 0 / 0.45),
+                    0 2px 4px -1px rgb(0 0 0 / 0.25);
+            }
+            #floating-tooltip-1 {
+                --anchor-name: --floating-thumb-1;
+                bottom: anchor(bottom);
+                left: anchor(left);
+            }
+            #floating-tooltip-2 {
+                --anchor-name: --floating-thumb-2;
+                top: anchor(top);
+                left: anchor(left);
+            }
+        </style>
+        <range-group id="floating-tooltip-range" min="0" max="100">
+            <legend slot="legend" class="visually-hidden">Floating tooltips</legend>
+            <label class="visually-hidden">
+                Value Handle 1
+                <input type="range" name="floating-tooltip-1" value="40" />
+            </label>
+            <label class="visually-hidden">
+                Value Handle 2
+                <input type="range" name="floating-tooltip-2" value="65" />
+            </label>
+        </range-group>
+        <div id="floating-tooltip-1" class="floating-tooltip" aria-hidden="true">40</div>
+        <div id="floating-tooltip-2" class="floating-tooltip" aria-hidden="true">65</div>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup id="floating-tooltip-range" min="0" max="100">
+  <legend>Floating tooltips</legend>
+  <label>Value Handle 1 <input type="range" value="40"></label>
+  <label>Value Handle 2 <input type="range" value="65"></label>
+</rangegroup>
+<div id="floating-tooltip-1" class="floating-tooltip">40</div>
+<div id="floating-tooltip-2" class="floating-tooltip">65</div>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+rangegroup::slider-track     { background: #d8d8de; }
+rangegroup::slider-segment(2){ background: #ec4899; }
+
+/* hide the real thumbs and name them for anchoring */
+rangegroup::slider-thumb(*) {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  width: 40px;
+  height: 20px;
+}
+rangegroup::slider-thumb(1) { anchor-name: --floating-thumb-1; }
+rangegroup::slider-thumb(2) { anchor-name: --floating-thumb-2; }
+
+/* the visible pills are absolutely positioned siblings */
+.floating-tooltip {
+  position: absolute;
+  width: 40px; height: 28px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  color: #0b1220;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.25);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+html.dark .floating-tooltip {
+  background: #1a2538;
+  border-color: #233049;
+  color: #f8fafc;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.45);
+}
+#floating-tooltip-1 {
+  position-anchor: --floating-thumb-1;
+  bottom: anchor(bottom);
+  left:   anchor(left);
+}
+#floating-tooltip-2 {
+  position-anchor: --floating-thumb-2;
+  top:  anchor(top);
+  left: anchor(left);
+}
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const rg = document.querySelector("#floating-tooltip-range");
+const t1 = document.querySelector("#floating-tooltip-1");
+const t2 = document.querySelector("#floating-tooltip-2");
+
+rg.addEventListener("input", () => {
+  const [a, b] = rg.values;
+  t1.textContent = Math.round(a);
+  t2.textContent = Math.round(b);
+});
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg = document.querySelector("#floating-tooltip-range");
+                const t1 = document.querySelector("#floating-tooltip-1");
+                const t2 = document.querySelector("#floating-tooltip-2");
+
+                rg.addEventListener("input", () => {
+                    const [a, b] = rg.values;
+                    t1.textContent = Math.round(a);
+                    t2.textContent = Math.round(b);
+                });
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

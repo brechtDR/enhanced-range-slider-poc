@@ -1,0 +1,86 @@
+/* =========================================
+   Code blocks — collapsible + tabbed
+   ========================================= */
+.code-block {
+    margin-top: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.code-block summary {
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    background: var(--surface);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    user-select: none;
+}
+
+.code-block summary::-webkit-details-marker {
+    display: none;
+}
+
+.code-block summary::before {
+    content: "▶";
+    font-size: 0.6em;
+    transition: transform 0.2s ease;
+    display: inline-block;
+    color: var(--text-soft);
+}
+
+.code-block[open] summary::before {
+    transform: rotate(90deg);
+}
+
+.code-block summary:hover {
+    color: var(--text-strong);
+}
+
+.code-block summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+.code-block [role="tablist"] {
+    display: flex;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.code-block [role="tab"] {
+    padding: 0.55rem 1rem;
+    border: none;
+    background: none;
+    color: var(--text-soft);
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.code-block [role="tab"]:hover {
+    color: var(--text-strong);
+}
+
+.code-block [role="tab"][aria-selected="true"] {
+    color: var(--text-strong);
+    border-bottom-color: var(--accent);
+}
+
+.code-block [role="tab"]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+.code-block [role="tabpanel"] pre {
+    margin: 0;
+    border-radius: 0;
+}
