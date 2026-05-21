@@ -496,7 +496,7 @@
                             rangegroup::slider-segment(2) {
                               background: #14b8a6;
                             }
-                            rangegroup::slider-thumb {
+                            rangegroup::slider-thumb(*) {
                               background-color: #14b8a6;
                             }
                         </script>
@@ -673,7 +673,7 @@
                             rangegroup::slider-segment(2) {
                               background-color: #f97316;        /* active range */
                             }
-                            rangegroup::slider-thumb {
+                            rangegroup::slider-thumb(*) {
                               background-color: #f97316;
                             }
                         </script>
@@ -721,7 +721,7 @@
                             rangegroup::slider-segment(2) {
                               background: #eab308;              /* selected range */
                             }
-                            rangegroup::slider-thumb {
+                            rangegroup::slider-thumb(*) {
                               background-color: #eab308;
                             }
                         </script>
@@ -836,7 +836,7 @@
                             rangegroup::slider-segment(2) {
                               background-color: #a855f7;        /* selected range */
                             }
-                            rangegroup::slider-thumb {
+                            rangegroup::slider-thumb(*) {
                               background-color: #a855f7;
                             }
                             /* The :disabled state itself is handled by user-agent styles -
@@ -901,7 +901,7 @@
                             rangegroup::slider-segment(2) {
                               background-color: #14b8a6;        /* selected range */
                             }
-                            rangegroup::slider-thumb {
+                            rangegroup::slider-thumb(*) {
                               background-color: #14b8a6;
                             }
                         </script>
@@ -1169,8 +1169,46 @@
                             }
 
                             @media (max-width: 700px) {
+                                .crossfade-card {
+                                    gap: 1.1rem;
+                                }
+                                .crossfade-track {
+                                    height: 40px;
+                                }
+                                .crossfade-track-tag {
+                                    font-size: 0.58rem;
+                                    letter-spacing: 0.1em;
+                                    padding: 2px 6px;
+                                }
+                                .crossfade-guide-label {
+                                    font-size: 0.63rem;
+                                    padding: 2px 6px;
+                                }
                                 .crossfade-readout {
                                     grid-template-columns: repeat(2, 1fr);
+                                    gap: 8px;
+                                }
+                                .crossfade-readout-item {
+                                    padding: 10px 11px;
+                                }
+                                .crossfade-readout-value {
+                                    font-size: 1rem;
+                                }
+                            }
+
+                            @media (max-width: 420px) {
+                                .crossfade-track {
+                                    height: 38px;
+                                }
+                                .crossfade-track-tag {
+                                    left: 8px;
+                                }
+                                .crossfade-guide-label {
+                                    font-size: 0.58rem;
+                                    padding: 2px 5px;
+                                }
+                                .crossfade-readout {
+                                    grid-template-columns: 1fr;
                                 }
                             }
                         </style>
@@ -1501,6 +1539,68 @@
                                 font-size: 0.95rem;
                                 color: var(--text-strong);
                                 font-weight: 600;
+                            }
+
+                            @media (max-width: 700px) {
+                                #opening-hours-range::part(slider-tick),
+                                #opening-hours-range::part(slider-tick-label) {
+                                    display: none;
+                                }
+                                .hours-stage {
+                                    padding-top: 56px;
+                                }
+                                .hours-atmosphere {
+                                    top: 28px;
+                                    height: 12px;
+                                }
+                                .hours-icon {
+                                    width: 22px;
+                                    height: 22px;
+                                    top: 8px;
+                                }
+                                .hours-shift-label {
+                                    font-size: 0.67rem;
+                                    letter-spacing: 0.02em;
+                                    padding: 4px 8px;
+                                }
+                                .hours-shift-label strong {
+                                    margin-left: 4px;
+                                }
+                                .hours-shift-am,
+                                .hours-shift-pm {
+                                    translate: -50% -8px;
+                                }
+                                .hours-readout {
+                                    margin-top: 1.2rem;
+                                    grid-template-columns: 1fr;
+                                    gap: 8px;
+                                }
+                                .hours-readout-cell {
+                                    padding: 10px 11px;
+                                }
+                            }
+
+                            @media (max-width: 420px) {
+                                .hours-stage {
+                                    padding-top: 52px;
+                                }
+                                .hours-atmosphere {
+                                    left: 5px;
+                                    right: 5px;
+                                    top: 26px;
+                                }
+                                .hours-icon {
+                                    width: 20px;
+                                    height: 20px;
+                                    top: 7px;
+                                }
+                                .hours-shift-label {
+                                    font-size: 0.62rem;
+                                    padding: 3px 7px;
+                                }
+                                .hours-shift-label strong {
+                                    margin-left: 3px;
+                                }
                             }
                         </style>
                         <div class="hours-stage">
@@ -2089,7 +2189,7 @@
                         </script>
                         <script type="text/plain" data-lang="css">
                             /* taller, thinner tick marks */
-                            rangegroup::slider-tick {
+                            rangegroup::slider-tick(*) {
                               height: 12px;
                               width: 2px;
                             }
@@ -2186,6 +2286,35 @@
                             .budget-label strong {
                                 font-size: 1rem;
                                 font-weight: 700;
+                            }
+
+                            @media (max-width: 700px) {
+                                #budget-range {
+                                    --track-height: 44px;
+                                    --thumb-size: 32px;
+                                }
+                                #budget-range::part(slider-track) {
+                                    border-radius: 22px;
+                                }
+                                .budget-label {
+                                    font-size: 0.76rem;
+                                    line-height: 1.1;
+                                    translate: 0 30%;
+                                }
+                                .budget-label strong {
+                                    font-size: 0.86rem;
+                                }
+                            }
+
+                            @media (max-width: 420px) {
+                                .budget-label {
+                                    font-size: 0.66rem;
+                                    line-height: 1;
+                                    translate: 0 36%;
+                                }
+                                .budget-label strong {
+                                    display: none;
+                                }
                             }
                         </style>
                         <div class="budget-range-wrapper">
@@ -2411,7 +2540,7 @@
                             rangegroup::slider-segment(2){ background: #ec4899; }
 
                             /* hide the real thumbs and name them for anchoring */
-                            rangegroup::slider-thumb {
+                            rangegroup::slider-thumb(*) {
                               background: transparent;
                               border: none;
                               box-shadow: none;
@@ -2560,7 +2689,7 @@
                             rangegroup::slider-segment(2) { background: #3b82f6; }
 
                             /* tall rectangular thumbs with a grey-to-light gradient */
-                            rangegroup::slider-thumb {
+                            rangegroup::slider-thumb(*) {
                               width: 14px;
                               height: 24px;
                               background: linear-gradient(to bottom, #f9fafb, #d1d5db);
@@ -2658,7 +2787,7 @@
                         </script>
                         <script type="text/plain" data-lang="css">
                             /* baseline tick rule */
-                            rangegroup::slider-tick {
+                            rangegroup::slider-tick(*) {
                               background: #94a3b8;
                               height: 8px;
                               transition: all 0.2s ease;
@@ -2799,6 +2928,61 @@
                                 font-weight: 700;
                                 margin-right: 4px;
                             }
+
+                            @media (max-width: 700px) {
+                                .price-histogram-stage {
+                                    padding-top: 28px;
+                                }
+                                .price-histogram-svg {
+                                    height: 72px;
+                                }
+                                .price-tag {
+                                    font-size: 0.7rem;
+                                    padding: 3px 7px;
+                                    max-inline-size: calc(50vw - 18px);
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;
+                                }
+                                .price-tag::after {
+                                    width: 6px;
+                                    height: 6px;
+                                }
+                                #price-tag-1,
+                                #price-tag-2 {
+                                    translate: -50% -6px;
+                                }
+                                .price-histogram-meta {
+                                    margin-top: 1rem;
+                                    align-items: flex-start;
+                                    flex-direction: column;
+                                    gap: 0.35rem;
+                                }
+                            }
+
+                            @media (max-width: 420px) {
+                                .price-histogram-stage {
+                                    padding-top: 24px;
+                                }
+                                .price-histogram-svg {
+                                    height: 64px;
+                                }
+                                .price-tag {
+                                    font-size: 0.64rem;
+                                    padding: 3px 6px;
+                                }
+                                .price-tag::after {
+                                    display: none;
+                                }
+                                .price-histogram-bounds {
+                                    font-size: 0.76rem;
+                                }
+                                .price-histogram-count {
+                                    font-size: 0.84rem;
+                                }
+                                .price-histogram-count strong {
+                                    font-size: 0.95rem;
+                                }
+                            }
                         </style>
                         <div class="price-histogram-stage">
                             <svg
@@ -2853,7 +3037,7 @@
                             }
 
                             /* pill thumb with two-bar grip icon */
-                            rangegroup::slider-thumb {
+                            rangegroup::slider-thumb(*) {
                               width: 16px; height: 28px;
                               border-radius: 8px;
                               background-color: white;
@@ -3071,7 +3255,7 @@
                             rangegroup::slider-segment(2) { background: #facc15; }
 
                             /* round gold thumb with a centred white star */
-                            rangegroup::slider-thumb {
+                            rangegroup::slider-thumb(*) {
                               background-color: #facc15;
                               background-image: url("...star icon svg...");
                               background-size: 60%;
@@ -3313,7 +3497,7 @@
                             rangegroup::slider-segment(4) { background: var(--gs-3); }
 
                             /* each thumb is a colour swatch matching its stop */
-                            rangegroup::slider-thumb     { border: 3px solid white; }
+                            rangegroup::slider-thumb(*)  { border: 3px solid white; }
                             rangegroup::slider-thumb(1)  { background-color: var(--gs-1); }
                             rangegroup::slider-thumb(2)  { background-color: var(--gs-2); }
                             rangegroup::slider-thumb(3)  { background-color: var(--gs-3); }
@@ -3400,6 +3584,28 @@
                                 color: var(--color-teal);
                                 font-weight: bold;
                             }
+
+                            @media (max-width: 700px) {
+                                #timeline-example::part(slider-tick) {
+                                    height: 8px;
+                                }
+                                #timeline-example::part(slider-tick-1),
+                                #timeline-example::part(slider-tick-3),
+                                #timeline-example::part(slider-tick-5) {
+                                    height: 15px;
+                                    width: 3px;
+                                    transform: translate(-1px, -4px);
+                                }
+                                #timeline-example::part(slider-tick-label) {
+                                    font-size: 0.7rem;
+                                }
+                            }
+
+                            @media (max-width: 420px) {
+                                #timeline-example::part(slider-tick-label) {
+                                    font-size: 0.64rem;
+                                }
+                            }
                         </style>
                         <range-group id="timeline-example" min="0" max="100" list="timeline-datalist">
                             <legend slot="legend" class="visually-hidden">Styled timeline</legend>
@@ -3435,10 +3641,10 @@
                             /* a hair-thin track */
                             rangegroup::slider-track     { background: #b8bfc8; height: 2px; }
                             rangegroup::slider-segment(2) { background: #14b8a6; }
-                            rangegroup::slider-thumb     { background-color: #14b8a6; }
+                            rangegroup::slider-thumb(*)  { background-color: #14b8a6; }
 
                             /* baseline ticks: short, grey */
-                            rangegroup::slider-tick {
+                            rangegroup::slider-tick(*) {
                               background: #94a3b8;
                               width: 2px;
                               height: 10px;
