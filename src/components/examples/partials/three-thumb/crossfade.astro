@@ -410,6 +410,9 @@ const startEl   = document.querySelector("#cf-start");
 const endEl     = document.querySelector("#cf-end");
 const overlapEl = document.querySelector("#cf-overlap");
 const biasEl    = document.querySelector("#cf-bias");
+const guideStart = document.querySelector("#cf-guide-start");
+const guideWeight = document.querySelector("#cf-guide-weight");
+const guideEnd = document.querySelector("#cf-guide-end");
 
 const TRACK_SECONDS = 10;
 const fmt = pct => (pct / 100 * TRACK_SECONDS).toFixed(1) + "s";
@@ -430,6 +433,9 @@ const update = () => {
     ? Math.round(((end - weight) / (end - start)) * 100)
     : 50;
   biasEl.textContent = a + " / " + (100 - a);
+  guideStart.textContent = fmt(start);
+  guideWeight.textContent = "× " + a + " / " + (100 - a);
+  guideEnd.textContent = fmt(end);
 };
 
 rg.addEventListener("input", update);
@@ -447,7 +453,21 @@ update();
                 const endEl = document.querySelector("#cf-end");
                 const overlapEl = document.querySelector("#cf-overlap");
                 const biasEl = document.querySelector("#cf-bias");
-                if (!crossfadeRoot || !rg || !card || !startEl || !endEl || !overlapEl || !biasEl) return;
+                const guideStart = document.querySelector("#cf-guide-start");
+                const guideWeight = document.querySelector("#cf-guide-weight");
+                const guideEnd = document.querySelector("#cf-guide-end");
+                if (
+                    !crossfadeRoot ||
+                    !rg ||
+                    !card ||
+                    !startEl ||
+                    !endEl ||
+                    !overlapEl ||
+                    !biasEl ||
+                    !guideStart ||
+                    !guideWeight ||
+                    !guideEnd
+                ) return;
 
                 crossfadeRoot.querySelectorAll("[data-cf-wave]").forEach((svg) => {
                     const isA = svg.dataset.cfWave === "a";
@@ -488,6 +508,9 @@ update();
                     overlapEl.textContent = fmt(end - start);
                     const a = end > start ? Math.round(((end - weight) / (end - start)) * 100) : 50;
                     biasEl.textContent = a + " / " + (100 - a);
+                    guideStart.textContent = fmt(start);
+                    guideWeight.textContent = "× " + a + " / " + (100 - a);
+                    guideEnd.textContent = fmt(end);
                 };
 
                 rg.addEventListener("input", update);

@@ -29,7 +29,7 @@ import CodeSnippet from "../../CodeSnippet.astro";
             <button id="getValuesBtn" class="btn btn-primary">Get values</button>
             <button id="setValuesBtn" class="btn btn-secondary">Set random values</button>
         </div>
-        <pre id="apiOutput" class="api-output"></pre>
+        <output id="apiOutput" class="api-output"></output>
     </div>
     <ExampleCodeBlock slot="code">
         <CodeSnippet
@@ -43,7 +43,7 @@ import CodeSnippet from "../../CodeSnippet.astro";
 
 <button id="getValuesBtn">Get values</button>
 <button id="setValuesBtn">Set random values</button>
-<pre id="apiOutput"></pre>
+<output id="apiOutput"></output>
 `}
         />
         <CodeSnippet
@@ -56,7 +56,7 @@ const output = document.querySelector("#apiOutput");
 
 /* read: .values returns a number[] in slot order */
 getBtn.addEventListener("click", () => {
-  output.textContent = \`Values: [\${rg.values.join(", ")}]\`;
+  output.value = \`Values: [\${rg.values.join(", ")}]\`;
 });
 
 /* write: setRangeValue(index, value) moves a single thumb */
@@ -79,7 +79,7 @@ setBtn.addEventListener("click", () => {
                 
                 /* read: .values returns a number[] in slot order */
                 getBtn.addEventListener("click", () => {
-                  output.textContent = `Values: [${rg.values.join(", ")}]`;
+                  output.value = `Values: [${rg.values.join(", ")}]`;
                 });
                 
                 /* write: setRangeValue(index, value) moves a single thumb */

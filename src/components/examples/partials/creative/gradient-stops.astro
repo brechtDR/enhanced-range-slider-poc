@@ -151,7 +151,7 @@ import CodeSnippet from "../../CodeSnippet.astro";
             <label class="visually-hidden">Stop 2 <input type="range" value="50" /></label>
             <label class="visually-hidden">Stop 3 <input type="range" value="80" /></label>
         </range-group>
-        <div class="gradient-code" id="gradient-code" aria-live="polite"></div>
+        <output class="gradient-code" id="gradient-code"></output>
         <div class="gradient-presets">
             <span class="gradient-presets-label">Presets</span>
             <button class="gradient-preset" data-preset="sunset" type="button">
@@ -184,7 +184,7 @@ import CodeSnippet from "../../CodeSnippet.astro";
   <label>Stop 3 <input type="range" value="80"></label>
 </rangegroup>
 <div class="gradient-preview"></div>
-<code id="gradient-code"></code>
+<output id="gradient-code"></output>
 
 <div class="gradient-presets">
   <button data-preset="sunset">Sunset</button>
@@ -237,7 +237,7 @@ const update = () => {
   card.style.setProperty("--p1", \`\${p1}%\`);
   card.style.setProperty("--p2", \`\${p2}%\`);
   card.style.setProperty("--p3", \`\${p3}%\`);
-  code.textContent =
+  code.value =
     \`linear-gradient(to right, \${readColor(1)} \${p1}%, \` +
     \`\${readColor(2)} \${p2}%, \${readColor(3)} \${p3}%)\`;
 };
@@ -275,7 +275,7 @@ update();
                   card.style.setProperty("--p1", `${p1}%`);
                   card.style.setProperty("--p2", `${p2}%`);
                   card.style.setProperty("--p3", `${p3}%`);
-                  code.textContent =
+                  code.value =
                     `linear-gradient(to right, ${readColor(1)} ${p1}%, ` +
                     `${readColor(2)} ${p2}%, ${readColor(3)} ${p3}%)`;
                 };

@@ -37,7 +37,7 @@ import CodeSnippet from "../../CodeSnippet.astro";
         <div class="button-group">
             <button id="toggleDisabledBtn" class="btn btn-primary">Toggle group disabled</button>
         </div>
-        <pre id="disabledOutput" class="api-output">Group disabled: false</pre>
+        <output id="disabledOutput" class="api-output">Group disabled: false</output>
     </div>
     <ExampleCodeBlock slot="code">
         <CodeSnippet
@@ -49,7 +49,7 @@ import CodeSnippet from "../../CodeSnippet.astro";
   <label>Maximum <input type="range" value="70"></label>
 </rangegroup>
 <button id="toggleDisabledBtn">Toggle group disabled</button>
-<pre id="disabledOutput">Group disabled: false</pre>
+<output id="disabledOutput">Group disabled: false</output>
 `}
         />
         <CodeSnippet
@@ -76,7 +76,7 @@ const output = document.querySelector("#disabledOutput");
 
 btn.addEventListener("click", () => {
   rg.disabled = !rg.disabled;
-  output.textContent = \`Group disabled: \${rg.disabled}\`;
+  output.value = \`Group disabled: \${rg.disabled}\`;
   /* The first input keeps its own \`disabled\` attribute, so
      toggling the group back on leaves it locked. */
 });
@@ -92,7 +92,7 @@ btn.addEventListener("click", () => {
                 
                 btn.addEventListener("click", () => {
                   rg.disabled = !rg.disabled;
-                  output.textContent = `Group disabled: ${rg.disabled}`;
+                  output.value = `Group disabled: ${rg.disabled}`;
                   /* The first input keeps its own `disabled` attribute, so
                      toggling the group back on leaves it locked. */
                 });
