@@ -103,6 +103,12 @@ npm install range-group-component
 - **`setRangeValue(index: number, value: number)`**
   - Programmatically sets the value of the handle at the specified index.
 
+- **`addThumb(value?: number, options?: { min?: number; max?: number; name?: string; label?: string }): HTMLInputElement`**
+  - Adds a new handle (a real `<input type="range">`) at the given value and returns it. Because handles are backed by slotted inputs, this is a convenience over creating and appending an input yourself.
+
+- **`removeThumb(index: number)`**
+  - Removes the handle (and its backing `<input>`) at the specified index.
+
 ### Events
 
 - **`change`**
@@ -144,6 +150,17 @@ range-group::part(thumb) {
 
 range-group::part(segment-2) {
   background-color: steelblue;
+}
+```
+
+### Custom track shapes (no component changes)
+
+Each thumb exposes its position along the track as an inline `--thumb-left` custom property (the proposed standardized name is `--slider-thumb-position`), and each segment exposes `--segment-left` / `--segment-width`. Opt-in CSS can use these with `offset-path` to lay thumbs out along any path — a wave, an arc, or a full circle — without touching the component. The `wavy-track` and `circular-track` examples demonstrate this.
+
+```css
+range-group::part(slider-thumb) {
+  offset-path: path("M0,40 Q40,15 80,40 T160,40 T240,40 T320,40");
+  offset-distance: var(--thumb-left);
 }
 ```
 

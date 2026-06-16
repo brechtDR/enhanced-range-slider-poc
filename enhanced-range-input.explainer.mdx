@@ -18,6 +18,7 @@ layout: ../../layouts/ComponentLayout.astro
 - [Progressive Enhancement](#progressive-enhancement)
 - [Datalist Integration](#datalist-integration)
 - [Multi-Color Range Segments](#multi-color-slider-segments)
+- [Custom Track Shapes](#custom-track-shapes)
 - [Detailed Design](#detailed-design)
 - [Extra Examples](#extra-examples)
 - [Resolved Decisions](#resolved-decisions)
@@ -338,6 +339,58 @@ rangegroup::slider-segment(3) {
 
 The number of segments is determined by the number of thumbs.
 
+## Custom Track Shapes
+
+A frequent request from authors is the ability to render range inputs along non-linear tracks: gently curved or wavy tracks, arcs, and full circular "knob" controls. Today this forces authors to abandon the native control entirely and rebuild it from scratch, losing accessibility, form integration, and keyboard behavior in the process.
+
+Rather than introducing a dedicated shape attribute or a family of shape-specific pseudo-elements, we propose a smaller, more composable primitive: the user agent exposes each thumb's current fractional position along the track as a CSS custom property on the `::slider-thumb` pseudo-element. Authors can then place thumbs along an arbitrary path using the existing CSS [`offset-path`](https://developer.mozilla.org/en-US/docs/Web/CSS/offset-path) / `offset-distance` mechanism, with no new layout model and no JavaScript.
+
+We propose the property name `--slider-thumb-position`, resolving to a `<percentage>` from `0%` (the start of the track, per writing mode) to `100%` (the end). Because it is a percentage, it can be passed directly to `offset-distance`, which interprets a percentage as a fraction of the total path length.
+
+### Wavy track
+
+```css
+input[type="range"] {
+    appearance: base;
+}
+
+/* Paint the track as a wave (e.g. an SVG mask or background) */
+input[type="range"]::slider-track {
+    background: url("wave.svg") center / 100% 100% no-repeat;
+}
+
+/* Ride each thumb along the same curve */
+input[type="range"]::slider-thumb {
+    offset-path: path("M 0,20 C 40,0 60,40 100,20");
+    offset-distance: var(--slider-thumb-position);
+}
+```
+
+### Circular track
+
+A circular control is the same technique with a closed path. A single-thumb circular input behaves as a rotary knob; multi-thumb `<rangegroup>` controls become radial range selectors.
+
+```css
+rangegroup {
+    appearance: base;
+    inline-size: 240px;
+    aspect-ratio: 1;
+}
+
+rangegroup::slider-thumb {
+    offset-path: path("M 120,20 A 100,100 0 1 1 119.99,20");
+    offset-distance: var(--slider-thumb-position);
+}
+```
+
+### Fills and segments
+
+The `::slider-fill` and `::slider-segment` pseudo-elements continue to expose the start and width of each segment so that authors can repaint them to match the chosen shape, for example as a `conic-gradient` ring for circular tracks or an SVG stroke for wavy ones. The same fractional-position primitive could be exposed for segment boundaries to make shaped fills fully declarative.
+
+### Accessibility
+
+Custom track shapes are purely presentational. Thumbs still move monotonically from the track's minimum to its maximum as `--slider-thumb-position` advances from `0%` to `100%`, so keyboard interaction, value semantics, and screen reader announcements are identical to a linear slider. Authors take on responsibility for ensuring the rendered shape keeps thumbs and ticks legible and hit-targetable.
+
 ## Detailed Design
 
 ### HTML Attributes
@@ -460,6 +513,8 @@ For groups specifically we'd like to introduce a few new ones:
 - `inputs`: A property that returns a collection of the contained range input elements. A shorthand for `querySelectorAll`
 - `getRangeInput(index)`: Returns the range input at the specified index.
 - `setRangeValue(index, value)`: Sets the value for a specific handle.
+- `addThumb(value, options?)`: Adds a new handle to the group at the given `value` and returns the created `<input type="range">`. Because handles are backed by real `<input type="range">` elements, this is a convenience over manually creating and appending an input. The optional `options` object accepts `min`, `max`, `name`, and `label`. Use cases such as a gradient editor that lets users add and remove color stops on demand are a primary motivation for this method.
+- `removeThumb(index)`: Removes the handle (and its backing `<input>`) at the specified index.
 
 Example usage:
 
@@ -476,7 +531,17 @@ console.log(inputs.length); // 2
 // Setting a specific handle's value
 rangeGroup.setRangeValue(0, 150);
 console.log(rangeGroup.values); // [150, 750]
+
+// Adding a handle programmatically (e.g. a new gradient color stop)
+rangeGroup.addThumb(500, { label: "Stop 3" });
+console.log(rangeGroup.values); // [150, 500, 750]
+
+// Removing the handle we just added
+rangeGroup.removeThumb(1);
+console.log(rangeGroup.values); // [150, 750]
 ```
+
+Because each handle is a real `<input type="range">` in the light DOM, authors can equivalently add or remove handles by appending or removing inputs directly. `addThumb`/`removeThumb` exist as an ergonomic shorthand that keeps value normalization and event dispatch consistent.
 
 ## Extra Examples
 
@@ -600,5 +665,6 @@ The following questions have been discussed and resolved in Open UI telecons:
 - **Automatic tick mark generation**: Should we provide options for generating tick marks without requiring a `<datalist>` (e.g., evenly spaced ticks based on a `step` attribute on the rangegroup)?
 - **Tick mark legibility**: How can we ensure that tick marks and labels remain legible and usable on small-screen devices or with a large number of ticks? Is this author responsibility?
 - **Programmatic segment styling**: Should we provide a way to set segment colors via a JavaScript API?
-- **Programmatic constraint violations**: What should the behavior be when a handle's value is updated programmatically to a value that would violate `stepbetween` or other range limits?
+- **Programmatic constraint violations**: What should the behavior be when a handle's value is updated programmatically to a value that would violate `stepbetween` or other range limits? This extends to `addThumb`: when a handle is added at a value that violates `stepbetween` or overlaps an existing handle, should it be clamped to the nearest valid position, rejected, or inserted as-is?
+- **Custom track shapes and assistive technology**: Non-linear tracks (wavy, circular) reorder thumbs visually without changing their value semantics. Is the `--slider-thumb-position` primitive plus `offset-path` sufficient for authors, or should the platform offer higher-level shape affordances? How should hit-testing, focus rings, and tick placement adapt on a curved or closed path?
 - **Form submission**: How should form submission work for `<rangegroup>` elements? Each child `<input>` submits its own name/value pair individually, as standard form controls. Should the `<rangegroup>` also support a group-level submission format?

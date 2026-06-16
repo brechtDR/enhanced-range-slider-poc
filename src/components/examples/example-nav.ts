@@ -49,12 +49,15 @@ export const exampleNav: ExampleNavGroup[] = [
             { id: "star-rating", label: "Star rating filter", title: "Star rating filter" },
             { id: "gradient-stops", label: "Color-stop gradient editor", title: "Color-stop gradient editor" },
             { id: "timeline", label: "Styled timeline", title: "Styled timeline" },
+            { id: "wavy-track", label: "Wavy track shape", title: "Wavy track shape" },
+            { id: "circular-track", label: "Circular track shape", title: "Circular track shape" },
         ],
     },
     {
         eyebrow: "JavaScript API",
         items: [
             { id: "api", label: "Programmatic interaction", title: "Programmatic interaction" },
+            { id: "dynamic-thumbs", label: "Add & remove thumbs", title: "Add & remove thumbs" },
         ],
     },
 ];

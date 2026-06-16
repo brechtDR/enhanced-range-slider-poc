@@ -1,0 +1,356 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="circular-track" eyebrow="Creative styling" title="Circular track shape">
+    <Fragment slot="description">
+        A two-thumb circular range dial, built entirely with opt-in CSS. Thumbs orbit the ring via <code>offset-path</code> +
+        <code>offset-distance: var(--thumb-left)</code>, and the filled arc is a <code>conic-gradient</code> driven by the
+        segment&rsquo;s exposed <code>--segment-left</code> / <code>--segment-width</code>. A tiny opt-in script maps pointer
+        movement to angle so dragging feels truly circular. The value chips are purely presentational and intentionally omitted
+        from the code sample. The component itself is unchanged.
+    </Fragment>
+    <div slot="demo" class="circular-card">
+        <style is:global>
+            .circular-card {
+                display: grid;
+                justify-items: center;
+                gap: 1.25rem;
+            }
+            #circular-range {
+                --thumb-size: 24px;
+                --ring: 18px;
+                --circ-accent: #0a84ff;
+                inline-size: 240px;
+                block-size: 240px;
+                padding-block: 0;
+            }
+            /* Base ring */
+            #circular-range::part(slider-track) {
+                top: 0 !important;
+                left: 0 !important;
+                inline-size: 240px !important;
+                block-size: 240px !important;
+                transform: none !important;
+                border-radius: 50% !important;
+                background: var(--surface, #e5e7eb) !important;
+                box-shadow: none !important;
+                -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - var(--ring)), #000 0) !important;
+                mask: radial-gradient(farthest-side, #0000 calc(100% - var(--ring)), #000 0) !important;
+            }
+            /* Segments are flat bars by default — neutralize, then paint only the
+               between-thumbs fill (segment 2) as a conic arc. */
+            #circular-range::part(slider-segment) {
+                background: transparent !important;
+            }
+            #circular-range::part(slider-segment-2) {
+                top: 0 !important;
+                left: 0 !important;
+                inline-size: 240px !important;
+                block-size: 240px !important;
+                border-radius: 50% !important;
+                background: conic-gradient(
+                    from 0deg,
+                    #0000 0 var(--segment-left),
+                    var(--circ-accent) var(--segment-left)
+                        calc(var(--segment-left) + var(--segment-width)),
+                    #0000 calc(var(--segment-left) + var(--segment-width)) 100%
+                ) !important;
+                -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - var(--ring)), #000 0) !important;
+                mask: radial-gradient(farthest-side, #0000 calc(100% - var(--ring)), #000 0) !important;
+            }
+            /* Orbit each thumb around the ring */
+            #circular-range::part(slider-thumb) {
+                inset: 0 !important;
+                transform: none !important;
+                offset-path: path("M120,9 A111,111 0 1 1 119.99,9");
+                offset-distance: var(--thumb-left);
+                offset-rotate: 0deg;
+                background: white;
+                border: 3px solid var(--circ-accent);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+            }
+            #circular-range::part(slider-thumb):hover {
+                transform: scale(1.12) !important;
+            }
+            .circular-readout {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+                font-size: 0.9rem;
+                color: var(--text-muted);
+            }
+        </style>
+        <range-group id="circular-range" min="0" max="100" stepbetween="5">
+            <legend slot="legend" class="visually-hidden">Circular range dial</legend>
+            <label class="visually-hidden">Start <input type="range" value="25" /></label>
+            <label class="visually-hidden">End <input type="range" value="75" /></label>
+        </range-group>
+        <div class="circular-readout" aria-hidden="true">
+            <span class="value-chip" id="circ-start">25</span>
+            <span>to</span>
+            <span class="value-chip" id="circ-end">75</span>
+        </div>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup id="circular-range" min="0" max="100" stepbetween="5">
+  <label>Start <input type="range" value="25"></label>
+  <label>End   <input type="range" value="75"></label>
+</rangegroup>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+rangegroup {
+  appearance: base;
+  inline-size: 240px;
+  block-size: 240px;
+}
+
+/* Ring track */
+rangegroup::slider-track {
+  border-radius: 50%;
+  background: #e5e7eb;
+  mask: radial-gradient(farthest-side, #0000 calc(100% - 18px), #000 0);
+}
+
+/* The fill segment between the two thumbs becomes a conic arc.
+   --segment-left / --segment-width are the segment's 0%..100% bounds. */
+rangegroup::slider-segment(2) {
+  border-radius: 50%;
+  background: conic-gradient(from 0deg,
+    #0000 0 var(--segment-left),
+    var(--circ-accent) var(--segment-left) calc(var(--segment-left) + var(--segment-width)),
+    #0000 calc(var(--segment-left) + var(--segment-width)) 100%);
+  mask: radial-gradient(farthest-side, #0000 calc(100% - 18px), #000 0);
+}
+
+/* Orbit the thumbs around the ring */
+rangegroup::slider-thumb {
+  offset-path: path("M120,9 A111,111 0 1 1 119.99,9");
+  offset-distance: var(--slider-thumb-position);
+}
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const rg = document.querySelector("#circular-range");
+let activeIndex = null;
+let activePointerId = null;
+let dragStartProgress = 0;
+let dragAccumulatedAngle = 0;
+let lastAngle = 0;
+
+const getCenter = () => {
+  const r = rg.getBoundingClientRect();
+  return { cx: r.left + r.width / 2, cy: r.top + r.height / 2 };
+};
+const pointerToAngle = (event) => {
+  const { cx, cy } = getCenter();
+  const raw = Math.atan2(event.clientY - cy, event.clientX - cx);
+  return (raw + Math.PI / 2 + Math.PI * 2) % (Math.PI * 2); // 0 at top, clockwise
+};
+const angleToProgress = (angle) => angle / (Math.PI * 2);
+const valueToProgress = (value) => {
+  const min = Number(rg.min ?? 0);
+  const max = Number(rg.max ?? 100);
+  return (value - min) / (max - min || 1);
+};
+const clamp01 = (v) => Math.max(0, Math.min(1, v));
+const circularDistance = (a, b) => {
+  const d = Math.abs(a - b);
+  return Math.min(d, 1 - d);
+};
+const closestThumbForProgress = (progress) => {
+  return rg.values.reduce((best, value, index) => {
+    const dist = circularDistance(valueToProgress(value), progress);
+    if (dist < best.dist) return { index, dist };
+    return best;
+  }, { index: 0, dist: Infinity }).index;
+};
+const applyProgress = (index, progress) => {
+  const min = Number(rg.min ?? 0);
+  const max = Number(rg.max ?? 100);
+  rg.setRangeValue(index, min + progress * (max - min));
+};
+const unwrapDelta = (next, prev) => {
+  let d = next - prev;
+  if (d > Math.PI) d -= Math.PI * 2;
+  else if (d < -Math.PI) d += Math.PI * 2;
+  return d;
+};
+
+rg.addEventListener("pointerdown", (event) => {
+  if (event.button !== 0) return;
+  event.preventDefault();
+  event.stopPropagation();
+  const angle = pointerToAngle(event);
+  const progress = angleToProgress(angle);
+  activeIndex = closestThumbForProgress(progress);
+  activePointerId = event.pointerId;
+  rg.setPointerCapture(event.pointerId);
+  applyProgress(activeIndex, progress);
+  dragStartProgress = valueToProgress(rg.values[activeIndex]);
+  dragAccumulatedAngle = 0;
+  lastAngle = angle;
+}, { capture: true, passive: false });
+
+window.addEventListener("pointermove", (event) => {
+  if (activeIndex === null || event.pointerId !== activePointerId) return;
+  event.preventDefault();
+  event.stopPropagation();
+  const nextAngle = pointerToAngle(event);
+  dragAccumulatedAngle += unwrapDelta(nextAngle, lastAngle);
+  lastAngle = nextAngle;
+  applyProgress(activeIndex, clamp01(dragStartProgress + dragAccumulatedAngle / (Math.PI * 2)));
+}, { passive: false });
+
+window.addEventListener("pointerup", (event) => {
+  if (event.pointerId !== activePointerId) return;
+  activeIndex = null;
+  activePointerId = null;
+});
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg = document.querySelector("#circular-range");
+                if (!rg) return;
+
+                let activeIndex = null;
+                let activePointerId = null;
+                let dragStartProgress = 0;
+                let dragAccumulatedAngle = 0;
+                let lastAngle = 0;
+
+                const getCenter = () => {
+                    const rect = rg.getBoundingClientRect();
+                    return { cx: rect.left + rect.width / 2, cy: rect.top + rect.height / 2 };
+                };
+
+                // 0 is at the top of the circle; values increase clockwise.
+                const pointerToAngle = (event) => {
+                    const { cx, cy } = getCenter();
+                    const raw = Math.atan2(event.clientY - cy, event.clientX - cx);
+                    return (raw + Math.PI / 2 + Math.PI * 2) % (Math.PI * 2);
+                };
+                const angleToProgress = (angle) => angle / (Math.PI * 2);
+
+                const getMin = () => Number(rg.getAttribute("min") ?? 0);
+                const getMax = () => Number(rg.getAttribute("max") ?? 100);
+
+                const progressToValue = (progress) => {
+                    const min = getMin();
+                    const max = getMax();
+                    return min + progress * (max - min);
+                };
+
+                const valueToProgress = (value) => {
+                    const min = getMin();
+                    const max = getMax();
+                    const span = max - min || 1;
+                    return (value - min) / span;
+                };
+                const clamp01 = (value) => Math.max(0, Math.min(1, value));
+
+                const circularDistance = (a, b) => {
+                    const d = Math.abs(a - b);
+                    return Math.min(d, 1 - d);
+                };
+
+                const closestThumbForProgress = (progress) => {
+                    let bestIndex = 0;
+                    let bestDist = Number.POSITIVE_INFINITY;
+                    rg.values.forEach((value, index) => {
+                        const dist = circularDistance(valueToProgress(value), progress);
+                        if (dist < bestDist) {
+                            bestDist = dist;
+                            bestIndex = index;
+                        }
+                    });
+                    return bestIndex;
+                };
+
+                const applyProgress = (index, progress) => {
+                    rg.setRangeValue(index, progressToValue(progress));
+                };
+                const unwrapDelta = (next, prev) => {
+                    let delta = next - prev;
+                    if (delta > Math.PI) delta -= Math.PI * 2;
+                    else if (delta < -Math.PI) delta += Math.PI * 2;
+                    return delta;
+                };
+
+                const handlePointerDown = (event) => {
+                    if (event.button !== 0) return;
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const angle = pointerToAngle(event);
+                    const progress = angleToProgress(angle);
+                    activeIndex = closestThumbForProgress(progress);
+                    if (activeIndex < 0) activeIndex = 0;
+                    activePointerId = event.pointerId;
+                    rg.setPointerCapture(event.pointerId);
+                    applyProgress(activeIndex, progress);
+                    dragStartProgress = valueToProgress(rg.values[activeIndex]);
+                    dragAccumulatedAngle = 0;
+                    lastAngle = angle;
+                };
+
+                const handlePointerMove = (event) => {
+                    if (activeIndex === null || event.pointerId !== activePointerId) return;
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const nextAngle = pointerToAngle(event);
+                    dragAccumulatedAngle += unwrapDelta(nextAngle, lastAngle);
+                    lastAngle = nextAngle;
+                    const nextProgress = clamp01(
+                        dragStartProgress + dragAccumulatedAngle / (Math.PI * 2),
+                    );
+                    applyProgress(activeIndex, nextProgress);
+                };
+
+                const handlePointerUp = (event) => {
+                    if (event.pointerId !== activePointerId) return;
+                    activeIndex = null;
+                    activePointerId = null;
+                };
+
+                rg.addEventListener("pointerdown", handlePointerDown, {
+                    capture: true,
+                    passive: false,
+                });
+                window.addEventListener("pointermove", handlePointerMove, {
+                    passive: false,
+                });
+                window.addEventListener("pointerup", handlePointerUp);
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>
