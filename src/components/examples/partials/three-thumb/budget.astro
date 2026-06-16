@@ -216,7 +216,10 @@ const update = () => {
   let announcement = "Budget updated. ";
   labels.forEach((label, i) => {
     const pct = Math.round(stops[i + 1] - stops[i]);
-    label.innerHTML = "<strong>" + categories[i] + "</strong><br>" + pct + "%";
+    label.replaceChildren();
+    const categoryName = document.createElement("strong");
+    categoryName.textContent = categories[i];
+    label.append(categoryName, document.createElement("br"), document.createTextNode(pct + "%"));
     announcement += categories[i] + ": " + pct + "%. ";
   });
   announcer.textContent = announcement.trim();
@@ -240,7 +243,14 @@ update();
                     let announcement = "Budget updated. ";
                     labels.forEach((label, i) => {
                         const pct = Math.round(stops[i + 1] - stops[i]);
-                        label.innerHTML = "<strong>" + categories[i] + "</strong><br>" + pct + "%";
+                        label.replaceChildren();
+                        const categoryName = document.createElement("strong");
+                        categoryName.textContent = categories[i];
+                        label.append(
+                            categoryName,
+                            document.createElement("br"),
+                            document.createTextNode(`${pct}%`),
+                        );
                         announcement += categories[i] + ": " + pct + "%. ";
                     });
                     announcer.textContent = announcement.trim();

@@ -1,0 +1,380 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="dynamic-thumbs" eyebrow="JavaScript API" title="Add & remove thumbs (gradient builder)">
+    <Fragment slot="description">
+        A live gradient editor where each thumb is a color stop. <code>addThumb(value, options)</code> and
+        <code>removeThumb(index)</code> grow and shrink the control on demand &mdash; new handles are real
+        <code>&lt;input type="range"&gt;</code> elements, so they stay keyboard-accessible and form-friendly.
+    </Fragment>
+    <div slot="demo" class="dynamic-card">
+        <style is:global>
+            .dynamic-card {
+                display: grid;
+                gap: 1rem;
+            }
+            .dynamic-preview {
+                height: 80px;
+                border-radius: 12px;
+                background: var(--grad, #ccc);
+                box-shadow:
+                    inset 0 0 0 1px rgba(0, 0, 0, 0.08),
+                    0 6px 18px rgba(0, 0, 0, 0.08);
+            }
+            #dynamic-range {
+                --thumb-size: 26px;
+                --track-height: 16px;
+            }
+            #dynamic-range::part(slider-track) {
+                background: var(--grad, #ccc);
+                border-radius: 999px;
+                box-shadow: inset 0 0 0 1px var(--border);
+            }
+            #dynamic-range::part(slider-segment) {
+                background: transparent !important;
+            }
+            #dynamic-range::part(slider-thumb) {
+                border: 3px solid white;
+                box-shadow:
+                    0 4px 14px rgba(0, 0, 0, 0.22),
+                    inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+            }
+            .dynamic-range-wrap {
+                position: relative;
+            }
+            .dynamic-color-list {
+                display: grid;
+                gap: 0.4rem;
+                padding: 0.65rem;
+                border: 1px solid rgba(148, 163, 184, 0.35);
+                border-radius: 12px;
+                background: linear-gradient(180deg, rgba(248, 250, 252, 0.92), rgba(241, 245, 249, 0.92));
+            }
+            .dynamic-color-row {
+                display: grid;
+                grid-template-columns: 1fr auto auto;
+                align-items: center;
+                gap: 0.65rem;
+                padding: 0.4rem 0.45rem;
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.8);
+                border: 1px solid rgba(148, 163, 184, 0.22);
+            }
+            .dynamic-color-label {
+                font-size: 0.85rem;
+                color: var(--text, #0f172a);
+                font-weight: 600;
+            }
+            .dynamic-color-position {
+                font-size: 0.75rem;
+                color: #64748b;
+                font-weight: 700;
+                min-width: 2.75rem;
+                text-align: right;
+            }
+            .dynamic-color-input {
+                width: 42px;
+                height: 30px;
+                padding: 0;
+                border: 1px solid rgba(15, 23, 42, 0.25);
+                border-radius: 8px;
+                cursor: pointer;
+                background: #fff;
+                box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+            }
+            .dynamic-color-input::-webkit-color-swatch-wrapper {
+                padding: 0;
+            }
+            .dynamic-color-input::-webkit-color-swatch {
+                border: none;
+                border-radius: 7px;
+            }
+            .dynamic-color-input::-moz-color-swatch {
+                border: none;
+                border-radius: 7px;
+            }
+            .dynamic-color-input:focus-visible {
+                outline: 2px solid var(--accent, #3b82f6);
+                outline-offset: 2px;
+            }
+            .dynamic-card:has(#dynamic-range:state(dragging)) .dynamic-color-list .dynamic-color-input {
+                pointer-events: none;
+            }
+            #dynamic-range::part(slider-thumb-1) {
+                background-color: var(--c1, #888);
+            }
+            #dynamic-range::part(slider-thumb-2) {
+                background-color: var(--c2, #888);
+            }
+            #dynamic-range::part(slider-thumb-3) {
+                background-color: var(--c3, #888);
+            }
+            #dynamic-range::part(slider-thumb-4) {
+                background-color: var(--c4, #888);
+            }
+            #dynamic-range::part(slider-thumb-5) {
+                background-color: var(--c5, #888);
+            }
+            #dynamic-range::part(slider-thumb-6) {
+                background-color: var(--c6, #888);
+            }
+            .dynamic-code {
+                background: #0b1220;
+                color: #e2e8f0;
+                font-family: "Source Code Pro", "JetBrains Mono", monospace;
+                font-size: 0.85rem;
+                padding: 12px 16px;
+                border-radius: 10px;
+                line-height: 1.6;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        </style>
+        <div class="dynamic-preview" aria-hidden="true"></div>
+        <div class="dynamic-range-wrap">
+            <range-group id="dynamic-range" min="0" max="100" stepbetween="4">
+                <legend slot="legend" class="visually-hidden">Gradient color stops</legend>
+                <label class="visually-hidden">Stop 1 <input type="range" value="15" /></label>
+                <label class="visually-hidden">Stop 2 <input type="range" value="50" /></label>
+                <label class="visually-hidden">Stop 3 <input type="range" value="85" /></label>
+            </range-group>
+        </div>
+        <div class="dynamic-color-list" id="dynamic-color-list" aria-label="Stop colors"></div>
+        <output class="dynamic-code" id="dynamic-code"></output>
+        <div class="button-group">
+            <button id="dynamic-add" class="btn btn-primary" type="button">Add stop</button>
+            <button id="dynamic-remove" class="btn btn-secondary" type="button">Remove stop</button>
+        </div>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup id="dynamic-range" min="0" max="100" stepbetween="4">
+  <label>Stop 1 <input type="range" value="15"></label>
+  <label>Stop 2 <input type="range" value="50"></label>
+  <label>Stop 3 <input type="range" value="85"></label>
+</rangegroup>
+<div id="dynamic-color-list"></div>
+<div class="dynamic-preview"></div>
+<output id="dynamic-code"></output>
+
+<button id="dynamic-add">Add stop</button>
+<button id="dynamic-remove">Remove stop</button>
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const rg     = document.querySelector("#dynamic-range");
+const card   = document.querySelector(".dynamic-card");
+const addBtn = document.querySelector("#dynamic-add");
+const remBtn = document.querySelector("#dynamic-remove");
+const colorList = document.querySelector("#dynamic-color-list");
+
+const palette = ["#f59e0b","#ef4444","#6366f1","#10b981","#ec4899","#06b6d4"];
+const colorFor = new WeakMap();   // keep a colour stable per <input>
+let next = 0;
+
+const ensureColors = () => {
+  rg.inputs.forEach(inp => {
+    if (!colorFor.has(inp)) colorFor.set(inp, palette[next++ % palette.length]);
+  });
+};
+
+const syncColorList = () => {
+  if (colorList.children.length !== rg.inputs.length) {
+    colorList.replaceChildren();
+    rg.inputs.forEach((inp, i) => {
+      const row = document.createElement("label");
+      row.className = "dynamic-color-row";
+      row.innerHTML =
+        '<span class="dynamic-color-label"></span><span class="dynamic-color-position"></span>';
+
+      const input = document.createElement("input");
+      input.type = "color";
+      input.className = "dynamic-color-input";
+      input.dataset.index = String(i);
+      input.addEventListener("input", () => {
+        const index = Number(input.dataset.index);
+        const target = rg.inputs[index];
+        if (!target) return;
+        colorFor.set(target, input.value);
+        render();
+      });
+      row.append(input);
+      colorList.append(row);
+    });
+  }
+
+  rg.inputs.forEach((inp, i) => {
+    const row = colorList.children[i];
+    if (!(row instanceof HTMLLabelElement)) return;
+    const label = row.querySelector(".dynamic-color-label");
+    const pos = row.querySelector(".dynamic-color-position");
+    const input = row.querySelector(".dynamic-color-input");
+    if (label) label.textContent = "Stop " + (i + 1);
+    if (pos) pos.textContent = Math.round(rg.values[i]) + "%";
+    if (input instanceof HTMLInputElement) {
+      input.dataset.index = String(i);
+      if (document.activeElement !== input) input.value = colorFor.get(inp);
+      input.setAttribute("aria-label", "Color for stop " + (i + 1));
+    }
+  });
+};
+
+const render = () => {
+  ensureColors();
+  const stops = rg.inputs.map((inp, i) => colorFor.get(inp) + " " + Math.round(rg.values[i]) + "%");
+  const grad  = "linear-gradient(to right, " + stops.join(", ") + ")";
+  /* set on the shared ancestor so the preview AND the slider track inherit it */
+  card.style.setProperty("--grad", grad);
+  rg.inputs.forEach((inp, i) => card.style.setProperty("--c" + (i + 1), colorFor.get(inp)));
+  syncColorList();
+  document.querySelector("#dynamic-code").value = grad;
+  addBtn.disabled = rg.inputs.length >= 6;
+  remBtn.disabled = rg.inputs.length <= 2;
+};
+
+/* add a stop in the widest gap */
+addBtn.addEventListener("click", () => {
+  const v = [...rg.values].sort((a, b) => a - b);
+  let value = 50, gap = -1;
+  for (let i = 0; i < v.length - 1; i++) {
+    if (v[i + 1] - v[i] > gap) { gap = v[i + 1] - v[i]; value = (v[i] + v[i + 1]) / 2; }
+  }
+  rg.addThumb(Math.round(value), { label: "Stop " + (rg.inputs.length + 1) });
+  render();
+});
+
+remBtn.addEventListener("click", () => {
+  rg.removeThumb(rg.inputs.length - 1);
+  render();
+});
+
+rg.addEventListener("input", render);
+render();
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg = document.querySelector("#dynamic-range");
+                const card = document.querySelector(".dynamic-card");
+                const addBtn = document.querySelector("#dynamic-add");
+                const remBtn = document.querySelector("#dynamic-remove");
+                const code = document.querySelector("#dynamic-code");
+                const colorList = document.querySelector("#dynamic-color-list");
+                if (!rg || !card || !addBtn || !remBtn || !code || !colorList) return;
+
+                const palette = ["#f59e0b", "#ef4444", "#6366f1", "#10b981", "#ec4899", "#06b6d4"];
+                const colorFor = new WeakMap();
+                let next = 0;
+
+                const ensureColors = () => {
+                    rg.inputs.forEach((inp) => {
+                        if (!colorFor.has(inp)) colorFor.set(inp, palette[next++ % palette.length]);
+                    });
+                };
+
+                const syncColorList = () => {
+                    if (colorList.children.length !== rg.inputs.length) {
+                        colorList.replaceChildren();
+                        rg.inputs.forEach((inp, i) => {
+                            const row = document.createElement("label");
+                            row.className = "dynamic-color-row";
+                            row.innerHTML =
+                                '<span class="dynamic-color-label"></span><span class="dynamic-color-position"></span>';
+
+                            const input = document.createElement("input");
+                            input.type = "color";
+                            input.className = "dynamic-color-input";
+                            input.dataset.index = String(i);
+                            input.addEventListener("input", () => {
+                                const index = Number(input.dataset.index);
+                                const target = rg.inputs[index];
+                                if (!target) return;
+                                colorFor.set(target, input.value);
+                                render();
+                            });
+                            row.append(input);
+                            colorList.append(row);
+                        });
+                    }
+
+                    rg.inputs.forEach((inp, i) => {
+                        const row = colorList.children[i];
+                        if (!(row instanceof HTMLLabelElement)) return;
+                        const label = row.querySelector(".dynamic-color-label");
+                        const pos = row.querySelector(".dynamic-color-position");
+                        const input = row.querySelector(".dynamic-color-input");
+                        if (label) label.textContent = `Stop ${i + 1}`;
+                        if (pos) pos.textContent = `${Math.round(rg.values[i])}%`;
+                        if (input instanceof HTMLInputElement) {
+                            input.dataset.index = String(i);
+                            if (document.activeElement !== input) input.value = colorFor.get(inp);
+                            input.setAttribute("aria-label", `Color for stop ${i + 1}`);
+                        }
+                    });
+                };
+
+                const render = () => {
+                    ensureColors();
+                    const stops = rg.inputs.map(
+                        (inp, i) => `${colorFor.get(inp)} ${Math.round(rg.values[i])}%`,
+                    );
+                    const grad = `linear-gradient(to right, ${stops.join(", ")})`;
+                    card.style.setProperty("--grad", grad);
+                    rg.inputs.forEach((inp, i) => card.style.setProperty(`--c${i + 1}`, colorFor.get(inp)));
+                    syncColorList();
+                    code.value = grad;
+                    addBtn.disabled = rg.inputs.length >= 6;
+                    remBtn.disabled = rg.inputs.length <= 2;
+                };
+
+                addBtn.addEventListener("click", () => {
+                    const v = [...rg.values].sort((a, b) => a - b);
+                    let value = 50,
+                        gap = -1;
+                    for (let i = 0; i < v.length - 1; i++) {
+                        if (v[i + 1] - v[i] > gap) {
+                            gap = v[i + 1] - v[i];
+                            value = (v[i] + v[i + 1]) / 2;
+                        }
+                    }
+                    rg.addThumb(Math.round(value), { label: `Stop ${rg.inputs.length + 1}` });
+                    render();
+                });
+
+                remBtn.addEventListener("click", () => {
+                    rg.removeThumb(rg.inputs.length - 1);
+                    render();
+                });
+
+                rg.addEventListener("input", render);
+                render();
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

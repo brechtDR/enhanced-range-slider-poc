@@ -1,0 +1,155 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="wavy-track" eyebrow="Creative styling" title="Wavy track shape">
+    <Fragment slot="description">
+        The track is repainted as a wave and every thumb rides the curve &mdash; with <strong>no changes to the component</strong>.
+        Each thumb exposes its position as <code>--thumb-left</code> (the proposed <code>--slider-thumb-position</code>), so an
+        opt-in stylesheet can drive <code>offset-path</code> / <code>offset-distance</code>. Dragging and keyboard control are
+        unchanged.
+    </Fragment>
+    <div slot="demo" class="wavy-card">
+        <style is:global>
+            .wavy-card {
+                display: grid;
+                gap: 1.25rem;
+            }
+            /* Opt in: a fixed coordinate space keeps the path predictable */
+            #wavy-range {
+                --thumb-size: 22px;
+                inline-size: 320px;
+                max-inline-size: 100%;
+                block-size: 80px;
+                padding-block: 0;
+                margin-inline: auto;
+            }
+            /* Repaint the track as a wave (SVG stroke), spanning the full box.
+               The path coordinate space is 320x80, so the track must match it
+               (the internal container is only --thumb-size tall). */
+            #wavy-range::part(slider-track) {
+                top: 0 !important;
+                left: 0 !important;
+                inline-size: 320px !important;
+                max-inline-size: 100% !important;
+                block-size: 80px !important;
+                transform: none !important;
+                border-radius: 0 !important;
+                background:
+                    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 80' preserveAspectRatio='none'%3E%3Cpath d='M0,40 Q40,15 80,40 T160,40 T240,40 T320,40' fill='none' stroke='%23c7cbd4' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E")
+                        center / 100% 100% no-repeat
+                    !important;
+            }
+            /* The flat rectangular segments don't apply to a curve — hide them */
+            #wavy-range::part(slider-segment) {
+                background: transparent !important;
+            }
+            /* Lay each thumb out along the same wave path */
+            #wavy-range::part(slider-thumb) {
+                inset: 0 !important;
+                transform: none !important;
+                offset-path: path("M0,40 Q40,15 80,40 T160,40 T240,40 T320,40");
+                offset-distance: var(--thumb-left);
+                offset-rotate: 0deg;
+                background: var(--accent, #0a84ff);
+                border: 3px solid white;
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+            }
+            #wavy-range::part(slider-thumb):hover {
+                transform: scale(1.12) !important;
+            }
+            #wavy-range::part(slider-thumb-1) {
+                background: #f59e0b;
+            }
+            #wavy-range::part(slider-thumb-2) {
+                background: #ef4444;
+            }
+            #wavy-range::part(slider-thumb-3) {
+                background: #6366f1;
+            }
+            .wavy-readout {
+                display: flex;
+                gap: 8px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        </style>
+        <range-group id="wavy-range" min="0" max="100" stepbetween="6">
+            <legend slot="legend" class="visually-hidden">Wavy track values</legend>
+            <label class="visually-hidden">Handle 1 <input type="range" value="20" /></label>
+            <label class="visually-hidden">Handle 2 <input type="range" value="50" /></label>
+            <label class="visually-hidden">Handle 3 <input type="range" value="80" /></label>
+        </range-group>
+        <div class="wavy-readout" id="wavy-readout" aria-hidden="true"></div>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup id="wavy-range" min="0" max="100" stepbetween="6">
+  <label>Handle 1 <input type="range" value="20"></label>
+  <label>Handle 2 <input type="range" value="50"></label>
+  <label>Handle 3 <input type="range" value="80"></label>
+</rangegroup>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+rangegroup {
+  appearance: base;
+  inline-size: 320px;
+  block-size: 80px;
+}
+
+/* Paint the track as a wave */
+rangegroup::slider-track {
+  background:
+    url("wave.svg") center / 100% 100% no-repeat;
+}
+
+/* Ride every thumb along the same curve.
+   --slider-thumb-position is the thumb's 0%..100% position. */
+rangegroup::slider-thumb {
+  offset-path: path("M0,40 Q40,15 80,40 T160,40 T240,40 T320,40");
+  offset-distance: var(--slider-thumb-position);
+}
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg = document.querySelector("#wavy-range");
+                const readout = document.querySelector("#wavy-readout");
+                if (!rg || !readout) return;
+                const update = () => {
+                    readout.innerHTML = rg.values
+                        .map((v) => `<span class="value-chip">${Math.round(v)}</span>`)
+                        .join("");
+                };
+                rg.addEventListener("input", update);
+                update();
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>
