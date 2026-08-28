@@ -53,7 +53,7 @@
 
 .sidebar a {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
     padding: 6px 10px;
     border-left: 3px solid transparent;
@@ -84,25 +84,29 @@ html.dark .sidebar a.is-active:hover {
     font-weight: 600;
 }
 
-/* Reserve bold-weight width so toggling the active state never causes a reflow.
-   The ::after pseudo renders an invisible bold copy of the label in the same
-   grid cell, forcing the cell to size to the bold metric. */
+/* Reserve bold-weight metrics so toggling the active state never causes a reflow.
+   The ::after pseudo renders an invisible bold copy of the label stacked in the
+   same grid cell as the real text, so the cell sizes to whichever is larger. Both
+   copies wrap inside the sidebar column, which is why the height matters as much
+   as the width: a label that fits on one line until it turns bold would otherwise
+   push the list around when it becomes active. */
 .nav-label {
     display: inline-grid;
-    grid-template-columns: max-content;
+    grid-template-columns: minmax(0, 1fr);
     min-width: 0;
 }
 
+.nav-label-text,
 .nav-label::after {
-    content: attr(data-title);
     grid-area: 1 / 1;
+}
+
+.nav-label::after {
+    content: attr(data-label);
     font-weight: 600;
-    height: 0;
     visibility: hidden;
-    overflow: hidden;
     pointer-events: none;
     user-select: none;
-    white-space: pre;
 }
 
 .sidebar a .new-pill {

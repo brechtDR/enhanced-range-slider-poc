@@ -1,0 +1,129 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="linked-fields" eyebrow="JavaScript API" title="Linked value fields (author JS)">
+    <Fragment slot="description">
+        Telecon outcome on
+        <a href="https://github.com/openui/open-ui/issues/1459">#1459</a>: linking a number
+        field to a slider is not a <code>&lt;rangegroup&gt;</code>-only feature and must not
+        be solved by putting number inputs in the group shadow tree. Both demos below use the
+        same author-space <code>input</code> listeners — one against a native range, one
+        against a single-thumb <code>&lt;range-group&gt;</code>.
+    </Fragment>
+    <div slot="demo">
+        <div class="linked-fields-stack">
+            <div>
+                <h3>Native <code>input type=range</code></h3>
+                <label class="price-input-group" for="native-range-slider">
+                    Volume
+                    <input id="native-range-slider" type="range" min="0" max="100" value="40" />
+                </label>
+                <div class="price-input-container">
+                    <div class="price-input-group">
+                        <label for="native-range-number">Value</label>
+                        <input id="native-range-number" type="number" min="0" max="100" />
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h3>One-thumb <code>&lt;range-group&gt;</code></h3>
+                <style is:global>
+                    #linked-single-range::part(slider-thumb) {
+                        --slider-thumb-color: var(--color-teal);
+                    }
+                </style>
+                <range-group id="linked-single-range" min="0" max="100">
+                    <legend slot="legend" class="visually-hidden">Volume</legend>
+                    <label class="visually-hidden">
+                        Volume
+                        <input type="range" name="linked-volume" value="40" />
+                    </label>
+                </range-group>
+                <div class="price-input-container">
+                    <div class="price-input-group">
+                        <label for="linked-single-number">Value</label>
+                        <input id="linked-single-number" type="number" min="0" max="100" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<label>Volume <input id="native-range-slider" type="range" min="0" max="100" value="40"></label>
+<label>Value <input id="native-range-number" type="number" min="0" max="100"></label>
+
+<rangegroup id="linked-single-range" min="0" max="100">
+  <legend>Volume</legend>
+  <label>Volume <input type="range" name="linked-volume" value="40"></label>
+</rangegroup>
+<label>Value <input id="linked-single-number" type="number" min="0" max="100"></label>
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const slider = document.querySelector("#native-range-slider");
+const number = document.querySelector("#native-range-number");
+slider.addEventListener("input", () => { number.value = slider.value; });
+number.addEventListener("input", () => { slider.value = number.value; });
+
+const rg = document.querySelector("#linked-single-range");
+const rgNumber = document.querySelector("#linked-single-number");
+rg.addEventListener("input", () => { rgNumber.value = Math.round(rg.values[0]); });
+rgNumber.addEventListener("input", () => { rg.setRangeValue(0, parseInt(rgNumber.value, 10)); });
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const slider = document.querySelector("#native-range-slider");
+                const number = document.querySelector("#native-range-number");
+                const rg = document.querySelector("#linked-single-range");
+                const rgNumber = document.querySelector("#linked-single-number");
+                if (!slider || !number || !rg || !rgNumber) return;
+
+                const syncNative = (fromSlider) => {
+                    if (fromSlider) number.value = slider.value;
+                    else slider.value = number.value;
+                };
+                slider.addEventListener("input", () => syncNative(true));
+                number.addEventListener("input", () => syncNative(false));
+                number.value = slider.value;
+
+                const syncGroup = () => {
+                    rgNumber.value = String(Math.round(rg.values[0] ?? 0));
+                };
+                rgNumber.addEventListener("input", () => {
+                    rg.setRangeValue(0, parseInt(rgNumber.value, 10) || 0);
+                    syncGroup();
+                });
+                rg.addEventListener("input", syncGroup);
+                syncGroup();
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

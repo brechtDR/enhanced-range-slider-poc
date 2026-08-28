@@ -1,0 +1,121 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="interaction-mode" eyebrow="Interaction modes" title="Interaction mode (working name)">
+    <Fragment slot="description">
+        Compare endpoint-oriented vs range-oriented pointer behavior. The attribute
+        <code>interaction</code> with keywords <code>endpoints</code> (default) and
+        <code>range</code> is a <strong>working name</strong> for Open UI bikeshed on
+        <a href="https://github.com/openui/open-ui/issues/1460">#1460</a> — not a committed HTML
+        API. Do not use <code>draggable</code>. In <code>range</code> mode, pressing anywhere
+        between two thumbs drags that interval and keeps its width; pressing
+        <em>outside</em> it still moves the nearest thumb, and a press without a drag
+        moves nothing. It works with any thumb count &mdash; with three or more, the pointer
+        picks which segment moves (see the segment-drag examples further down).
+    </Fragment>
+    <div slot="demo">
+        <style is:global>
+            #interaction-mode-range::part(slider-segment-2) {
+                background: var(--color-teal);
+            }
+            #interaction-mode-range::part(slider-thumb) {
+                --slider-thumb-color: var(--color-teal);
+                --slider-thumb-ring-color: color-mix(in oklab, var(--color-teal) 55%, white);
+            }
+        </style>
+        <fieldset class="interaction-mode-controls">
+            <legend class="interaction-mode-legend">interaction (bikeshed)</legend>
+            <label>
+                <input type="radio" name="interaction-mode-choice" value="endpoints" />
+                endpoints
+            </label>
+            <label>
+                <input type="radio" name="interaction-mode-choice" value="range" checked />
+                range
+            </label>
+        </fieldset>
+        <range-group id="interaction-mode-range" min="0" max="120" interaction="range">
+            <legend slot="legend" class="visually-hidden">Clip in and out points</legend>
+            <label class="visually-hidden">
+                In
+                <input type="range" name="clip-in" value="24" />
+            </label>
+            <label class="visually-hidden">
+                Out
+                <input type="range" name="clip-out" value="84" />
+            </label>
+        </range-group>
+        <p class="interaction-mode-readout" id="interaction-mode-readout"></p>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<!-- Working name: bikeshed on https://github.com/openui/open-ui/issues/1460 -->
+<rangegroup min="0" max="120" interaction="range">
+  <legend>Clip in and out points</legend>
+  <label>In <input type="range" name="clip-in" value="24"></label>
+  <label>Out <input type="range" name="clip-out" value="84"></label>
+</rangegroup>
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const rg = document.querySelector("#interaction-mode-range");
+rg.interaction = "range"; // or "endpoints"
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg = document.querySelector("#interaction-mode-range");
+                const readout = document.querySelector("#interaction-mode-readout");
+                const radios = document.querySelectorAll('input[name="interaction-mode-choice"]');
+                if (!rg || !readout) return;
+
+                const format = (seconds) => {
+                    const m = Math.floor(seconds / 60);
+                    const s = Math.round(seconds % 60);
+                    return `${m}:${String(s).padStart(2, "0")}`;
+                };
+
+                const syncReadout = () => {
+                    const [a, b] = rg.values;
+                    readout.textContent = `In ${format(a)} · Out ${format(b)} · duration ${format(b - a)}`;
+                };
+
+                radios.forEach((radio) => {
+                    radio.addEventListener("change", () => {
+                        if (!radio.checked) return;
+                        rg.setAttribute("interaction", radio.value);
+                    });
+                });
+
+                rg.addEventListener("input", syncReadout);
+                syncReadout();
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

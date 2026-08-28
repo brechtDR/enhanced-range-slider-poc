@@ -6,8 +6,13 @@ import CodeSnippet from "../../CodeSnippet.astro";
 
 <ExampleSection id="interactive-price" eyebrow="Foundations" title="Interactive price editor">
     <Fragment slot="description">
-        Two-way binding between the component values and number inputs. Drag the handles to update the fields, or type
-        in the fields to move the handles.
+        Two-way binding between the component values and number inputs is
+        <strong>author JavaScript</strong> — not a native <code>reference</code> API or
+        built-in sibling fields. Linked value fields belong with a general data-binding /
+        invoker discussion
+        (<a href="https://github.com/openui/open-ui/issues/1459">#1459</a>) and must also work
+        for a plain <code>input type=range</code>. Drag the handles to update the fields, or
+        type in the fields to move the handles.
     </Fragment>
     <div slot="demo">
         <style is:global>

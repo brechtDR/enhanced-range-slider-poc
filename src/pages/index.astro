@@ -3,6 +3,7 @@ import "../../style.css";
 import Topbar from "../components/layout/Topbar.astro";
 import SidebarNav from "../components/layout/SidebarNav.astro";
 import BaselineExample from "../components/examples/partials/foundations/baseline.astro";
+import SingleThumbExample from "../components/examples/partials/foundations/single-thumb.astro";
 import InteractivePriceExample from "../components/examples/partials/foundations/interactive-price.astro";
 import DatalistExample from "../components/examples/partials/foundations/datalist.astro";
 import StepbetweenExample from "../components/examples/partials/constraints/stepbetween.astro";
@@ -11,11 +12,16 @@ import ParentOverrideExample from "../components/examples/partials/constraints/p
 import MultiHandleConstraintsExample from "../components/examples/partials/constraints/multi-handle-constraints.astro";
 import DisabledGroupExample from "../components/examples/partials/constraints/disabled-group.astro";
 import DisabledMixedExample from "../components/examples/partials/constraints/disabled-mixed.astro";
+import InteractionModeExample from "../components/examples/partials/interaction/interaction-mode.astro";
+import VideoTimelineExample from "../components/examples/partials/interaction/video-timeline.astro";
+import MeetingSlotExample from "../components/examples/partials/interaction/meeting-slot.astro";
 import CrossfadeExample from "../components/examples/partials/three-thumb/crossfade.astro";
 import OpeningHoursExample from "../components/examples/partials/three-thumb/opening-hours.astro";
+import OpeningHoursSegmentExample from "../components/examples/partials/three-thumb/opening-hours-segment.astro";
 import TemperatureExample from "../components/examples/partials/three-thumb/temperature.astro";
 import ProcessFlowExample from "../components/examples/partials/three-thumb/process-flow.astro";
 import BudgetExample from "../components/examples/partials/three-thumb/budget.astro";
+import BudgetSegmentExample from "../components/examples/partials/three-thumb/budget-segment.astro";
 import FloatingTooltipsExample from "../components/examples/partials/creative/floating-tooltips.astro";
 import ClassicExample from "../components/examples/partials/creative/classic.astro";
 import CustomTicksExample from "../components/examples/partials/creative/custom-ticks.astro";
@@ -26,6 +32,7 @@ import TimelineExample from "../components/examples/partials/creative/timeline.a
 import WavyTrackExample from "../components/examples/partials/creative/wavy-track.astro";
 import CircularTrackExample from "../components/examples/partials/creative/circular-track.astro";
 import ApiExample from "../components/examples/partials/javascript/api.astro";
+import LinkedFieldsExample from "../components/examples/partials/javascript/linked-fields.astro";
 import DynamicThumbsExample from "../components/examples/partials/javascript/dynamic-thumbs.astro";
 ---
 
@@ -33,7 +40,7 @@ import DynamicThumbsExample from "../components/examples/partials/javascript/dyn
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" type="image/svg+xml" href="/enhanced-range-slider-poc/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>&lt;rangegroup&gt; proposal — Open UI</title>
         <link rel="preload" href="/enhanced-range-slider-poc/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
@@ -83,6 +90,7 @@ import DynamicThumbsExample from "../components/examples/partials/javascript/dyn
                 </section>
 
                 <BaselineExample />
+                <SingleThumbExample />
                 <InteractivePriceExample />
                 <DatalistExample />
                 <StepbetweenExample />
@@ -91,11 +99,16 @@ import DynamicThumbsExample from "../components/examples/partials/javascript/dyn
                 <MultiHandleConstraintsExample />
                 <DisabledGroupExample />
                 <DisabledMixedExample />
+                <InteractionModeExample />
+                <VideoTimelineExample />
+                <MeetingSlotExample />
                 <CrossfadeExample />
                 <OpeningHoursExample />
+                <OpeningHoursSegmentExample />
                 <TemperatureExample />
                 <ProcessFlowExample />
                 <BudgetExample />
+                <BudgetSegmentExample />
                 <FloatingTooltipsExample />
                 <ClassicExample />
                 <CustomTicksExample />
@@ -106,6 +119,7 @@ import DynamicThumbsExample from "../components/examples/partials/javascript/dyn
                 <WavyTrackExample />
                 <CircularTrackExample />
                 <ApiExample />
+                <LinkedFieldsExample />
                 <DynamicThumbsExample />
             </main>
         </div>

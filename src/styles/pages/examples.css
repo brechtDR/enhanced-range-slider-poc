@@ -74,6 +74,57 @@
     -moz-appearance: textfield;
 }
 
+.interaction-mode-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    border: 0;
+}
+
+.interaction-mode-legend {
+    float: left;
+    width: 100%;
+    padding: 0;
+    margin: 0 0 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.interaction-mode-controls label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    color: var(--text-strong);
+}
+
+.interaction-mode-readout {
+    margin: 0.85rem 0 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.linked-fields-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+.linked-fields-stack h3 {
+    margin: 0 0 0.65rem;
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+.linked-fields-stack input[type="range"] {
+    width: 100%;
+    margin: 0;
+}
+
 /* ============================
    PE toggle (component vs native)
    ============================ */

@@ -12,8 +12,8 @@ import { exampleNav } from "../examples/example-nav";
                         {group.items.map((item) => (
                             <li>
                                 <a href={`#${item.id}`}>
-                                    <span class="nav-label" data-title={item.title}>
-                                        {item.label}
+                                    <span class="nav-label" data-label={item.label} title={item.title}>
+                                        <span class="nav-label-text">{item.label}</span>
                                     </span>
                                 </a>
                             </li>

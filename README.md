@@ -17,6 +17,7 @@ The demo site is built with [Astro](https://astro.build/) and published as stati
 - **Multiple Handles**: Use any number of handles on a single track.
 - **Datalist Integration**: Automatically displays tick marks and labels from a `<datalist>` element.
 - **`stepbetween`**: Enforces a minimum distance between adjacent handles.
+- **`interaction` (working name):** `"endpoints"` (default, nearest thumb) or `"range"` (drag the fill to translate two thumbs). Name and keywords need Open UI bikeshed ([#1460](https://github.com/openui/open-ui/issues/1460)); not a committed HTML attribute.
 - **Easy Styling**: Uses CSS Shadow Parts (`::part`) for extensive styling of the track, segments, and thumbs.
 - **Rich JavaScript API**: Programmatically get and set values.
 - **Accessibility**: Implements ARIA roles and attributes for keyboard and screen reader support.
@@ -84,7 +85,8 @@ npm install range-group-component
 |---------------|---------------|----------|---------|---------------------------------------------------------|
 | `min`         | `min`         | `Number` | `0`     | The minimum allowed value for the range.                |
 | `max`         | `max`         | `Number` | `100`   | The maximum allowed value for the range.                |
-| `stepbetween` | `stepbetween` | `Number` | `0`     | The minimum gap required between any two adjacent thumbs. |
+| `stepbetween` | `stepBetween` | `Number` | `0`     | The minimum gap required between any two adjacent thumbs. |
+| `interaction` | `interaction` | `String` | `endpoints` | **Working name (bikeshed [#1460](https://github.com/openui/open-ui/issues/1460)).** `endpoints`: click/tap the track moves the nearest thumb. `range`: dragging anywhere between two enabled thumbs translates that pair and preserves the segment width, for any thumb count; pressing outside every segment still moves the nearest thumb. Not a committed HTML attribute. Do not use `draggable`. |
 | `list`        | `list`        | `String` | `''`    | The `id` of a `<datalist>` to associate with the range.   |
 
 
