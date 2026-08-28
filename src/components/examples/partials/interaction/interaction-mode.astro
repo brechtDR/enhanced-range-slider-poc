@@ -11,10 +11,10 @@ import CodeSnippet from "../../CodeSnippet.astro";
         <code>range</code> is a <strong>working name</strong> for Open UI bikeshed on
         <a href="https://github.com/openui/open-ui/issues/1460">#1460</a> — not a committed HTML
         API. Do not use <code>draggable</code>. In <code>range</code> mode, pressing anywhere
-        between the two thumbs drags the whole interval and keeps its width; pressing
-        <em>outside</em> the interval still moves the nearest thumb, and a press without a drag
-        moves nothing. It applies only with <strong>exactly two</strong> enabled thumbs; three
-        or more stay endpoint-oriented.
+        between two thumbs drags that interval and keeps its width; pressing
+        <em>outside</em> it still moves the nearest thumb, and a press without a drag
+        moves nothing. It works with any thumb count &mdash; with three or more, the pointer
+        picks which segment moves (see the segment-drag examples further down).
     </Fragment>
     <div slot="demo">
         <style is:global>

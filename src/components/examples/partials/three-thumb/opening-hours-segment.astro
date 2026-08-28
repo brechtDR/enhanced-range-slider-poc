@@ -1,0 +1,247 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection
+    id="opening-hours-segment"
+    eyebrow="Three-plus thumb patterns"
+    title="Opening hours selector (segment drag)"
+>
+    <Fragment slot="description">
+        The same four-handle timeline with <code>interaction="range"</code>. Pressing inside a shift drags that shift as
+        a block: both of its bounding thumbs move together and the duration stays fixed, while the other two thumbs stay
+        put. With more than two thumbs the pointer position is what decides which interval moves &mdash; the case the
+        explainer previously called ambiguous. Presses outside every segment still move the nearest thumb, and a dragged
+        shift is clamped by its neighbours and by <code>stepbetween</code>.
+    </Fragment>
+    <div slot="demo" class="hours-card">
+        <style is:global>
+            /* Base layout, pill and readout styles are shared with the opening hours example above. */
+            #opening-hours-segment-range {
+                position: relative;
+                z-index: 1;
+            }
+            #opening-hours-segment-range::part(slider-segment-1),
+            #opening-hours-segment-range::part(slider-segment-3),
+            #opening-hours-segment-range::part(slider-segment-5) {
+                background-color: var(--hours-closed);
+            }
+            #opening-hours-segment-range::part(slider-segment-2) {
+                background-color: var(--hours-open);
+                anchor-name: --hours-segment-shift-am;
+            }
+            #opening-hours-segment-range::part(slider-segment-4) {
+                background-color: var(--hours-open);
+                anchor-name: --hours-segment-shift-pm;
+            }
+            #opening-hours-segment-range::part(slider-thumb-1),
+            #opening-hours-segment-range::part(slider-thumb-3) {
+                background-color: var(--hours-open);
+                background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'><path d='M5.5 3.4v9.2L13 8z'/></svg>");
+                background-position: 58% center;
+                background-repeat: no-repeat;
+                background-size: 58%;
+                border-color: color-mix(in oklab, var(--hours-open) 70%, black 25%);
+            }
+            #opening-hours-segment-range::part(slider-thumb-2),
+            #opening-hours-segment-range::part(slider-thumb-4) {
+                background-color: #475569;
+                background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'><rect x='4.5' y='4.5' width='7' height='7' rx='1.2'/></svg>");
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: 55%;
+                border-color: #334155;
+            }
+            #opening-hours-segment-range::part(slider-tick) {
+                background: var(--text-soft);
+            }
+            #opening-hours-segment-range::part(slider-tick-label) {
+                color: var(--text-muted);
+            }
+            #opening-hours-segment-range::part(slider-tick-label-2),
+            #opening-hours-segment-range::part(slider-tick-label-4),
+            #opening-hours-segment-range::part(slider-tick-label-6),
+            #opening-hours-segment-range::part(slider-tick-label-8),
+            #opening-hours-segment-range::part(slider-tick-label-10),
+            #opening-hours-segment-range::part(slider-tick-label-12),
+            #opening-hours-segment-range::part(slider-tick-label-14),
+            #opening-hours-segment-range::part(slider-tick-label-16),
+            #opening-hours-segment-range::part(slider-tick-label-18),
+            #opening-hours-segment-range::part(slider-tick-label-20),
+            #opening-hours-segment-range::part(slider-tick-label-22),
+            #opening-hours-segment-range::part(slider-tick-label-24),
+            #opening-hours-segment-range::part(slider-tick-label-26),
+            #opening-hours-segment-range::part(slider-tick-label-28) {
+                display: none;
+            }
+            #opening-hours-segment-range::part(slider-tick-label-29) {
+                white-space: nowrap;
+            }
+            .hours-segment-shift-am {
+                position-anchor: --hours-segment-shift-am;
+                bottom: anchor(top);
+                left: anchor(center);
+                translate: -50% -12px;
+            }
+            .hours-segment-shift-pm {
+                position-anchor: --hours-segment-shift-pm;
+                bottom: anchor(top);
+                left: anchor(center);
+                translate: -50% -12px;
+            }
+
+            @media (max-width: 700px) {
+                #opening-hours-segment-range::part(slider-tick),
+                #opening-hours-segment-range::part(slider-tick-label) {
+                    display: none;
+                }
+                .hours-segment-shift-am,
+                .hours-segment-shift-pm {
+                    translate: -50% -8px;
+                }
+            }
+        </style>
+        <div class="hours-stage">
+            <div class="hours-atmosphere" aria-hidden="true"></div>
+            <svg class="hours-icon hours-icon-sun" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <circle cx="12" cy="12" r="4.5"></circle>
+                <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="12" y1="2.5" x2="12" y2="5"></line>
+                    <line x1="12" y1="19" x2="12" y2="21.5"></line>
+                    <line x1="2.5" y1="12" x2="5" y2="12"></line>
+                    <line x1="19" y1="12" x2="21.5" y2="12"></line>
+                    <line x1="5.4" y1="5.4" x2="7.2" y2="7.2"></line>
+                    <line x1="16.8" y1="16.8" x2="18.6" y2="18.6"></line>
+                    <line x1="18.6" y1="5.4" x2="16.8" y2="7.2"></line>
+                    <line x1="7.2" y1="16.8" x2="5.4" y2="18.6"></line>
+                </g>
+            </svg>
+            <svg class="hours-icon hours-icon-moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20.5 14.5A9 9 0 0 1 9.5 3.5a.5.5 0 0 0-.65-.65 9 9 0 1 0 12.3 12.3.5.5 0 0 0-.65-.65z"></path>
+            </svg>
+            <range-group
+                id="opening-hours-segment-range"
+                min="480"
+                max="1320"
+                list="hours-ticks"
+                stepbetween="30"
+                interaction="range"
+            >
+                <legend slot="legend" class="visually-hidden">Opening hours, draggable shifts</legend>
+                <label class="visually-hidden">AM Open <input type="range" value="540" /></label>
+                <label class="visually-hidden">AM Close <input type="range" value="720" /></label>
+                <label class="visually-hidden">PM Open <input type="range" value="780" /></label>
+                <label class="visually-hidden">PM Close <input type="range" value="1020" /></label>
+            </range-group>
+            <div class="hours-shift-label hours-segment-shift-am" aria-hidden="true">
+                Morning shift<strong id="hours-segment-shift-am-duration">3h 0m</strong>
+            </div>
+            <div class="hours-shift-label hours-segment-shift-pm" aria-hidden="true">
+                Afternoon shift<strong id="hours-segment-shift-pm-duration">4h 0m</strong>
+            </div>
+        </div>
+        <div class="hours-readout">
+            <div class="hours-readout-cell">
+                <span class="hours-readout-label">Morning shift</span>
+                <span class="hours-readout-value" id="hours-segment-am">9:00 AM – 12:00 PM</span>
+            </div>
+            <div class="hours-readout-cell">
+                <span class="hours-readout-label">Afternoon shift</span>
+                <span class="hours-readout-value" id="hours-segment-pm">1:00 PM – 5:00 PM</span>
+            </div>
+        </div>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<!-- interaction is a working name: https://github.com/openui/open-ui/issues/1460 -->
+<rangegroup id="opening-hours-range" min="480" max="1320" list="hours-ticks"
+            stepbetween="30" interaction="range">
+  <legend>Opening hours, draggable shifts</legend>
+  <label>AM Open <input type="range" value="540"></label>
+  <label>AM Close <input type="range" value="720"></label>
+  <label>PM Open <input type="range" value="780"></label>
+  <label>PM Close <input type="range" value="1020"></label>
+</rangegroup>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+/* only the open shifts read as draggable blocks */
+rangegroup::slider-segment(1),
+rangegroup::slider-segment(3),
+rangegroup::slider-segment(5) { background: #d6dbe2; }
+rangegroup::slider-segment(2),
+rangegroup::slider-segment(4) { background: #14b8a6; }
+
+rangegroup::slider-segment(2) { anchor-name: --hours-shift-am; }
+rangegroup::slider-segment(4) { anchor-name: --hours-shift-pm; }
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+/* Dragging segment 2 moves thumbs 1 and 2 together; segment 4 moves thumbs 3
+   and 4. Neither drag can push past its neighbour or violate stepbetween, so
+   the shift keeps its duration and the other shift never moves. */
+const rg = document.querySelector("#opening-hours-range");
+
+rg.addEventListener("input", () => {
+  const [amS, amE, pmS, pmE] = rg.values;
+  console.log(amE - amS, pmE - pmS); // constant while dragging a segment
+});
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg = document.querySelector("#opening-hours-segment-range");
+                const amOut = document.querySelector("#hours-segment-am");
+                const pmOut = document.querySelector("#hours-segment-pm");
+                const amLabel = document.querySelector(".hours-segment-shift-am strong");
+                const pmLabel = document.querySelector(".hours-segment-shift-pm strong");
+                if (!rg) return;
+
+                const minutesToTime = (m) => {
+                    const h = Math.floor(m / 60);
+                    const ampm = h >= 12 ? "PM" : "AM";
+                    const displayH = h % 12 === 0 ? 12 : h % 12;
+                    return `${displayH}:${String(m % 60).padStart(2, "0")} ${ampm}`;
+                };
+                const minutesToDuration = (mins) => `${Math.floor(mins / 60)}h ${mins % 60}m`;
+
+                rg.valueTextFormatter = minutesToTime;
+
+                rg.addEventListener("input", () => {
+                    const [amS, amE, pmS, pmE] = rg.values;
+                    amOut.textContent = `${minutesToTime(amS)} – ${minutesToTime(amE)}`;
+                    pmOut.textContent = `${minutesToTime(pmS)} – ${minutesToTime(pmE)}`;
+                    amLabel.textContent = minutesToDuration(amE - amS);
+                    pmLabel.textContent = minutesToDuration(pmE - pmS);
+                });
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

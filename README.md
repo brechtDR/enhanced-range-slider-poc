@@ -86,7 +86,7 @@ npm install range-group-component
 | `min`         | `min`         | `Number` | `0`     | The minimum allowed value for the range.                |
 | `max`         | `max`         | `Number` | `100`   | The maximum allowed value for the range.                |
 | `stepbetween` | `stepBetween` | `Number` | `0`     | The minimum gap required between any two adjacent thumbs. |
-| `interaction` | `interaction` | `String` | `endpoints` | **Working name (bikeshed [#1460](https://github.com/openui/open-ui/issues/1460)).** `endpoints`: click/tap the track moves the nearest thumb. `range`: with exactly two enabled thumbs, dragging anywhere between them translates both and preserves the interval width; pressing outside the interval still moves the nearest thumb. Not a committed HTML attribute. Do not use `draggable`. |
+| `interaction` | `interaction` | `String` | `endpoints` | **Working name (bikeshed [#1460](https://github.com/openui/open-ui/issues/1460)).** `endpoints`: click/tap the track moves the nearest thumb. `range`: dragging anywhere between two enabled thumbs translates that pair and preserves the segment width, for any thumb count; pressing outside every segment still moves the nearest thumb. Not a committed HTML attribute. Do not use `draggable`. |
 | `list`        | `list`        | `String` | `''`    | The `id` of a `<datalist>` to associate with the range.   |
 
 

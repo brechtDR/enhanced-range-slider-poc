@@ -39,9 +39,10 @@ export interface AddThumbOptions {
  * - `addThumb(value, options)`: appends a new thumb/input pair.
  * - `removeThumb(index)`: removes a thumb/input pair.
  * - `interaction`: working name (Open UI bikeshed, #1460) — `"endpoints"` (default)
- *   or `"range"`. Not a committed HTML attribute. `"range"` translates the filled
- *   interval, preserving its width, when a pointer press lands between exactly two
- *   enabled thumbs.
+ *   or `"range"`. Not a committed HTML attribute. `"range"` translates the segment
+ *   under the pointer, preserving its width, moving the two enabled thumbs that bound
+ *   it. Works for any thumb count: the pointer position selects which interval moves.
+ *   Presses outside every segment stay endpoint-oriented.
  *
  * Events:
  * - `input`: dispatched while values are changing.
@@ -100,7 +101,7 @@ export class RangeGroup extends LitElement {
     /**
      * Working pointer model (name and keywords need Open UI bikeshed — #1460).
      * `"endpoints"`: track click moves the nearest thumb (default).
-     * `"range"`: drag the fill to translate both thumbs when N === 2.
+     * `"range"`: drag a segment to translate the two thumbs bounding it, any thumb count.
      */
     @property({ type: String, reflect: true }) interaction = "endpoints";
 
@@ -125,7 +126,13 @@ export class RangeGroup extends LitElement {
     private _activeThumbIndex: number | null = null;
     private _containerRect: DOMRect | null = null;
     private _pendingActivation: { indices: number[]; initialX: number } | null = null;
-    private _segmentDrag: { startLo: number; startHi: number; startValue: number } | null = null;
+    private _segmentDrag: {
+        loIndex: number;
+        hiIndex: number;
+        startLo: number;
+        startHi: number;
+        startValue: number;
+    } | null = null;
     private _uniqueId = Math.random().toString(36).substring(2, 9);
     private _internals: ElementInternals | null = null;
 
@@ -219,24 +226,27 @@ export class RangeGroup extends LitElement {
         return this.interaction === "range" ? "range" : "endpoints";
     }
 
-    private _canTranslateFilledInterval(): boolean {
-        return (
-            this._resolvedInteraction() === "range" &&
-            this._values.length === 2 &&
-            !this._isThumbDisabled(0) &&
-            !this._isThumbDisabled(1)
-        );
-    }
-
     /**
-     * Hit-tests the filled interval by value rather than by event target: the fill is only
+     * Hit-tests the interior segments by value rather than by event target: a segment is only
      * as tall as the track, so most of the control's height would otherwise fall through to
      * the nearest-thumb branch.
+     *
+     * Returns the adjacent thumb pair bounding the segment under `value`, or `null` when the
+     * pointer is outside every segment (before the first thumb or after the last), which keeps
+     * those regions endpoint-oriented. With three or more thumbs the pointer position is what
+     * disambiguates which interval is being grabbed.
      */
-    private _isInsideFilledInterval(value: number): boolean {
-        if (!this._canTranslateFilledInterval()) return false;
-        const [lo, hi] = this._values;
-        return value >= Math.min(lo, hi) && value <= Math.max(lo, hi);
+    private _segmentPairAt(value: number): [number, number] | null {
+        if (this._resolvedInteraction() !== "range") return null;
+        for (let i = 0; i < this._values.length - 1; i++) {
+            const lo = Math.min(this._values[i], this._values[i + 1]);
+            const hi = Math.max(this._values[i], this._values[i + 1]);
+            if (value < lo || value > hi) continue;
+            // Keep looking: on a shared boundary the adjacent segment may still be draggable.
+            if (this._isThumbDisabled(i) || this._isThumbDisabled(i + 1)) continue;
+            return [i, i + 1];
+        }
+        return null;
     }
 
     private _pointerToValue(clientX: number): number {
@@ -275,40 +285,38 @@ export class RangeGroup extends LitElement {
 
     private _translateFilledInterval(pointerValue: number) {
         if (!this._segmentDrag || this._inputs.length < 2) return;
-        const { startLo, startHi, startValue } = this._segmentDrag;
+        const { loIndex, hiIndex, startLo, startHi, startValue } = this._segmentDrag;
         const width = startHi - startLo;
+        const gap = this.stepBetween || 0;
+
+        const loBounds = this._thumbBounds(loIndex);
+        const hiBounds = this._thumbBounds(hiIndex);
+
+        // The pair moves as a unit, so the travel limits have to account for the thumbs on
+        // either side of it. Without this pre-clamp the per-thumb normalization below would
+        // stop one end while the other kept going, distorting the interval's width.
+        const prevValue = this._values[loIndex - 1];
+        const nextValue = this._values[hiIndex + 1];
+        let loLimit = Math.max(this.min, loBounds.min);
+        let hiLimit = Math.min(this.max, hiBounds.max);
+        if (prevValue !== undefined) loLimit = Math.max(loLimit, prevValue + gap);
+        if (nextValue !== undefined) hiLimit = Math.min(hiLimit, nextValue - gap);
+
         let lo = startLo + (pointerValue - startValue);
+        const maxLo = hiLimit - width;
+        lo = maxLo < loLimit ? loLimit : Math.max(loLimit, Math.min(maxLo, lo));
         let hi = lo + width;
 
-        if (lo < this.min) {
-            lo = this.min;
-            hi = lo + width;
-        }
-        if (hi > this.max) {
-            hi = this.max;
-            lo = hi - width;
-        }
-
-        const b0 = this._thumbBounds(0);
-        const b1 = this._thumbBounds(1);
-        if (lo < b0.min) {
-            lo = b0.min;
-            hi = lo + width;
-        }
-        if (hi > b1.max) {
-            hi = b1.max;
-            lo = hi - width;
-        }
-        lo = Math.max(b0.min, Math.min(b0.max, lo));
-        hi = Math.max(b1.min, Math.min(b1.max, hi));
+        lo = Math.max(loBounds.min, Math.min(loBounds.max, lo));
+        hi = Math.max(hiBounds.min, Math.min(hiBounds.max, hi));
         if (hi < lo) hi = lo;
 
-        this._inputs[0].value = String(lo);
-        this._inputs[1].value = String(hi);
-        const n0 = this._normalizeValue(Number(this._inputs[0].value), 0);
-        const n1 = this._normalizeValue(Number(this._inputs[1].value), 1);
-        this._inputs[0].value = String(n0);
-        this._inputs[1].value = String(n1);
+        this._inputs[loIndex].value = String(lo);
+        this._inputs[hiIndex].value = String(hi);
+        const normalizedLo = this._normalizeValue(Number(this._inputs[loIndex].value), loIndex);
+        const normalizedHi = this._normalizeValue(Number(this._inputs[hiIndex].value), hiIndex);
+        this._inputs[loIndex].value = String(normalizedLo);
+        this._inputs[hiIndex].value = String(normalizedHi);
         this._updateValues();
         this._dispatch("input");
     }
@@ -449,6 +457,7 @@ export class RangeGroup extends LitElement {
         const target = e.target as HTMLElement;
         const isThumb = target.classList.contains("thumb");
         const pointerValue = this._pointerToValue(e.clientX);
+        const segmentPair = isThumb ? null : this._segmentPairAt(pointerValue);
 
         if (isThumb) {
             // --- Thumb click: start a drag operation ---
@@ -475,10 +484,13 @@ export class RangeGroup extends LitElement {
 
             // Capture the pointer on the thumb itself
             target.setPointerCapture(e.pointerId);
-        } else if (this._isInsideFilledInterval(pointerValue)) {
+        } else if (segmentPair) {
+            const [loIndex, hiIndex] = segmentPair;
             this._segmentDrag = {
-                startLo: this._values[0],
-                startHi: this._values[1],
+                loIndex,
+                hiIndex,
+                startLo: this._values[loIndex],
+                startHi: this._values[hiIndex],
                 startValue: pointerValue,
             };
             this._setDraggingState(true);
