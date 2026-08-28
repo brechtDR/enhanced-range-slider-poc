@@ -14,8 +14,17 @@ export const exampleNav: ExampleNavGroup[] = [
         eyebrow: "Foundations",
         items: [
             { id: "baseline", label: "Baseline (native default)", title: "Baseline (native default)" },
+            { id: "single-thumb", label: "Single thumb (group of one)", title: "Single thumb (group of one)" },
             { id: "interactive-price", label: "Interactive price editor", title: "Interactive price editor" },
             { id: "datalist", label: "Datalist integration", title: "Datalist integration" },
+        ],
+    },
+    {
+        eyebrow: "Interaction modes",
+        items: [
+            { id: "interaction-mode", label: "Interaction mode", title: "Interaction mode (working name)" },
+            { id: "video-timeline", label: "Video timeline trim", title: "Video timeline trim" },
+            { id: "meeting-slot", label: "Meeting duration slot", title: "Meeting duration slot" },
         ],
     },
     {
@@ -57,6 +66,7 @@ export const exampleNav: ExampleNavGroup[] = [
         eyebrow: "JavaScript API",
         items: [
             { id: "api", label: "Programmatic interaction", title: "Programmatic interaction" },
+            { id: "linked-fields", label: "Linked value fields", title: "Linked value fields (author JS)" },
             { id: "dynamic-thumbs", label: "Add & remove thumbs", title: "Add & remove thumbs" },
         ],
     },

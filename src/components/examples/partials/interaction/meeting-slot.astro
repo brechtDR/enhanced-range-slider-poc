@@ -1,0 +1,252 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="meeting-slot" eyebrow="Interaction modes" title="Meeting duration slot">
+    <Fragment slot="description">
+        A one-hour meeting on a workday calendar. Drag the block to a free slot without changing
+        its length; the handles still resize. Busy times are shown behind the track.
+        <code>interaction="range"</code> is a working name pending bikeshed on
+        <a href="https://github.com/openui/open-ui/issues/1460">#1460</a>.
+    </Fragment>
+    <div slot="demo" class="meeting-slot-card">
+        <style is:global>
+            .meeting-slot-card {
+                --ms-free: #14b8a6;
+                --ms-busy: #f59e0b;
+                --ms-conflict: #ef4444;
+                --ms-busy-fill: color-mix(in oklab, var(--ms-busy) 28%, var(--surface));
+            }
+            .meeting-slot-stage {
+                position: relative;
+                padding-top: 2.5rem;
+            }
+            .meeting-slot-busy {
+                position: absolute;
+                top: 0;
+                height: 1.35rem;
+                border-radius: 4px;
+                background: var(--ms-busy-fill);
+                border: 1px solid color-mix(in oklab, var(--ms-busy) 45%, var(--border));
+                color: var(--text-strong);
+                font-size: 0.68rem;
+                font-weight: 700;
+                letter-spacing: 0.02em;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 0.35rem;
+                overflow: hidden;
+                white-space: nowrap;
+                pointer-events: none;
+                z-index: 1;
+            }
+            .meeting-slot-busy-standup {
+                left: 10%;
+                width: 5%;
+            }
+            .meeting-slot-busy-review {
+                left: 50%;
+                width: 10%;
+            }
+            #meeting-slot-range {
+                position: relative;
+                z-index: 2;
+            }
+            #meeting-slot-range::part(slider-segment-2) {
+                background: var(--ms-free);
+            }
+            #meeting-slot-range.is-conflict::part(slider-segment-2) {
+                background: var(--ms-conflict);
+            }
+            #meeting-slot-range::part(slider-thumb) {
+                --slider-thumb-color: var(--ms-free);
+                --slider-thumb-ring-color: color-mix(in oklab, var(--ms-free) 55%, white);
+            }
+            #meeting-slot-range.is-conflict::part(slider-thumb) {
+                --slider-thumb-color: var(--ms-conflict);
+                --slider-thumb-ring-color: color-mix(in oklab, var(--ms-conflict) 55%, white);
+            }
+            #meeting-slot-range::part(slider-tick) {
+                background: var(--text-soft);
+            }
+            #meeting-slot-range::part(slider-tick-label) {
+                color: var(--text-muted);
+            }
+            #meeting-slot-range::part(slider-tick-label-2),
+            #meeting-slot-range::part(slider-tick-label-4),
+            #meeting-slot-range::part(slider-tick-label-6),
+            #meeting-slot-range::part(slider-tick-label-8),
+            #meeting-slot-range::part(slider-tick-label-10),
+            #meeting-slot-range::part(slider-tick-label-12),
+            #meeting-slot-range::part(slider-tick-label-14),
+            #meeting-slot-range::part(slider-tick-label-16),
+            #meeting-slot-range::part(slider-tick-label-18),
+            #meeting-slot-range::part(slider-tick-label-20) {
+                display: none;
+            }
+            /* Clears the datalist tick labels, which overflow below the component box. */
+            .meeting-slot-readout {
+                margin: 3rem 0 0;
+                font-size: 0.9rem;
+                color: var(--text-muted);
+            }
+            .meeting-slot-readout[data-conflict="true"] {
+                color: var(--ms-conflict);
+                font-weight: 600;
+            }
+
+            @media (max-width: 700px) {
+                .meeting-slot-busy {
+                    font-size: 0;
+                }
+                #meeting-slot-range::part(slider-tick-label) {
+                    font-size: 0.7rem;
+                }
+            }
+        </style>
+        <div class="meeting-slot-stage">
+            <div class="meeting-slot-busy meeting-slot-busy-standup" title="Standup 9:00–9:30 AM">Standup</div>
+            <div class="meeting-slot-busy meeting-slot-busy-review" title="Design review 1:00–2:00 PM">
+                Design review
+            </div>
+            <range-group
+                id="meeting-slot-range"
+                min="480"
+                max="1080"
+                list="meeting-ticks"
+                stepbetween="30"
+                interaction="range"
+            >
+                <legend slot="legend" class="visually-hidden">Meeting time</legend>
+                <label class="visually-hidden">
+                    Start
+                    <input type="range" name="meeting-start" value="600" />
+                </label>
+                <label class="visually-hidden">
+                    End
+                    <input type="range" name="meeting-end" value="660" />
+                </label>
+            </range-group>
+        </div>
+        <datalist id="meeting-ticks">
+            <option value="480" label="8 AM"></option>
+            <option value="510"></option>
+            <option value="540" label="9 AM"></option>
+            <option value="570"></option>
+            <option value="600" label="10 AM"></option>
+            <option value="630"></option>
+            <option value="660" label="11 AM"></option>
+            <option value="690"></option>
+            <option value="720" label="12 PM"></option>
+            <option value="750"></option>
+            <option value="780" label="1 PM"></option>
+            <option value="810"></option>
+            <option value="840" label="2 PM"></option>
+            <option value="870"></option>
+            <option value="900" label="3 PM"></option>
+            <option value="930"></option>
+            <option value="960" label="4 PM"></option>
+            <option value="990"></option>
+            <option value="1020" label="5 PM"></option>
+            <option value="1050"></option>
+            <option value="1080" label="6 PM"></option>
+        </datalist>
+        <p class="meeting-slot-readout" id="meeting-slot-readout"></p>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup min="480" max="1080" list="meeting-ticks" stepbetween="30" interaction="range">
+  <legend>Meeting time</legend>
+  <label>Start <input type="range" name="meeting-start" value="600"></label>
+  <label>End   <input type="range" name="meeting-end" value="660"></label>
+</rangegroup>
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const busy = [
+  { start: 540, end: 570, label: "Standup" },
+  { start: 780, end: 840, label: "Design review" },
+];
+rg.addEventListener("input", () => {
+  const [a, b] = rg.values;
+  const hit = busy.find((block) => Math.max(a, block.start) < Math.min(b, block.end));
+  readout.textContent = hit
+    ? \`\${format(a)} – \${format(b)} · Conflicts with \${hit.label}\`
+    : \`\${format(a)} – \${format(b)} · 1h · Free slot\`;
+});
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg = document.querySelector("#meeting-slot-range");
+                const readout = document.querySelector("#meeting-slot-readout");
+                if (!rg || !readout) return;
+
+                const minutesToTime = (m) => {
+                    const h = Math.floor(m / 60);
+                    const ampm = h >= 12 ? "PM" : "AM";
+                    const displayH = h % 12 === 0 ? 12 : h % 12;
+                    return `${displayH}:${String(m % 60).padStart(2, "0")} ${ampm}`;
+                };
+                const minutesToDuration = (mins) => {
+                    const h = Math.floor(mins / 60);
+                    const rest = mins % 60;
+                    if (h === 0) return `${rest}m`;
+                    if (rest === 0) return `${h}h`;
+                    return `${h}h ${rest}m`;
+                };
+
+                const busy = [
+                    { start: 540, end: 570, label: "Standup" },
+                    { start: 780, end: 840, label: "Design review" },
+                ];
+
+                rg.valueTextFormatter = minutesToTime;
+
+                const sync = () => {
+                    const [a, b] = rg.values;
+                    const hit = busy.find((block) => Math.max(a, block.start) < Math.min(b, block.end));
+                    const duration = minutesToDuration(b - a);
+                    if (hit) {
+                        rg.classList.add("is-conflict");
+                        readout.dataset.conflict = "true";
+                        readout.textContent = `${minutesToTime(a)} – ${minutesToTime(b)} · ${duration} · Conflicts with ${hit.label}`;
+                    } else {
+                        rg.classList.remove("is-conflict");
+                        readout.dataset.conflict = "false";
+                        readout.textContent = `${minutesToTime(a)} – ${minutesToTime(b)} · ${duration} · Free slot`;
+                    }
+                };
+
+                rg.addEventListener("input", sync);
+                sync();
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

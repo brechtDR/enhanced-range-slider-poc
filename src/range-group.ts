@@ -38,6 +38,10 @@ export interface AddThumbOptions {
  * - `setRangeValue(index, value)`: programmatically updates one thumb.
  * - `addThumb(value, options)`: appends a new thumb/input pair.
  * - `removeThumb(index)`: removes a thumb/input pair.
+ * - `interaction`: working name (Open UI bikeshed, #1460) — `"endpoints"` (default)
+ *   or `"range"`. Not a committed HTML attribute. `"range"` translates the filled
+ *   interval, preserving its width, when a pointer press lands between exactly two
+ *   enabled thumbs.
  *
  * Events:
  * - `input`: dispatched while values are changing.
@@ -51,7 +55,7 @@ export interface AddThumbOptions {
  * Styling API (`::part()`):
  * - `slider-track`
  * - `slider-segment`, `slider-segment-{n}`
- * - `slider-fill` (applied to fill segments between thumbs)
+ * - `slider-fill` (single-thumb only: track start to thumb; multi-thumb uses `slider-segment-{n}`)
  * - `slider-thumb`, `slider-thumb-{n}`
  * - `slider-ticks`
  * - `slider-tick`, `slider-tick-{n}`
@@ -93,6 +97,12 @@ export class RangeGroup extends LitElement {
     @property({ type: String }) list = "";
     /** Disables the entire group; reflected so CSS can style disabled state. */
     @property({ type: Boolean, reflect: true }) disabled = false;
+    /**
+     * Working pointer model (name and keywords need Open UI bikeshed — #1460).
+     * `"endpoints"`: track click moves the nearest thumb (default).
+     * `"range"`: drag the fill to translate both thumbs when N === 2.
+     */
+    @property({ type: String, reflect: true }) interaction = "endpoints";
 
     /** Formats `aria-valuetext` for each thumb. */
     @property({ attribute: false })
@@ -115,6 +125,7 @@ export class RangeGroup extends LitElement {
     private _activeThumbIndex: number | null = null;
     private _containerRect: DOMRect | null = null;
     private _pendingActivation: { indices: number[]; initialX: number } | null = null;
+    private _segmentDrag: { startLo: number; startHi: number; startValue: number } | null = null;
     private _uniqueId = Math.random().toString(36).substring(2, 9);
     private _internals: ElementInternals | null = null;
 
@@ -201,6 +212,105 @@ export class RangeGroup extends LitElement {
     private _isThumbDisabled(index: number): boolean {
         if (this.disabled) return true;
         return this._inputs[index]?.disabled ?? false;
+    }
+
+    /** `"range"` is the working keyword; anything else behaves as `"endpoints"`. */
+    private _resolvedInteraction(): "endpoints" | "range" {
+        return this.interaction === "range" ? "range" : "endpoints";
+    }
+
+    private _canTranslateFilledInterval(): boolean {
+        return (
+            this._resolvedInteraction() === "range" &&
+            this._values.length === 2 &&
+            !this._isThumbDisabled(0) &&
+            !this._isThumbDisabled(1)
+        );
+    }
+
+    /**
+     * Hit-tests the filled interval by value rather than by event target: the fill is only
+     * as tall as the track, so most of the control's height would otherwise fall through to
+     * the nearest-thumb branch.
+     */
+    private _isInsideFilledInterval(value: number): boolean {
+        if (!this._canTranslateFilledInterval()) return false;
+        const [lo, hi] = this._values;
+        return value >= Math.min(lo, hi) && value <= Math.max(lo, hi);
+    }
+
+    private _pointerToValue(clientX: number): number {
+        if (!this._containerRect || this._containerRect.width === 0) return this.min;
+        const percent = Math.max(0, Math.min(1, (clientX - this._containerRect.left) / this._containerRect.width));
+        return this.min + percent * (this.max - this.min);
+    }
+
+    private _thumbBounds(index: number): { min: number; max: number } {
+        const input = this._inputs[index];
+        const inputMinAttr = input?.getAttribute("min");
+        const inputMaxAttr = input?.getAttribute("max");
+        const inputMin = inputMinAttr !== null && inputMinAttr !== undefined ? Number(inputMinAttr) : this.min;
+        const inputMax = inputMaxAttr !== null && inputMaxAttr !== undefined ? Number(inputMaxAttr) : this.max;
+        return {
+            min: Math.max(this.min, inputMin),
+            max: Math.min(this.max, inputMax),
+        };
+    }
+
+    private _jumpClosestThumb(value: number) {
+        if (this._values.length === 0) return;
+        const enabledIndices = this._values.map((_, i) => i).filter((i) => !this._isThumbDisabled(i));
+        if (enabledIndices.length === 0) return;
+
+        const thumbIndex = enabledIndices.reduce((closestIndex, currentIndex) => {
+            const closestDistance = Math.abs(this._values[closestIndex] - value);
+            const currentDistance = Math.abs(this._values[currentIndex] - value);
+            return currentDistance < closestDistance ? currentIndex : closestIndex;
+        }, enabledIndices[0]);
+
+        this.setRangeValue(thumbIndex, value);
+        this._dispatch("input");
+        this._dispatch("change");
+    }
+
+    private _translateFilledInterval(pointerValue: number) {
+        if (!this._segmentDrag || this._inputs.length < 2) return;
+        const { startLo, startHi, startValue } = this._segmentDrag;
+        const width = startHi - startLo;
+        let lo = startLo + (pointerValue - startValue);
+        let hi = lo + width;
+
+        if (lo < this.min) {
+            lo = this.min;
+            hi = lo + width;
+        }
+        if (hi > this.max) {
+            hi = this.max;
+            lo = hi - width;
+        }
+
+        const b0 = this._thumbBounds(0);
+        const b1 = this._thumbBounds(1);
+        if (lo < b0.min) {
+            lo = b0.min;
+            hi = lo + width;
+        }
+        if (hi > b1.max) {
+            hi = b1.max;
+            lo = hi - width;
+        }
+        lo = Math.max(b0.min, Math.min(b0.max, lo));
+        hi = Math.max(b1.min, Math.min(b1.max, hi));
+        if (hi < lo) hi = lo;
+
+        this._inputs[0].value = String(lo);
+        this._inputs[1].value = String(hi);
+        const n0 = this._normalizeValue(Number(this._inputs[0].value), 0);
+        const n1 = this._normalizeValue(Number(this._inputs[1].value), 1);
+        this._inputs[0].value = String(n0);
+        this._inputs[1].value = String(n1);
+        this._updateValues();
+        this._dispatch("input");
     }
 
     connectedCallback() {
@@ -338,6 +448,7 @@ export class RangeGroup extends LitElement {
 
         const target = e.target as HTMLElement;
         const isThumb = target.classList.contains("thumb");
+        const pointerValue = this._pointerToValue(e.clientX);
 
         if (isThumb) {
             // --- Thumb click: start a drag operation ---
@@ -364,34 +475,27 @@ export class RangeGroup extends LitElement {
 
             // Capture the pointer on the thumb itself
             target.setPointerCapture(e.pointerId);
+        } else if (this._isInsideFilledInterval(pointerValue)) {
+            this._segmentDrag = {
+                startLo: this._values[0],
+                startHi: this._values[1],
+                startValue: pointerValue,
+            };
+            this._setDraggingState(true);
+            target.setPointerCapture(e.pointerId);
         } else {
-            // --- Track click: move the closest thumb and finish ---
-            const percent = Math.max(
-                0,
-                Math.min(1, (e.clientX - this._containerRect.left) / this._containerRect.width),
-            );
-            const value = this.min + percent * (this.max - this.min);
-
-            if (this._values.length === 0) return;
-
-            // Find the closest non-disabled thumb to the click position
-            const enabledIndices = this._values.map((_, i) => i).filter((i) => !this._isThumbDisabled(i));
-            if (enabledIndices.length === 0) return;
-
-            const thumbIndex = enabledIndices.reduce((closestIndex, currentIndex) => {
-                const closestDistance = Math.abs(this._values[closestIndex] - value);
-                const currentDistance = Math.abs(this._values[currentIndex] - value);
-                return currentDistance < closestDistance ? currentIndex : closestIndex;
-            }, enabledIndices[0]);
-
-            // Set the new value, dispatch events, and we're done. No drag.
-            this.setRangeValue(thumbIndex, value);
-            this._dispatch("input");
-            this._dispatch("change"); // A track click is a discrete change event
+            this._jumpClosestThumb(pointerValue);
         }
     }
 
     private _handlePointerMove = (e: PointerEvent) => {
+        if (this._segmentDrag) {
+            e.preventDefault();
+            this._containerRect = this.shadowRoot?.querySelector(".container")?.getBoundingClientRect() ?? this._containerRect;
+            this._translateFilledInterval(this._pointerToValue(e.clientX));
+            return;
+        }
+
         if (this._pendingActivation) {
             const dx = e.clientX - this._pendingActivation.initialX;
             if (Math.abs(dx) > 2) {
@@ -415,12 +519,13 @@ export class RangeGroup extends LitElement {
     };
 
     private _handlePointerUp = () => {
-        if (this._activeThumbIndex !== null || this._pendingActivation !== null) {
+        if (this._activeThumbIndex !== null || this._pendingActivation !== null || this._segmentDrag !== null) {
             this._dispatch("change");
         }
         this._setDraggingState(false);
         this._activeThumbIndex = null;
         this._pendingActivation = null;
+        this._segmentDrag = null;
     };
 
     private _handleKeyDown(e: KeyboardEvent, index: number) {
@@ -538,11 +643,17 @@ export class RangeGroup extends LitElement {
                         ${segmentPoints.slice(0, -1).map((p, i) => {
                             const left = p;
                             const width = segmentPoints[i + 1] - p;
-                            const isFillSegment = i > 0 && i < segmentPoints.length - 2;
+                            const isFillSegment =
+                                this._values.length === 1
+                                    ? i === 0
+                                    : i > 0 && i < segmentPoints.length - 2;
+                            // `slider-fill` is only defined for a single-thumb control. With two or
+                            // more thumbs the space between thumbs is addressed as a segment.
+                            const isSliderFill = this._values.length === 1 && i === 0;
                             const partTokens = [
                                 "slider-segment",
                                 `slider-segment-${i + 1}`,
-                                isFillSegment ? "slider-fill" : "",
+                                isSliderFill ? "slider-fill" : "",
                             ]
                                 .filter(Boolean)
                                 .join(" ");
@@ -660,6 +771,28 @@ export class RangeGroup extends LitElement {
 
         .segment-fill {
             background-color: var(--fill-bg);
+        }
+
+        :host([interaction="range"]) .container {
+            touch-action: none;
+        }
+
+        :host([interaction="range"]:state(dragging)) .container {
+            user-select: none;
+        }
+
+        /* The fill is only as tall as the track; stretch its pointer area to the full
+           control height so the grab affordance matches where dragging actually works. */
+        :host([interaction="range"]) .segment-fill::before {
+            content: "";
+            position: absolute;
+            inset-block: calc((var(--_track-height) - var(--_thumb-size)) / 2);
+            inset-inline: 0;
+            cursor: grab;
+        }
+
+        :host([interaction="range"]:state(dragging)) .segment-fill::before {
+            cursor: grabbing;
         }
 
         .thumb {

@@ -1,0 +1,38 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="single-thumb" eyebrow="Foundations" title="Single thumb — group of one">
+    <Fragment slot="description">
+        A <code>&lt;rangegroup&gt;</code> with one child range still paints the composite slider: one thumb on the group
+        track, not a hidden wrapper. Fill runs from the group minimum to that thumb.
+    </Fragment>
+    <div slot="demo">
+        <range-group id="single-thumb-range" min="0" max="100">
+            <legend slot="legend" class="visually-hidden">Volume</legend>
+            <label class="visually-hidden">
+                Volume
+                <input type="range" name="volume" value="40" />
+            </label>
+        </range-group>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup min="0" max="100">
+  <legend>Volume</legend>
+  <label>Volume <input type="range" name="volume" value="40"></label>
+</rangegroup>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+/* No extra CSS — same defaults as the two-thumb baseline. */
+`}
+        />
+    </ExampleCodeBlock>
+</ExampleSection>

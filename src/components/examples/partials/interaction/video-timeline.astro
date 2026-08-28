@@ -1,0 +1,319 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="video-timeline" eyebrow="Interaction modes" title="Video timeline trim">
+    <Fragment slot="description">
+        Drag the selected clip to slide in and out together while keeping duration. The in/out
+        handles still trim each end. <code>interaction="range"</code> is a working name pending
+        bikeshed on <a href="https://github.com/openui/open-ui/issues/1460">#1460</a>.
+    </Fragment>
+    <div slot="demo" class="video-timeline-card">
+        <style is:global>
+            .video-timeline-card {
+                --vt-accent: #f43f5e;
+                --vt-film: #1a1d24;
+                --vt-sprocket: #3a404c;
+                --vt-wave: #5b6474;
+                --vt-wave-on: #f43f5e;
+            }
+            html.dark .video-timeline-card {
+                --vt-film: #0e1116;
+                --vt-sprocket: #2a3140;
+                --vt-wave: #6b7586;
+            }
+            .video-timeline-toolbar {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                margin-bottom: 0.85rem;
+            }
+            /* Reserve the width of the longer "Pause" label so toggling does not shift layout. */
+            .video-timeline-toolbar .btn {
+                justify-content: center;
+                min-width: 5.25rem;
+            }
+            .video-timeline-stage {
+                position: relative;
+                padding-bottom: 0.35rem;
+            }
+            .video-timeline-filmstrip {
+                height: 36px;
+                border-radius: 6px 6px 0 0;
+                background:
+                    repeating-linear-gradient(
+                        to right,
+                        var(--vt-sprocket) 0 6px,
+                        transparent 6px 14px
+                    )
+                    0 0 / 100% 5px no-repeat,
+                    repeating-linear-gradient(
+                        to right,
+                        var(--vt-sprocket) 0 6px,
+                        transparent 6px 14px
+                    )
+                    0 100% / 100% 5px no-repeat,
+                    repeating-linear-gradient(
+                        to right,
+                        #2a3140 0 28px,
+                        #353c4a 28px 56px,
+                        #2f3644 56px 84px,
+                        #3a4252 84px 112px
+                    );
+                background-color: var(--vt-film);
+                box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+            }
+            .video-timeline-wave {
+                display: block;
+                width: 100%;
+                height: 48px;
+                background: color-mix(in oklab, var(--vt-film) 88%, var(--surface));
+            }
+            .video-timeline-wave rect {
+                fill: var(--vt-wave);
+            }
+            .video-timeline-wave rect[data-in-range="true"] {
+                fill: var(--vt-wave-on);
+            }
+            .video-timeline-playhead {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 2px;
+                margin-left: -1px;
+                background: #fff;
+                box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+                pointer-events: none;
+                z-index: 4;
+                left: 0%;
+            }
+            .video-timeline-playhead::before {
+                content: "";
+                position: absolute;
+                top: -1px;
+                left: 50%;
+                translate: -50% 0;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 7px solid #fff;
+            }
+            #video-timeline-range {
+                --thumb-size: 28px;
+                --track-height: 6px;
+                margin-top: -2px;
+            }
+            #video-timeline-range::part(slider-track) {
+                background: var(--vt-sprocket);
+            }
+            #video-timeline-range::part(slider-segment-2) {
+                background: var(--vt-accent);
+            }
+            #video-timeline-range::part(slider-thumb) {
+                width: 12px;
+                height: 32px;
+                border-radius: 3px;
+                background-color: white;
+                border: 2px solid var(--vt-accent);
+                background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 32'><line x1='4.5' y1='10' x2='4.5' y2='22' stroke='%23f43f5e' stroke-width='1.4' stroke-linecap='round'/><line x1='7.5' y1='10' x2='7.5' y2='22' stroke='%23f43f5e' stroke-width='1.4' stroke-linecap='round'/></svg>");
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
+                box-shadow: 0 2px 6px rgba(244, 63, 94, 0.28);
+            }
+            .video-timeline-readout {
+                margin: 0.85rem 0 0;
+                font-size: 0.9rem;
+                color: var(--text-muted);
+                font-family: "Source Code Pro", "JetBrains Mono", monospace;
+            }
+        </style>
+        <div class="video-timeline-toolbar">
+            <button type="button" class="btn btn-primary" id="video-timeline-play" aria-pressed="false">Play</button>
+        </div>
+        <div class="video-timeline-stage">
+            <div class="video-timeline-filmstrip" aria-hidden="true"></div>
+            <svg
+                class="video-timeline-wave"
+                id="video-timeline-wave"
+                viewBox="0 0 180 48"
+                preserveAspectRatio="none"
+                aria-hidden="true"></svg>
+            <div class="video-timeline-playhead" id="video-timeline-playhead" hidden></div>
+            <range-group id="video-timeline-range" min="0" max="180" stepbetween="1" interaction="range">
+                <legend slot="legend" class="visually-hidden">Clip in and out</legend>
+                <label class="visually-hidden">
+                    In
+                    <input type="range" name="video-in" value="24" />
+                </label>
+                <label class="visually-hidden">
+                    Out
+                    <input type="range" name="video-out" value="84" />
+                </label>
+            </range-group>
+        </div>
+        <p class="video-timeline-readout" id="video-timeline-readout"></p>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup min="0" max="180" stepbetween="1" interaction="range">
+  <legend>Clip in and out</legend>
+  <label>In  <input type="range" name="video-in" value="24"></label>
+  <label>Out <input type="range" name="video-out" value="84"></label>
+</rangegroup>
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const rg = document.querySelector("#video-timeline-range");
+const format = (s) => {
+  const m = Math.floor(s / 60);
+  return \`\${m}:\${String(Math.round(s % 60)).padStart(2, "0")}\`;
+};
+rg.valueTextFormatter = format;
+rg.addEventListener("input", () => {
+  const [a, b] = rg.values;
+  readout.textContent = \`In \${format(a)} · Out \${format(b)} · Duration \${format(b - a)}\`;
+});
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg = document.querySelector("#video-timeline-range");
+                const readout = document.querySelector("#video-timeline-readout");
+                const playBtn = document.querySelector("#video-timeline-play");
+                const playhead = document.querySelector("#video-timeline-playhead");
+                const wave = document.querySelector("#video-timeline-wave");
+                if (!rg || !readout || !playBtn || !playhead || !wave) return;
+
+                const format = (seconds) => {
+                    const m = Math.floor(seconds / 60);
+                    const s = Math.round(seconds % 60);
+                    return `${m}:${String(s).padStart(2, "0")}`;
+                };
+
+                rg.valueTextFormatter = format;
+
+                const BAR_COUNT = 90;
+                const heights = Array.from({ length: BAR_COUNT }, (_, i) => {
+                    const n = Math.sin(i * 0.37) * 0.35 + Math.sin(i * 0.13) * 0.25 + 0.4;
+                    return Math.max(6, Math.min(44, n * 44));
+                });
+                const ns = "http://www.w3.org/2000/svg";
+                const barWidth = 180 / BAR_COUNT;
+                heights.forEach((h, i) => {
+                    const rect = document.createElementNS(ns, "rect");
+                    rect.setAttribute("x", String(i * barWidth + 0.3));
+                    rect.setAttribute("y", String(24 - h / 2));
+                    rect.setAttribute("width", String(Math.max(0.6, barWidth - 0.5)));
+                    rect.setAttribute("height", String(h));
+                    rect.setAttribute("rx", "0.4");
+                    wave.appendChild(rect);
+                });
+                const bars = wave.querySelectorAll("rect");
+
+                const max = 180;
+                const toPercent = (value) => `${(value / max) * 100}%`;
+
+                const syncWave = (lo, hi) => {
+                    bars.forEach((rect, i) => {
+                        const t = ((i + 0.5) / BAR_COUNT) * max;
+                        rect.setAttribute("data-in-range", t >= lo && t <= hi ? "true" : "false");
+                    });
+                };
+
+                const syncReadout = () => {
+                    const [a, b] = rg.values;
+                    readout.textContent = `In ${format(a)} · Out ${format(b)} · Duration ${format(b - a)}`;
+                    syncWave(a, b);
+                };
+
+                let playing = false;
+                let raf = 0;
+                let lastTs = 0;
+                let playheadTime = 24;
+
+                const setPlayhead = (t) => {
+                    playheadTime = t;
+                    playhead.style.left = toPercent(t);
+                };
+
+                const stopLoop = () => {
+                    if (raf) {
+                        cancelAnimationFrame(raf);
+                        raf = 0;
+                    }
+                    lastTs = 0;
+                };
+
+                const tick = (ts) => {
+                    if (!playing) return;
+                    if (!lastTs) lastTs = ts;
+                    const dt = (ts - lastTs) / 1000;
+                    lastTs = ts;
+                    const [lo, hi] = rg.values;
+                    playheadTime += dt;
+                    if (playheadTime >= hi || playheadTime < lo) playheadTime = lo;
+                    setPlayhead(playheadTime);
+                    raf = requestAnimationFrame(tick);
+                };
+
+                const play = () => {
+                    const [lo, hi] = rg.values;
+                    if (playheadTime < lo || playheadTime >= hi) playheadTime = lo;
+                    playing = true;
+                    lastTs = 0;
+                    playhead.hidden = false;
+                    setPlayhead(playheadTime);
+                    playBtn.textContent = "Pause";
+                    playBtn.setAttribute("aria-pressed", "true");
+                    raf = requestAnimationFrame(tick);
+                };
+
+                const pause = () => {
+                    playing = false;
+                    stopLoop();
+                    playBtn.textContent = "Play";
+                    playBtn.setAttribute("aria-pressed", "false");
+                };
+
+                playBtn.addEventListener("click", () => {
+                    if (playing) pause();
+                    else play();
+                });
+
+                rg.addEventListener("input", () => {
+                    syncReadout();
+                    if (!playing) return;
+                    const [lo, hi] = rg.values;
+                    if (playheadTime < lo || playheadTime >= hi) setPlayhead(lo);
+                });
+
+                syncReadout();
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>
