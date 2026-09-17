@@ -10,11 +10,17 @@ import CodeSnippet from "../../CodeSnippet.astro";
         <code>interaction</code> with keywords <code>endpoints</code> (default) and
         <code>range</code> is a <strong>working name</strong> for Open UI bikeshed on
         <a href="https://github.com/openui/open-ui/issues/1460">#1460</a> — not a committed HTML
-        API. Do not use <code>draggable</code>. In <code>range</code> mode, pressing anywhere
-        between two thumbs drags that interval and keeps its width; pressing
-        <em>outside</em> it still moves the nearest thumb, and a press without a drag
-        moves nothing. It works with any thumb count &mdash; with three or more, the pointer
-        picks which segment moves (see the segment-drag examples further down).
+        API. Do not use <code>draggable</code>. In <code>range</code> mode a track press never
+        moves a single thumb: pressing between two thumbs drags that interval and keeps its
+        width, and pressing <em>outside</em> it pulls the nearest interval to the pointer
+        instead. Only dragging a thumb directly changes one end. Keyboard users get the same
+        translate-with-width-preserved action via <kbd>Shift</kbd>+Arrow on a focused thumb
+        (see <a href="https://github.com/openui/open-ui/issues/1511">#1511</a>). The two
+        keywords are deliberately different experiences so they can be compared in user
+        testing, which is what the 10 September 2026 telecon
+        <a href="https://www.w3.org/2026/09/10-openui-minutes.html">resolved</a>. It works with
+        any thumb count &mdash; with three or more, the pointer picks which segment moves (see
+        the segment-drag examples further down).
     </Fragment>
     <div slot="demo">
         <style is:global>

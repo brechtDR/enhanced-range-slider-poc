@@ -1,0 +1,124 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+---
+
+<ExampleSection id="empty-group" eyebrow="Foundations" title="Empty group — no thumbs">
+    <Fragment slot="description">
+        A <code>&lt;rangegroup&gt;</code> with no child range renders an empty track: visible, not hidden and not
+        disabled, with nothing to drag. Open UI
+        <a href="https://github.com/openui/open-ui/issues/1515">resolved</a> against having an empty group imply a
+        default thumb, because that thumb would have no backing <code>&lt;input&gt;</code>, no IDL, and no submitted
+        value. Adding inputs grows the same control from zero thumbs to one to many, which is what the buttons below do.
+    </Fragment>
+    <div slot="demo">
+        <range-group id="empty-group-range" min="0" max="100" stepbetween="5">
+            <legend slot="legend" class="visually-hidden">Stops</legend>
+        </range-group>
+        <div class="button-group">
+            <button id="empty-group-add" class="btn btn-primary" type="button">Add thumb</button>
+            <button id="empty-group-remove" class="btn btn-secondary" type="button">Remove thumb</button>
+        </div>
+        <output id="empty-group-output" class="api-output"></output>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<rangegroup min="0" max="100" stepbetween="5">
+  <legend>Stops</legend>
+</rangegroup>
+`}
+        />
+        <CodeSnippet
+            lang="css"
+            code={`
+/* The bare track is a single segment, so it is addressable even with no thumbs. */
+rangegroup::slider-segment(1) { background: #d8d8de; }
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+const rg = document.querySelector("rangegroup");
+
+/* Appending a real <input type="range"> is what creates a thumb; addThumb() is
+   the ergonomic shorthand for it. Zero inputs means zero thumbs. */
+rg.addThumb(50, { label: "Stop 1" });
+console.log(rg.values); // [50]
+
+rg.removeThumb(0);
+console.log(rg.values); // [] — back to the empty track
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime">
+        (() => {
+            const init = () => {
+                const rg = document.querySelector("#empty-group-range");
+                const addBtn = document.querySelector("#empty-group-add");
+                const removeBtn = document.querySelector("#empty-group-remove");
+                const output = document.querySelector("#empty-group-output");
+                if (!rg || !addBtn || !removeBtn || !output) return;
+
+                const render = () => {
+                    const count = rg.values.length;
+                    output.value =
+                        count === 0
+                            ? "0 thumbs — empty track, nothing to drag"
+                            : `${count} thumb${count === 1 ? "" : "s"} — values: [${rg.values
+                                  .map((v) => Math.round(v))
+                                  .join(", ")}]`;
+                    addBtn.disabled = count >= 4;
+                    removeBtn.disabled = count === 0;
+                };
+
+                // Drop each new thumb into the widest free stretch of the track.
+                const nextValue = () => {
+                    const points = [rg.min, ...rg.values, rg.max];
+                    let value = (rg.min + rg.max) / 2;
+                    let widest = -1;
+                    for (let i = 0; i < points.length - 1; i++) {
+                        const gap = points[i + 1] - points[i];
+                        if (gap > widest) {
+                            widest = gap;
+                            value = (points[i] + points[i + 1]) / 2;
+                        }
+                    }
+                    return Math.round(value);
+                };
+
+                addBtn.addEventListener("click", () => {
+                    rg.addThumb(nextValue(), { label: `Stop ${rg.values.length + 1}` });
+                    render();
+                });
+
+                removeBtn.addEventListener("click", () => {
+                    rg.removeThumb(rg.values.length - 1);
+                    render();
+                });
+
+                rg.addEventListener("input", render);
+                render();
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

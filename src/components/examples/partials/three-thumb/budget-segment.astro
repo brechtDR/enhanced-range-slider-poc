@@ -8,8 +8,9 @@ import CodeSnippet from "../../CodeSnippet.astro";
     <Fragment slot="description">
         The same three-thumb split with <code>interaction="range"</code>. Dragging one of the two interior bars shifts
         its share left or right without resizing it: the two thumbs bounding that bar move together, the categories on
-        either side absorb the change, and the outer thumbs stay where they are. The first and last bars have only one
-        thumb, so pressing there still moves that nearest thumb.
+        either side absorb the change, and the outer thumbs stay where they are. The first and last bars are bounded by
+        a single thumb, so they are not draggable themselves; pressing there moves the closest interior bar to the
+        pointer.
     </Fragment>
     <div slot="demo" style="position: relative">
         <style is:global>
@@ -185,7 +186,7 @@ rg.addEventListener("input", () => {
                 const categories = ["Groceries", "Rent", "Transport", "Internet"];
                 if (!rg) return;
 
-                const update = () => {
+                const updateLabels = () => {
                     const stops = [0, ...rg.values, 100];
                     let announcement = "Budget updated. ";
                     labels.forEach((label, i) => {
@@ -200,11 +201,14 @@ rg.addEventListener("input", () => {
                         );
                         announcement += categories[i] + ": " + pct + "%. ";
                     });
-                    announcer.textContent = announcement.trim();
+                    return announcement.trim();
                 };
 
-                rg.addEventListener("input", update);
-                update();
+                rg.addEventListener("input", updateLabels);
+                rg.addEventListener("change", () => {
+                    announcer.textContent = updateLabels();
+                });
+                updateLabels();
             };
 
             const run = () => {
