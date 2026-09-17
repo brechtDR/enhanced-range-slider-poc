@@ -222,10 +222,13 @@ const update = () => {
     label.append(categoryName, document.createElement("br"), document.createTextNode(pct + "%"));
     announcement += categories[i] + ": " + pct + "%. ";
   });
-  announcer.textContent = announcement.trim();
+  // Live region updates on change only — announcing on every input event
+  // floods assistive tech during a drag or held arrow key.
+  return announcement.trim();
 };
 
-rg.addEventListener("input", update);
+rg.addEventListener("input", () => { update(); });
+rg.addEventListener("change", () => { announcer.textContent = update(); });
 update();
 `}
         />
@@ -238,7 +241,7 @@ update();
                 const labels = document.querySelectorAll(".budget-label");
                 const categories = ["Groceries", "Rent", "Transport", "Internet"];
 
-                const update = () => {
+                const updateLabels = () => {
                     const stops = [0, ...rg.values, 100];
                     let announcement = "Budget updated. ";
                     labels.forEach((label, i) => {
@@ -253,11 +256,17 @@ update();
                         );
                         announcement += categories[i] + ": " + pct + "%. ";
                     });
-                    announcer.textContent = announcement.trim();
+                    return announcement.trim();
                 };
 
-                rg.addEventListener("input", update);
-                update();
+                // Visual labels track every input event; the live region only
+                // speaks when the interaction commits, so it does not drown out
+                // the slider's own value announcements during a drag.
+                rg.addEventListener("input", updateLabels);
+                rg.addEventListener("change", () => {
+                    announcer.textContent = updateLabels();
+                });
+                updateLabels();
             };
 
             const run = () => {

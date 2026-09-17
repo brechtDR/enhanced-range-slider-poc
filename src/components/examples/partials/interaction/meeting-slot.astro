@@ -7,7 +7,8 @@ import CodeSnippet from "../../CodeSnippet.astro";
 <ExampleSection id="meeting-slot" eyebrow="Interaction modes" title="Meeting duration slot">
     <Fragment slot="description">
         A one-hour meeting on a workday calendar. Drag the block to a free slot without changing
-        its length; the handles still resize. Busy times are shown behind the track.
+        its length, or press anywhere on the day to send it there; the handles still resize. Busy
+        times are shown behind the track.
         <code>interaction="range"</code> is a working name pending bikeshed on
         <a href="https://github.com/openui/open-ui/issues/1460">#1460</a>.
     </Fragment>
@@ -108,8 +109,18 @@ import CodeSnippet from "../../CodeSnippet.astro";
             }
         </style>
         <div class="meeting-slot-stage">
-            <div class="meeting-slot-busy meeting-slot-busy-standup" title="Standup 9:00–9:30 AM">Standup</div>
-            <div class="meeting-slot-busy meeting-slot-busy-review" title="Design review 1:00–2:00 PM">
+            <div
+                class="meeting-slot-busy meeting-slot-busy-standup"
+                role="img"
+                aria-label="Standup, 9:00–9:30 AM"
+            >
+                Standup
+            </div>
+            <div
+                class="meeting-slot-busy meeting-slot-busy-review"
+                role="img"
+                aria-label="Design review, 1:00–2:00 PM"
+            >
                 Design review
             </div>
             <range-group
@@ -154,7 +165,7 @@ import CodeSnippet from "../../CodeSnippet.astro";
             <option value="1050"></option>
             <option value="1080" label="6 PM"></option>
         </datalist>
-        <p class="meeting-slot-readout" id="meeting-slot-readout"></p>
+        <p class="meeting-slot-readout" id="meeting-slot-readout" role="status" aria-live="polite"></p>
     </div>
     <ExampleCodeBlock slot="code">
         <CodeSnippet
@@ -174,7 +185,9 @@ const busy = [
   { start: 540, end: 570, label: "Standup" },
   { start: 780, end: 840, label: "Design review" },
 ];
-rg.addEventListener("input", () => {
+// Visual conflict styling can track input; the status readout speaks on change
+// so assistive tech is not flooded mid-drag.
+rg.addEventListener("change", () => {
   const [a, b] = rg.values;
   const hit = busy.find((block) => Math.max(a, block.start) < Math.min(b, block.end));
   readout.textContent = hit
@@ -212,23 +225,35 @@ rg.addEventListener("input", () => {
 
                 rg.valueTextFormatter = minutesToTime;
 
-                const sync = () => {
+                const syncVisual = () => {
+                    const [a, b] = rg.values;
+                    const hit = busy.find((block) => Math.max(a, block.start) < Math.min(b, block.end));
+                    if (hit) {
+                        rg.classList.add("is-conflict");
+                        readout.dataset.conflict = "true";
+                    } else {
+                        rg.classList.remove("is-conflict");
+                        readout.dataset.conflict = "false";
+                    }
+                };
+
+                const syncReadout = () => {
                     const [a, b] = rg.values;
                     const hit = busy.find((block) => Math.max(a, block.start) < Math.min(b, block.end));
                     const duration = minutesToDuration(b - a);
                     if (hit) {
-                        rg.classList.add("is-conflict");
-                        readout.dataset.conflict = "true";
                         readout.textContent = `${minutesToTime(a)} – ${minutesToTime(b)} · ${duration} · Conflicts with ${hit.label}`;
                     } else {
-                        rg.classList.remove("is-conflict");
-                        readout.dataset.conflict = "false";
                         readout.textContent = `${minutesToTime(a)} – ${minutesToTime(b)} · ${duration} · Free slot`;
                     }
+                    syncVisual();
                 };
 
-                rg.addEventListener("input", sync);
-                sync();
+                // Conflict colour tracks every input event; the status readout
+                // announces only when the interaction commits.
+                rg.addEventListener("input", syncVisual);
+                rg.addEventListener("change", syncReadout);
+                syncReadout();
             };
 
             const run = () => {

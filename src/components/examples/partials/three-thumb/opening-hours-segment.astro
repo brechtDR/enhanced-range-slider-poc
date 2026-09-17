@@ -13,8 +13,9 @@ import CodeSnippet from "../../CodeSnippet.astro";
         The same four-handle timeline with <code>interaction="range"</code>. Pressing inside a shift drags that shift as
         a block: both of its bounding thumbs move together and the duration stays fixed, while the other two thumbs stay
         put. With more than two thumbs the pointer position is what decides which interval moves &mdash; the case the
-        explainer previously called ambiguous. Presses outside every segment still move the nearest thumb, and a dragged
-        shift is clamped by its neighbours and by <code>stepbetween</code>.
+        explainer previously called ambiguous. Pressing before or after all four thumbs pulls the closest shift to the
+        pointer rather than jumping a thumb, and a dragged shift is clamped by its neighbours and by
+        <code>stepbetween</code>.
     </Fragment>
     <div slot="demo" class="hours-card">
         <style is:global>

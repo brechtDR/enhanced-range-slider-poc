@@ -1,0 +1,285 @@
+---
+import ExampleSection from "../../ExampleSection.astro";
+import ExampleCodeBlock from "../../ExampleCodeBlock.astro";
+import CodeSnippet from "../../CodeSnippet.astro";
+
+// Octave bands from the bottom of hearing to the top, the scale every audio tool draws
+// logarithmically. `height` is a stylised pink-noise profile for the spectrum behind the track.
+const bands = [
+    { hz: 20, label: "20", height: 30 },
+    { hz: 31, label: "31", height: 46 },
+    { hz: 63, label: "63", height: 66 },
+    { hz: 125, label: "125", height: 88 },
+    { hz: 250, label: "250", height: 96 },
+    { hz: 500, label: "500", height: 82 },
+    { hz: 1000, label: "1k", height: 71 },
+    { hz: 2000, label: "2k", height: 58 },
+    { hz: 4000, label: "4k", height: 44 },
+    { hz: 8000, label: "8k", height: 30 },
+    { hz: 16000, label: "16k", height: 19 },
+];
+
+const MIN = bands[0].hz;
+const MAX = bands[bands.length - 1].hz;
+
+// The two mappings this example compares: a stop's distance along the track by value, and
+// by its index in the list.
+const byValue = (hz: number) => ((hz - MIN) / (MAX - MIN)) * 100;
+const byIndex = (i: number) => (i / (bands.length - 1)) * 100;
+---
+
+<ExampleSection id="non-linear-scale" eyebrow="Foundations" title="Non-linear scale via datalist">
+    <Fragment slot="description">
+        Open UI <a href="https://github.com/openui/open-ui/issues/1464">resolved</a> to first prototype non-linear
+        scales with nothing more than a <code>&lt;datalist&gt;</code>, which is what a range input can already express,
+        and to document where that runs out. Both controls below are the same filter band, 125&nbsp;Hz&ndash;4&nbsp;kHz
+        over the same ten octaves, with the same octave-band spectrum drawn behind the track. The only difference is
+        where a stop is placed: by its value, or by its position in the list. Audio is the honest test case, because no
+        one has ever shipped a linear frequency control.
+    </Fragment>
+    <div slot="demo" class="scale-card">
+        <style is:global>
+            .scale-card {
+                display: grid;
+                gap: 2.25rem;
+            }
+            .scale-row h3 {
+                margin: 0 0 0.25rem;
+                font-size: 0.95rem;
+            }
+            .scale-note {
+                margin: 0 0 1.25rem;
+                color: var(--text-muted);
+                font-size: 0.85rem;
+            }
+            .scale-spectrum {
+                position: relative;
+                height: 68px;
+                margin-bottom: 2px;
+            }
+            .scale-bar {
+                position: absolute;
+                bottom: 0;
+                left: var(--bar-left);
+                translate: -50% 0;
+                width: 6px;
+                height: var(--bar-height);
+                border-radius: 3px 3px 0 0;
+                background: var(--text-soft);
+                opacity: 0.3;
+                transition:
+                    background-color 0.12s ease,
+                    opacity 0.12s ease;
+            }
+            .scale-bar.in-band {
+                background: var(--color-purple);
+                opacity: 1;
+            }
+            .scale-row range-group {
+                --slider-thumb-color: var(--color-purple);
+            }
+            #scale-datalist-range::part(slider-segment-2),
+            #scale-mapped-range::part(slider-segment-2) {
+                background: var(--color-purple);
+            }
+            #scale-datalist-range::part(slider-thumb),
+            #scale-mapped-range::part(slider-thumb) {
+                background-color: var(--color-purple);
+                border-color: color-mix(in oklab, var(--color-purple) 70%, black 25%);
+            }
+            #scale-datalist-range::part(slider-tick),
+            #scale-mapped-range::part(slider-tick) {
+                background: var(--text-soft);
+            }
+            #scale-datalist-range::part(slider-tick-label),
+            #scale-mapped-range::part(slider-tick-label) {
+                color: var(--text-muted);
+                font-size: 0.7rem;
+            }
+            /* On the value-placed track the six lowest octaves share the first 3%, so their
+               labels cannot be drawn without overlapping. The ticks stay. */
+            #scale-datalist-range::part(slider-tick-label-2),
+            #scale-datalist-range::part(slider-tick-label-3),
+            #scale-datalist-range::part(slider-tick-label-4),
+            #scale-datalist-range::part(slider-tick-label-5),
+            #scale-datalist-range::part(slider-tick-label-6) {
+                display: none;
+            }
+            @media (max-width: 700px) {
+                .scale-spectrum {
+                    height: 48px;
+                }
+            }
+        </style>
+
+        <div class="scale-row">
+            <h3>Stops placed by value &mdash; what the platform does today</h3>
+            <p class="scale-note">
+                The keyboard half works: focus a thumb and the arrow keys walk the octaves one at a time, which is
+                exactly right. The pointer half does not. Because the track is linear and snapping picks the nearest
+                stop <em>by value</em>, half of the audible spectrum lives in the first 3% of the track: 20&nbsp;Hz
+                through 500&nbsp;Hz are a single smear you cannot aim at, while 8&nbsp;kHz alone owns a third of the
+                track. Drag the low cut and you can reach 1&nbsp;kHz and up; everything below it is a pixel-hunt.
+            </p>
+            <div class="scale-spectrum" id="scale-datalist-spectrum">
+                {
+                    bands.map((band) => (
+                        <div
+                            class="scale-bar"
+                            data-hz={band.hz}
+                            style={`--bar-left: ${byValue(band.hz)}%; --bar-height: ${band.height}%`}
+                        />
+                    ))
+                }
+            </div>
+            <range-group id="scale-datalist-range" min={MIN} max={MAX} list="scale-stops">
+                <legend slot="legend" class="visually-hidden">Filter band, stops placed by value</legend>
+                <label class="visually-hidden">Low cut <input type="range" name="low-cut" value="125" /></label>
+                <label class="visually-hidden">High cut <input type="range" name="high-cut" value="4000" /></label>
+            </range-group>
+            <datalist id="scale-stops">
+                {bands.map((band) => <option value={band.hz} label={band.label} />)}
+            </datalist>
+            <output id="scale-datalist-output" class="api-output"></output>
+        </div>
+
+        <div class="scale-row">
+            <h3>Stops placed by position &mdash; what an author has to fake</h3>
+            <p class="scale-note">
+                The same band and the same ten octaves, each given an equal stretch of track. Every stop is reachable by
+                pointer, the spectrum is legible, and the band reads as a shape rather than a sliver. The catch is that
+                the slider holds an octave index rather than a frequency: the real value exists only in script, so
+                <code>value</code>, form submission, and validation all lose it. That is the cost the platform would
+                remove.
+            </p>
+            <div class="scale-spectrum" id="scale-mapped-spectrum">
+                {
+                    bands.map((band, i) => (
+                        <div
+                            class="scale-bar"
+                            data-hz={band.hz}
+                            style={`--bar-left: ${byIndex(i)}%; --bar-height: ${band.height}%`}
+                        />
+                    ))
+                }
+            </div>
+            <range-group id="scale-mapped-range" min="0" max={bands.length - 1} list="scale-octaves">
+                <legend slot="legend" class="visually-hidden">Filter band, stops placed by position</legend>
+                <label class="visually-hidden">Low cut <input type="range" value="3" /></label>
+                <label class="visually-hidden">High cut <input type="range" value="8" /></label>
+            </range-group>
+            <datalist id="scale-octaves">
+                {bands.map((band, i) => <option value={i} label={band.label} />)}
+            </datalist>
+            <output id="scale-mapped-output" class="api-output"></output>
+        </div>
+    </div>
+    <ExampleCodeBlock slot="code">
+        <CodeSnippet
+            lang="html"
+            code={`
+<!-- What the platform can express today: unevenly spaced options. -->
+<rangegroup name="filter" min="20" max="16000" list="scale-stops">
+  <legend>Filter band</legend>
+  <label>Low cut  <input type="range" name="low-cut"  value="125"></label>
+  <label>High cut <input type="range" name="high-cut" value="4000"></label>
+</rangegroup>
+
+<datalist id="scale-stops">
+  <option value="20"    label="20"></option>
+  <option value="31"    label="31"></option>
+  <option value="63"    label="63"></option>
+  <option value="125"   label="125"></option>
+  <option value="250"   label="250"></option>
+  <option value="500"   label="500"></option>
+  <option value="1000"  label="1k"></option>
+  <option value="2000"  label="2k"></option>
+  <option value="4000"  label="4k"></option>
+  <option value="8000"  label="8k"></option>
+  <option value="16000" label="16k"></option>
+</datalist>
+`}
+        />
+        <CodeSnippet
+            lang="javascript"
+            code={`
+/* The workaround for even spacing: the slider carries an octave index and the
+   real frequency is derived. It never reaches the input, so it is not submitted
+   and not exposed to assistive technology without extra work. */
+const OCTAVES = [20, 31, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
+const rg = document.querySelector("#scale-mapped-range");
+
+rg.valueTextFormatter = (i) => formatHz(OCTAVES[i]);
+rg.addEventListener("input", () => {
+  const [lo, hi] = rg.values.map((i) => OCTAVES[i]);
+  hiddenLow.value = lo;   // the values a form would actually need
+  hiddenHigh.value = hi;
+});
+`}
+        />
+    </ExampleCodeBlock>
+    <script is:inline slot="runtime" define:vars={{ octaves: bands.map((b) => b.hz) }}>
+        (() => {
+            const init = () => {
+                const formatHz = (hz) => (hz >= 1000 ? `${hz / 1000} kHz` : `${hz} Hz`);
+
+                // How much of the track the selected band covers is the number that separates
+                // the two mappings, so both readouts report it.
+                const describe = (rg, lo, hi) => {
+                    const span = rg.max - rg.min;
+                    const start = Math.round(((rg.values[0] - rg.min) / span) * 100);
+                    const width = Math.round(((rg.values[1] - rg.values[0]) / span) * 100);
+                    return `${formatHz(lo)} – ${formatHz(hi)} — band spans ${width}% of the track, low cut at ${start}%`;
+                };
+
+                const paint = (spectrum, lo, hi) => {
+                    spectrum.querySelectorAll(".scale-bar").forEach((bar) => {
+                        const hz = Number(bar.dataset.hz);
+                        bar.classList.toggle("in-band", hz >= lo && hz <= hi);
+                    });
+                };
+
+                const wire = (rangeId, spectrumId, outputId, toHz) => {
+                    const rg = document.querySelector(rangeId);
+                    const spectrum = document.querySelector(spectrumId);
+                    const output = document.querySelector(outputId);
+                    if (!rg || !spectrum || !output) return;
+
+                    rg.valueTextFormatter = (value) => formatHz(toHz(value));
+                    const render = () => {
+                        const [lo, hi] = rg.values.map(toHz);
+                        paint(spectrum, lo, hi);
+                        output.value = describe(rg, lo, hi);
+                    };
+                    rg.addEventListener("input", render);
+                    render();
+                };
+
+                wire("#scale-datalist-range", "#scale-datalist-spectrum", "#scale-datalist-output", (hz) => hz);
+                wire(
+                    "#scale-mapped-range",
+                    "#scale-mapped-spectrum",
+                    "#scale-mapped-output",
+                    (i) => octaves[Math.round(i)],
+                );
+            };
+
+            const run = () => {
+                if (typeof customElements?.whenDefined === "function") {
+                    customElements
+                        .whenDefined("range-group")
+                        .then(init)
+                        .catch(() => init());
+                    return;
+                }
+                init();
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", run, { once: true });
+            } else {
+                run();
+            }
+        })();
+    </script>
+</ExampleSection>

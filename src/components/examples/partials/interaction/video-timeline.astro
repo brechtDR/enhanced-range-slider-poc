@@ -6,8 +6,9 @@ import CodeSnippet from "../../CodeSnippet.astro";
 
 <ExampleSection id="video-timeline" eyebrow="Interaction modes" title="Video timeline trim">
     <Fragment slot="description">
-        Drag the selected clip to slide in and out together while keeping duration. The in/out
-        handles still trim each end. <code>interaction="range"</code> is a working name pending
+        Drag the selected clip to slide in and out together while keeping duration. Pressing the
+        timeline before or after the clip moves the clip there rather than trimming one end; only
+        the in/out handles trim. <code>interaction="range"</code> is a working name pending
         bikeshed on <a href="https://github.com/openui/open-ui/issues/1460">#1460</a>.
     </Fragment>
     <div slot="demo" class="video-timeline-card">

@@ -1,4 +1,4 @@
-import { LitElement, html, css } from "lit";
+import { LitElement, html, css, nothing } from "lit";
 import type { PropertyValueMap } from "lit";
 import { customElement, property, state, queryAssignedElements, queryAll } from "lit/decorators.js";
 
@@ -39,10 +39,12 @@ export interface AddThumbOptions {
  * - `addThumb(value, options)`: appends a new thumb/input pair.
  * - `removeThumb(index)`: removes a thumb/input pair.
  * - `interaction`: working name (Open UI bikeshed, #1460) — `"endpoints"` (default)
- *   or `"range"`. Not a committed HTML attribute. `"range"` translates the segment
- *   under the pointer, preserving its width, moving the two enabled thumbs that bound
- *   it. Works for any thumb count: the pointer position selects which interval moves.
- *   Presses outside every segment stay endpoint-oriented.
+ *   or `"range"`. Not a committed HTML attribute. `"range"` never moves a lone thumb
+ *   from the track: it translates a segment, preserving its width, by moving the two
+ *   enabled thumbs that bound it. Pressing inside a segment drags that one; pressing
+ *   outside every segment pulls the closest one to the pointer. Works for any thumb
+ *   count, since the pointer position selects the interval. Groups with fewer than two
+ *   enabled thumbs have no segment and stay endpoint-oriented.
  *
  * Events:
  * - `input`: dispatched while values are changing.
@@ -82,9 +84,15 @@ export interface AddThumbOptions {
  * - `:state(dragging)` while a pointer drag is active.
  *
  * Accessibility model:
- * - Grouped structure using `fieldset` + projected `legend`.
- * - Individual thumbs expose `role="slider"` with ARIA min/max/now/value text.
- * - Keyboard behavior follows existing range input conventions.
+ * - Grouped structure using `fieldset` + projected `legend`; the interactive
+ *   container is a `role="group"` named via `aria-label` copied from the
+ *   legend text (IDREF across the shadow boundary does not resolve). Thumb
+ *   labels are the per-input names only — the group name is not repeated on
+ *   every thumb.
+ * - Individual thumbs expose `role="slider"` with ARIA min/max/now/value text
+ *   reflecting each thumb's effective bounds (`_thumbBounds`).
+ * - Keyboard behavior follows existing range input conventions. In
+ *   `interaction="range"` mode, Shift+Arrow translates the adjacent segment.
  */
 @customElement("range-group")
 export class RangeGroup extends LitElement {
@@ -133,7 +141,6 @@ export class RangeGroup extends LitElement {
         startHi: number;
         startValue: number;
     } | null = null;
-    private _uniqueId = Math.random().toString(36).substring(2, 9);
     private _internals: ElementInternals | null = null;
 
     constructor() {
@@ -227,26 +234,41 @@ export class RangeGroup extends LitElement {
     }
 
     /**
-     * Hit-tests the interior segments by value rather than by event target: a segment is only
-     * as tall as the track, so most of the control's height would otherwise fall through to
-     * the nearest-thumb branch.
+     * Hit-tests segments by value rather than by event target: a segment is only as tall as
+     * the track, so most of the control's height would otherwise miss it.
      *
-     * Returns the adjacent thumb pair bounding the segment under `value`, or `null` when the
-     * pointer is outside every segment (before the first thumb or after the last), which keeps
-     * those regions endpoint-oriented. With three or more thumbs the pointer position is what
-     * disambiguates which interval is being grabbed.
+     * Returns the adjacent thumb pair bounding the segment under `value`, falling back to the
+     * pair whose segment is closest when the pointer is outside all of them. Pairs with a
+     * disabled bounding thumb are skipped. `null` means there is nothing to drag at all:
+     * fewer than two enabled thumbs, or not in range mode.
      */
-    private _segmentPairAt(value: number): [number, number] | null {
+    private _segmentPairFor(value: number): [number, number] | null {
         if (this._resolvedInteraction() !== "range") return null;
+
+        let nearest: [number, number] | null = null;
+        let nearestDistance = Infinity;
+
         for (let i = 0; i < this._values.length - 1; i++) {
+            if (this._isThumbDisabled(i) || this._isThumbDisabled(i + 1)) continue;
             const lo = Math.min(this._values[i], this._values[i + 1]);
             const hi = Math.max(this._values[i], this._values[i + 1]);
-            if (value < lo || value > hi) continue;
-            // Keep looking: on a shared boundary the adjacent segment may still be draggable.
-            if (this._isThumbDisabled(i) || this._isThumbDisabled(i + 1)) continue;
-            return [i, i + 1];
+            const distance = Math.max(lo - value, value - hi, 0);
+            if (distance === 0) return [i, i + 1];
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearest = [i, i + 1];
+            }
         }
-        return null;
+
+        return nearest;
+    }
+
+    /** True when a press anywhere on the track would translate a segment. */
+    private get _hasDraggableSegment(): boolean {
+        if (this._resolvedInteraction() !== "range") return false;
+        return this._values.some(
+            (_, i) => i < this._values.length - 1 && !this._isThumbDisabled(i) && !this._isThumbDisabled(i + 1),
+        );
     }
 
     private _pointerToValue(clientX: number): number {
@@ -321,6 +343,96 @@ export class RangeGroup extends LitElement {
         this._dispatch("input");
     }
 
+    /**
+     * Keyboard counterpart to segment drag in `interaction="range"` mode: translate the
+     * segment bounded by `loIndex`/`hiIndex` by `delta`, preserving width. Returns true when
+     * the pair actually moved.
+     */
+    private _translateSegmentByDelta(loIndex: number, hiIndex: number, delta: number): boolean {
+        if (this._isThumbDisabled(loIndex) || this._isThumbDisabled(hiIndex)) return false;
+        const startLo = this._values[loIndex];
+        const startHi = this._values[hiIndex];
+        const width = startHi - startLo;
+        const gap = this.stepBetween || 0;
+        const loBounds = this._thumbBounds(loIndex);
+        const hiBounds = this._thumbBounds(hiIndex);
+
+        const prevValue = this._values[loIndex - 1];
+        const nextValue = this._values[hiIndex + 1];
+        let loLimit = Math.max(this.min, loBounds.min);
+        let hiLimit = Math.min(this.max, hiBounds.max);
+        if (prevValue !== undefined) loLimit = Math.max(loLimit, prevValue + gap);
+        if (nextValue !== undefined) hiLimit = Math.min(hiLimit, nextValue - gap);
+
+        let lo = startLo + delta;
+        const maxLo = hiLimit - width;
+        lo = maxLo < loLimit ? loLimit : Math.max(loLimit, Math.min(maxLo, lo));
+        let hi = lo + width;
+
+        lo = Math.max(loBounds.min, Math.min(loBounds.max, lo));
+        hi = Math.max(hiBounds.min, Math.min(hiBounds.max, hi));
+        if (hi < lo) hi = lo;
+
+        if (lo === startLo && hi === startHi) return false;
+
+        this._inputs[loIndex].value = String(lo);
+        this._inputs[hiIndex].value = String(hi);
+        this._inputs[loIndex].value = String(this._normalizeValue(Number(this._inputs[loIndex].value), loIndex));
+        this._inputs[hiIndex].value = String(this._normalizeValue(Number(this._inputs[hiIndex].value), hiIndex));
+        this._updateValues();
+        return true;
+    }
+
+    /**
+     * Picks the segment a focused thumb should translate with Shift+Arrow.
+     * Prefers the pair in the travel direction; falls back to the only enabled
+     * pair that includes the thumb.
+     */
+    private _segmentPairForThumb(thumbIndex: number, direction: -1 | 1): [number, number] | null {
+        if (this._resolvedInteraction() !== "range") return null;
+        const preferred: [number, number] =
+            direction > 0 ? [thumbIndex, thumbIndex + 1] : [thumbIndex - 1, thumbIndex];
+        const fallback: [number, number] =
+            direction > 0 ? [thumbIndex - 1, thumbIndex] : [thumbIndex, thumbIndex + 1];
+
+        for (const pair of [preferred, fallback]) {
+            const [lo, hi] = pair;
+            if (lo < 0 || hi >= this._values.length) continue;
+            if (this._isThumbDisabled(lo) || this._isThumbDisabled(hi)) continue;
+            return [lo, hi];
+        }
+        return null;
+    }
+
+    /** Step size used for keyboard segment translation (datalist-aware when present). */
+    private _keyboardStep(index: number, direction: -1 | 1, large: boolean): number {
+        const input = this._inputs[index];
+        const step = Number(input?.step) || 1;
+        const multiplier = large ? 10 : 1;
+
+        if (this.list && this._datalistOptions.length > 0) {
+            const sortedValues = this._datalistOptions.map((opt) => Number(opt.value)).sort((a, b) => a - b);
+            const current = this._values[index];
+            const currentIndex = sortedValues.indexOf(current);
+            if (currentIndex === -1) {
+                // Not on a stop: step by the nearest stop distance, falling back to `step`.
+                const nearest = sortedValues.reduce((prev, curr) =>
+                    Math.abs(curr - current) < Math.abs(prev - current) ? curr : prev,
+                );
+                const nearestIndex = sortedValues.indexOf(nearest);
+                const targetIndex = Math.max(
+                    0,
+                    Math.min(sortedValues.length - 1, nearestIndex + direction * multiplier),
+                );
+                return sortedValues[targetIndex] - current;
+            }
+            const targetIndex = Math.max(0, Math.min(sortedValues.length - 1, currentIndex + direction * multiplier));
+            return sortedValues[targetIndex] - current;
+        }
+
+        return direction * step * multiplier;
+    }
+
     connectedCallback() {
         super.connectedCallback();
         window.addEventListener("pointermove", this._handlePointerMove);
@@ -351,15 +463,19 @@ export class RangeGroup extends LitElement {
             );
         }
         this._initializeInputs();
+        // Re-render so a slotted legend's text is copied onto the group's
+        // aria-label even when _values did not change (e.g. empty group).
+        this.requestUpdate();
     }
 
     private _getAccessibleName(input: HTMLInputElement, index: number): string {
         let controlLabel: string | null = null;
         if (input) {
-            // 1. aria-labelledby
+            // 1. aria-labelledby (first ID only — multi-ID resolution is rare in this PoC)
             const labelledby = input.getAttribute("aria-labelledby");
             if (labelledby) {
-                const labelElement = document.getElementById(labelledby);
+                const firstId = labelledby.trim().split(/\s+/)[0];
+                const labelElement = firstId ? document.getElementById(firstId) : null;
                 controlLabel = labelElement?.textContent?.trim() || null;
             }
 
@@ -379,21 +495,13 @@ export class RangeGroup extends LitElement {
             }
         }
 
-        // 5. Final fallback
-        const finalControlLabel = controlLabel || `value ${index + 1}`;
-
-        const legendText = this._legendElements?.[0]?.textContent?.trim();
-
-        if (legendText) {
-            return `${legendText}, ${finalControlLabel}`;
-        }
-
-        return finalControlLabel;
+        // Per-thumb name only. The group legend is copied onto the container's
+        // `aria-label`, so repeating it here would make every arrow-key stop
+        // re-announce the group name.
+        return controlLabel || `value ${index + 1}`;
     }
 
     private _initializeInputs() {
-        if (this._inputs.length === 0) return;
-
         this._inputs.sort((a, b) => Number(a.getAttribute("value")) - Number(b.getAttribute("value")));
 
         this._inputs.forEach((input) => {
@@ -409,6 +517,8 @@ export class RangeGroup extends LitElement {
             }
         });
 
+        // Runs for an empty group too, so removing the last input clears the thumbs
+        // instead of leaving the previous values painted on the track.
         this._updateValues();
     }
 
@@ -457,7 +567,7 @@ export class RangeGroup extends LitElement {
         const target = e.target as HTMLElement;
         const isThumb = target.classList.contains("thumb");
         const pointerValue = this._pointerToValue(e.clientX);
-        const segmentPair = isThumb ? null : this._segmentPairAt(pointerValue);
+        const segmentPair = isThumb ? null : this._segmentPairFor(pointerValue);
 
         if (isThumb) {
             // --- Thumb click: start a drag operation ---
@@ -486,15 +596,23 @@ export class RangeGroup extends LitElement {
             target.setPointerCapture(e.pointerId);
         } else if (segmentPair) {
             const [loIndex, hiIndex] = segmentPair;
+            const startLo = this._values[loIndex];
+            const startHi = this._values[hiIndex];
+            const isInside = pointerValue >= startLo && pointerValue <= startHi;
+
+            // Pressing inside a segment grabs it where the pointer landed. Pressing outside every
+            // segment pulls the closest one to the pointer instead of jumping a thumb, so the grab
+            // point is that segment's center and it stays centred for the rest of the drag.
             this._segmentDrag = {
                 loIndex,
                 hiIndex,
-                startLo: this._values[loIndex],
-                startHi: this._values[hiIndex],
-                startValue: pointerValue,
+                startLo,
+                startHi,
+                startValue: isInside ? pointerValue : (startLo + startHi) / 2,
             };
             this._setDraggingState(true);
             target.setPointerCapture(e.pointerId);
+            if (!isInside) this._translateFilledInterval(pointerValue);
         } else {
             this._jumpClosestThumb(pointerValue);
         }
@@ -503,7 +621,8 @@ export class RangeGroup extends LitElement {
     private _handlePointerMove = (e: PointerEvent) => {
         if (this._segmentDrag) {
             e.preventDefault();
-            this._containerRect = this.shadowRoot?.querySelector(".container")?.getBoundingClientRect() ?? this._containerRect;
+            this._containerRect =
+                this.shadowRoot?.querySelector(".container")?.getBoundingClientRect() ?? this._containerRect;
             this._translateFilledInterval(this._pointerToValue(e.clientX));
             return;
         }
@@ -543,6 +662,27 @@ export class RangeGroup extends LitElement {
     private _handleKeyDown(e: KeyboardEvent, index: number) {
         const input = this._inputs[index];
         if (!input || this._isThumbDisabled(index)) return;
+
+        const isArrow =
+            e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === "ArrowUp";
+        const isPage = e.key === "PageDown" || e.key === "PageUp";
+
+        // Shift+Arrow / Shift+Page in range mode translates the adjacent segment instead of
+        // moving a single thumb. End states remain reachable without Shift.
+        if (e.shiftKey && (isArrow || isPage) && this._resolvedInteraction() === "range") {
+            const direction: -1 | 1 = e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "PageDown" ? -1 : 1;
+            const pair = this._segmentPairForThumb(index, direction);
+            if (pair) {
+                const [loIndex, hiIndex] = pair;
+                const delta = this._keyboardStep(loIndex, direction, isPage);
+                e.preventDefault();
+                if (this._translateSegmentByDelta(loIndex, hiIndex, delta)) {
+                    this._dispatch("input");
+                    this._dispatch("change");
+                }
+                return;
+            }
+        }
 
         let step = Number(input.step) || 1;
         let newValue = Number(input.value);
@@ -634,20 +774,21 @@ export class RangeGroup extends LitElement {
     render() {
         const segmentPoints = [0, ...this._values.map((v) => this._valueToPercent(v)), 100];
 
-        const legend = this._legendElements?.[0];
-        if (legend && !legend.id) {
-            legend.id = `rg-legend-${this._uniqueId}`;
-        }
-        const legendId = legend?.id;
+        // Copy the light-DOM legend's text onto the shadow-DOM group as a string.
+        // aria-labelledby cannot resolve an IDREF across the shadow boundary, so
+        // the ID-based approach leaves the group unnamed in Chrome's AX tree.
+        const legendText = this._legendElements?.[0]?.textContent?.trim() || undefined;
         const effectivelyDisabled = this._isEffectivelyDisabled;
 
         return html`
             <fieldset class="wrapper" ?disabled=${effectivelyDisabled}>
                 <slot name="legend" @slotchange=${this._onSlotChange}></slot>
                 <div
-                    class="container ${effectivelyDisabled ? "disabled" : ""}"
+                    class="container ${effectivelyDisabled ? "disabled" : ""} ${this._hasDraggableSegment
+                        ? "segment-drag"
+                        : ""}"
                     role="group"
-                    aria-labelledby=${legendId || ""}
+                    aria-label=${legendText || nothing}
                     aria-disabled=${effectivelyDisabled ? "true" : "false"}
                     @pointerdown=${this._handleContainerPointerDown}
                 >
@@ -709,6 +850,7 @@ export class RangeGroup extends LitElement {
                         : ""}
                     ${this._values.map((value, index) => {
                         const thumbDisabled = this._isThumbDisabled(index);
+                        const bounds = this._thumbBounds(index);
                         return html`
                             <button
                                 part="slider-thumb slider-thumb-${index + 1}"
@@ -719,9 +861,9 @@ export class RangeGroup extends LitElement {
                                     : 10};"
                                 role="slider"
                                 aria-label=${this._getAccessibleName(this._inputs[index], index)}
-                                aria-valuemin=${this.min}
-                                aria-valuemax=${this.max}
-                                aria-valuenow=${Math.round(value)}
+                                aria-valuemin=${bounds.min}
+                                aria-valuemax=${bounds.max}
+                                aria-valuenow=${value}
                                 aria-valuetext=${this.valueTextFormatter(value)}
                                 aria-disabled=${thumbDisabled ? "true" : "false"}
                                 tabindex=${thumbDisabled ? -1 : 0}
@@ -785,26 +927,16 @@ export class RangeGroup extends LitElement {
             background-color: var(--fill-bg);
         }
 
-        :host([interaction="range"]) .container {
+        /* Hit-testing is by value, not by event target, so the whole control translates a
+           segment in range mode. The affordance sits on the container to match that. */
+        .container.segment-drag {
             touch-action: none;
-        }
-
-        :host([interaction="range"]:state(dragging)) .container {
-            user-select: none;
-        }
-
-        /* The fill is only as tall as the track; stretch its pointer area to the full
-           control height so the grab affordance matches where dragging actually works. */
-        :host([interaction="range"]) .segment-fill::before {
-            content: "";
-            position: absolute;
-            inset-block: calc((var(--_track-height) - var(--_thumb-size)) / 2);
-            inset-inline: 0;
             cursor: grab;
         }
 
-        :host([interaction="range"]:state(dragging)) .segment-fill::before {
+        :host(:state(dragging)) .container.segment-drag {
             cursor: grabbing;
+            user-select: none;
         }
 
         .thumb {
